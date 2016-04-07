@@ -1,0 +1,27 @@
+{
+  "name": "MYTableViewManager",
+  "version": "0.1.4",
+  "summary": "TableView 管理器",
+  "homepage": "https://github.com/TimeFaceCoder/MYTableViewManager",
+  "license": "Copyright (C) 2015 TimeFace, Inc.  All rights reserved.",
+  "authors": {
+    "Melvin": "yangmin@timeface.cn"
+  },
+  "social_media_url": "http://www.timeface.cn",
+  "platforms": {
+    "ios": "7.0"
+  },
+  "source": {
+    "git": "https://github.com/TimeFaceCoder/MYTableViewManager.git"
+  },
+  "source_files": "MYTableViewManager/MYTableViewManager/**/*.{h,m,c}",
+  "requires_arc": true,
+  "dependencies": {
+    "pop": [
+
+    ],
+    "AsyncDisplayKit": [
+
+    ]
+  }
+}

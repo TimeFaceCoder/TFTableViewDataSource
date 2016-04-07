@@ -1,0 +1,27 @@
+{
+  "name": "TFNetwork",
+  "version": "0.0.1",
+  "summary": "时光流影iOS底层网络框架",
+  "homepage": "https://github.com/TimeFaceCoder/TFNetwork",
+  "license": "Copyright (C) 2016 TimeFace, Inc.  All rights reserved.",
+  "authors": {
+    "Melvin": "yangmin@timeface.cn"
+  },
+  "social_media_url": "http://www.timeface.cn",
+  "platforms": {
+    "ios": "7.1"
+  },
+  "source": {
+    "git": "https://github.com/TimeFaceCoder/TFNetwork.git"
+  },
+  "source_files": "TFNetwork/TFNetwork/**/*.{h,m,c}",
+  "requires_arc": true,
+  "dependencies": {
+    "MPMessagePack": [
+
+    ],
+    "AFNetworking": [
+
+    ]
+  }
+}

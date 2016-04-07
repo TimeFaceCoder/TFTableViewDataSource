@@ -1,0 +1,114 @@
+//
+//  TFTableViewDataManager.m
+//  TFTableViewDataSource
+//
+//  Created by Melvin on 3/16/16.
+//  Copyright © 2016 TimeFace. All rights reserved.
+//
+
+#import "TFTableViewDataManager.h"
+#import "TFTableViewItem.h"
+
+@interface TFTableViewDataManager() {
+    
+}
+
+
+
+@end
+
+@implementation TFTableViewDataManager
+
+- (instancetype)initWithDataSource:(TFTableViewDataSource *)tableViewDataSource
+                          listType:(NSInteger)listType {
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    _tableViewDataSource = tableViewDataSource;
+    _listType = listType;
+    __weak __typeof(self)weakSelf = self;
+    _cellViewClickHandler = ^ (TFTableViewItem *item ,NSInteger actionType) {
+        __typeof(&*weakSelf) strongSelf = weakSelf;
+        strongSelf.currentIndexPath = item.indexPath;
+        [item deselectRowAnimated:YES];
+        if ([strongSelf.tableViewDataSource.delegate respondsToSelector:@selector(actionOnView:actionType:)]) {
+            [strongSelf.tableViewDataSource.delegate actionOnView:item actionType:actionType];
+        }
+        [strongSelf cellViewClickHandler:item actionType:actionType];
+    };
+    
+    _deleteHanlder = ^(TFTableViewItem *item ,Completion completion) {
+        __typeof(&*weakSelf) strongSelf = weakSelf;
+        [strongSelf deleteHanlder:item completion:completion];
+    };
+    [self registeredDataRequest];
+    
+    return self;
+}
+
+- (void)registeredDataRequest {
+    
+}
+
+
+/**
+ *  显示列表数据
+ *
+ *  @param result          数据字典
+ *  @param completionBlock 回调block
+ */
+- (void)reloadView:(NSDictionary *)result block:(TableViewReloadCompletionBlock)completionBlock {
+    
+}
+/**
+ *  列表内View事件处理
+ *
+ *  @param item
+ *  @param actionType
+ */
+- (void)cellViewClickHandler:(TFTableViewItem *)item actionType:(NSInteger)actionType {
+    self.currentIndexPath = item.indexPath;
+}
+/**
+ *  列表删除事件处理
+ *
+ *  @param item
+ */
+- (void)deleteHanlder:(TFTableViewItem *)item completion:(void (^)(void))completion {
+    self.currentIndexPath = item.indexPath;
+}
+
+/**
+ *  刷新指定Cell
+ *
+ *  @param actionType
+ *  @param dataId
+ */
+- (void)refreshCell:(NSInteger)actionType identifier:(NSString *)identifier {
+    
+}
+
+/**
+ *  刷新列表数据
+ */
+- (void)updateTableViewData:(id)section {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSInteger sectionCount = [self.tableViewDataSource.manager.sections count];
+        [self.tableViewDataSource.manager addSection:section];
+        if (sectionCount > 0) {
+            [self.tableViewDataSource.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionCount]
+                                              withRowAnimation:UITableViewRowAnimationBottom];
+        }
+        else {
+            [self.tableViewDataSource.tableView reloadData];
+        }
+    });
+}
+
+- (void)clearCompletionBlock {
+    self.cellViewClickHandler = nil;
+    self.deleteHanlder        = nil;
+}
+
+@end
