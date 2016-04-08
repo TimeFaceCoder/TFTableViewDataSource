@@ -20,14 +20,14 @@
 
 - (void)loadView {
     [super loadView];
-    _tableView = [[ASTableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain asyncDataFetching:YES];
+    _tableView = [[ASTableView alloc] initWithFrame:self.view.bounds
+                                              style:UITableViewStylePlain
+                                  asyncDataFetching:YES];
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_tableView];
     _tableView.backgroundColor = [UIColor lightGrayColor];
 }
-- (void)viewWillLayoutSubviews {
-    _tableView.frame = self.view.bounds;
-}
+
 - (void)createDataSource {
     self.dataSource = [[DemoTableViewDataSource alloc] initWithTableView:self.tableView
                                                                 listType:1
@@ -77,4 +77,8 @@
     self.tableView.tableFooterView = [[UIView alloc] init];
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell
+forRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%s",__func__);
+}
 @end

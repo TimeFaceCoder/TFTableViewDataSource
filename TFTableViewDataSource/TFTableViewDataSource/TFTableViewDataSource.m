@@ -268,8 +268,10 @@
                          [strongSelf stopTableViewPullRefresh];
                      }
                      if (dataLoadPolicy == TFDataLoadPolicyCache) {
-                         //第一次从缓存加载数据后触发下拉刷新重新加载
-                         [strongSelf startTableViewPullRefresh];
+                         //第一次从缓存加载数据后延迟触发下拉刷新重新加载
+                         [strongSelf performSelector:@selector(startTableViewPullRefresh)
+                                          withObject:nil
+                                          afterDelay:0.75];
                      }
                  }
                  //数据加载完成

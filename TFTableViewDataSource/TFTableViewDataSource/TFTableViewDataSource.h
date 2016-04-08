@@ -11,7 +11,6 @@
 
 
 @class MYTableViewManager;
-@class TFTableViewDataManager;
 @class TFTableViewItem;
 @class ASTableView;
 
