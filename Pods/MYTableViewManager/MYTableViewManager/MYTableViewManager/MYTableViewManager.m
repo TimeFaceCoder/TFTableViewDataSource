@@ -254,7 +254,17 @@
         MYTableViewCell *cell = (MYTableViewCell *)[tableView nodeForRowAtIndexPath:indexPath];
         [self.delegate my_tableView:tableView willLoadCell:cell forRowAtIndexPath:indexPath];
     }
+    if ([self.delegate respondsToSelector:@selector(tableView:willDisplayNodeForRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView willDisplayNodeForRowAtIndexPath:indexPath];
+    }
 }
+
+- (void)tableView:(ASTableView *)tableView didEndDisplayingNode:(ASCellNode *)node forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingNode:forRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView didEndDisplayingNode:node forRowAtIndexPath:indexPath];
+    }
+}
+
 
 #pragma mark -
 #pragma mark Table view delegate
@@ -773,6 +783,7 @@
 
 - (void)addSection:(MYTableViewSection *)section
 {
+    ASDisplayNodeAssert(!self.dataSourceLocked, @"Could not update data source when it is locked !");
     section.tableViewManager = self;
     [self.mutableSections addObject:section];
 }

@@ -20,7 +20,6 @@ extern NSString *const kTFTableViewDataRequestURLKey;
 
 extern NSString *const kTFTableViewDataManagerClassKey;
 
-
 @interface TFTableViewDataSourceConfig : NSObject
 
 

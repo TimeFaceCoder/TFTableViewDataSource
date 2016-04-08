@@ -83,6 +83,10 @@
 
 @optional
 
+- (void)tableView:(ASTableView *)tableView willDisplayNodeForRowAtIndexPath:(NSIndexPath *)indexPath;
+
+- (void)tableView:(ASTableView *)tableView didEndDisplayingNode:(ASCellNode *)node forRowAtIndexPath:(NSIndexPath *)indexPath;
+
 /*
  Tells the delegate the table view is about to layout a cell for a particular row.
  

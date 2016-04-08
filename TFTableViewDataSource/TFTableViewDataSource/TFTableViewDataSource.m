@@ -289,7 +289,6 @@
 
 #pragma mark - 刷新列表
 - (void)reloadTableView {
-    [self.tableView reloadData];
     UIView *snapshot = [self.tableView snapshotViewAfterScreenUpdates:NO];
     [self.tableView.superview insertSubview:snapshot aboveSubview:_tableView];
     [self.tableView beginUpdates];
@@ -350,15 +349,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath; {
     }
 }
 
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell
-forRowAtIndexPath:(NSIndexPath *)indexPath; {
-    if ([cell isKindOfClass:[MYTableViewLoadingItemCell class]]) {
-        [self performSelector:@selector(loadMore) withObject:nil afterDelay:0.3];
+- (void)tableView:(ASTableView *)tableView willDisplayNodeForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableView:willDisplayNodeForRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView willDisplayNodeForRowAtIndexPath:indexPath];
     }
-    
-    if ([self.delegate respondsToSelector:@selector(tableView:willDisplayCell:forRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
+}
+
+- (void)tableView:(ASTableView *)tableView didEndDisplayingNode:(ASCellNode *)node forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingNode:forRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView didEndDisplayingNode:node forRowAtIndexPath:indexPath];
     }
 }
 
