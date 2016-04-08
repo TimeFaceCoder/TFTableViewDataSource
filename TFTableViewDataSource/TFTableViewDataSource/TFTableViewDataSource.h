@@ -83,7 +83,9 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 - (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy error:(NSError *)error;
 
 @optional
+
 - (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy object:(id)object error:(NSError *)error;
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 
 - (void)scrollViewDidScrollUp:(CGFloat)deltaY;
@@ -112,7 +114,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath;
 @interface TFTableViewDataSource : NSObject
 
 @property (nonatomic ,weak) id<TFTableViewDataSourceDelegate> delegate;
-@property (readonly, nonatomic, strong, getter = manager) MYTableViewManager *manager;
+@property (nonatomic ,strong ,readonly ,getter = manager) MYTableViewManager *manager;
 @property (nonatomic ,weak) ASTableView *tableView;
 @property (nonatomic ,assign) TFDataSourceState dataSourceState;
 /**
@@ -125,7 +127,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath;
 @property (nonatomic ,assign) NSInteger currentPage;
 
 @property (nonatomic ,assign) NSInteger listType;
-
+/**
+ *  列表数据缓存时间
+ */
 @property (nonatomic ,assign) NSInteger cacheTimeInSeconds;
 
 

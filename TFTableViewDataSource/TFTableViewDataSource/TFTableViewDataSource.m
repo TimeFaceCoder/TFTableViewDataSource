@@ -24,11 +24,11 @@
 /**
  *  向上滚动阈值
  */
-@property (nonatomic ,assign) CGFloat                        upThresholdY;
+@property (nonatomic ,assign) CGFloat                  upThresholdY;
 /**
  *  向下阈值
  */
-@property (nonatomic ,assign) CGFloat                        downThresholdY;
+@property (nonatomic ,assign) CGFloat                  downThresholdY;
 /**
  *  当前滚动方向
  */
@@ -36,11 +36,11 @@
 /**
  *  Y轴偏移
  */
-@property (nonatomic ,assign) CGFloat                        previousOffsetY;
+@property (nonatomic ,assign) CGFloat                  previousOffsetY;
 /**
  *  Y积累总量
  */
-@property (nonatomic ,assign) CGFloat                        accumulatedY;
+@property (nonatomic ,assign) CGFloat                  accumulatedY;
 
 @property (nonatomic ,strong) MYTableViewManager       *manager;
 /**
@@ -52,7 +52,7 @@
 
 @property (nonatomic ,strong) NSMutableDictionary      *requestArgument;
 
-@property (nonatomic ,assign) BOOL firstLoadOver;
+@property (nonatomic ,assign) BOOL                     firstLoadOver;
 
 @end
 

@@ -63,12 +63,6 @@ typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *
  */
 - (void)refreshCell:(NSInteger)actionType identifier:(NSString *)identifier;
 
-/**
- *  刷新列表数据
- */
-- (void)updateTableViewData:(id)section;
-
-
 @end
 
 #endif /* TFTableViewDataManagerProtocol_h */

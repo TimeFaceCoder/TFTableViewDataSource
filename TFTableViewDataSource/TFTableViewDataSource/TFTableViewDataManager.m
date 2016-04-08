@@ -82,22 +82,6 @@
     
 }
 
-/**
- *  刷新列表数据
- */
-- (void)updateTableViewData:(id)section {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSInteger sectionCount = [self.tableViewDataSource.manager.sections count];
-        [self.tableViewDataSource.manager addSection:section];
-        if (sectionCount > 0) {
-            [self.tableViewDataSource.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionCount]
-                                              withRowAnimation:UITableViewRowAnimationBottom];
-        }
-        else {
-            [self.tableViewDataSource.tableView reloadData];
-        }
-    });
-}
 
 - (void)clearCompletionBlock {
     self.cellViewClickHandler = nil;
