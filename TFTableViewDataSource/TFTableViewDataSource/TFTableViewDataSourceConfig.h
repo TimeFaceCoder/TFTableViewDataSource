@@ -12,9 +12,9 @@
 if ([TFTableViewDataSourceConfig isLogEnable]) {\
 NSLog(@"[TFTableViewDataSource Debug]: %@", [NSString stringWithFormat:(frmt), ##__VA_ARGS__]);\
 }
-static BOOL isEnable;
+static BOOL isEnable = YES;
 
-static NSInteger kTFPageSize;
+static NSInteger kTFPageSize = 20;
 
 extern NSString *const kTFTableViewDataRequestURLKey;
 

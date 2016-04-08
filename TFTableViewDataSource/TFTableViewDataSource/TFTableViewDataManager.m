@@ -42,15 +42,8 @@
         __typeof(&*weakSelf) strongSelf = weakSelf;
         [strongSelf deleteHanlder:item completion:completion];
     };
-    [self registeredDataRequest];
-    
     return self;
 }
-
-- (void)registeredDataRequest {
-    
-}
-
 
 /**
  *  显示列表数据

@@ -14,10 +14,10 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - AsyncDisplayKit (1.9.7.1):
-    - AsyncDisplayKit/PINRemoteImage (= 1.9.7.1)
-  - AsyncDisplayKit/ASDealloc2MainObject (1.9.7.1)
-  - AsyncDisplayKit/PINRemoteImage (1.9.7.1):
+  - AsyncDisplayKit (1.9.8):
+    - AsyncDisplayKit/PINRemoteImage (= 1.9.8)
+  - AsyncDisplayKit/ASDealloc2MainObject (1.9.8)
+  - AsyncDisplayKit/PINRemoteImage (1.9.8):
     - AsyncDisplayKit/ASDealloc2MainObject
     - PINRemoteImage/iOS (>= 2.1.2)
   - GHODictionary (1.0.9)
@@ -38,18 +38,23 @@ PODS:
     - MPMessagePack
 
 DEPENDENCIES:
-  - AsyncDisplayKit
+  - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit.git`)
   - JSONModel
   - MYTableViewManager (from `https://github.com/TimeFaceCoder/MYTableViewManager.git`)
   - TFNetwork (from `https://github.com/TimeFaceCoder/TFNetwork.git`)
 
 EXTERNAL SOURCES:
+  AsyncDisplayKit:
+    :git: https://github.com/facebook/AsyncDisplayKit.git
   MYTableViewManager:
     :git: https://github.com/TimeFaceCoder/MYTableViewManager.git
   TFNetwork:
     :git: https://github.com/TimeFaceCoder/TFNetwork.git
 
 CHECKOUT OPTIONS:
+  AsyncDisplayKit:
+    :commit: ccddb36ed9b9b5d5fcd4321fa2fab6591747929c
+    :git: https://github.com/facebook/AsyncDisplayKit.git
   MYTableViewManager:
     :commit: c2a92abc27799e8564d04c48b88373eb8d1d06d9
     :git: https://github.com/TimeFaceCoder/MYTableViewManager.git
@@ -59,7 +64,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  AsyncDisplayKit: 2b52f841e384e7326d4f59323b1bf35d00696e17
+  AsyncDisplayKit: a0a50ce59bdad7cf2fbd9dfda35c03ce60d98469
   GHODictionary: 1f7873492445e0f33ac19575a358c3c91926b564
   JSONModel: 12523685c4b623553ccf844bbbf7007624317b2c
   MPMessagePack: 7c9c9cdee049b62e3578ee423ba451fa406bbd08

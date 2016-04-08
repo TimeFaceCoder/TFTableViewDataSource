@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 #import "DemoTableViewDataSource.h"
-@interface ViewController ()
+@interface ViewController ()<TFTableViewDataSourceDelegate>
 
 @property (nonatomic ,strong) DemoTableViewDataSource *dataSource;
 @property (nonatomic ,strong) ASTableView           *tableView;
@@ -23,7 +23,7 @@
     _tableView = [[ASTableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain asyncDataFetching:YES];
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_tableView];
-   
+    _tableView.backgroundColor = [UIColor lightGrayColor];
 }
 - (void)viewWillLayoutSubviews {
     _tableView.frame = self.view.bounds;
@@ -33,6 +33,7 @@
                                                                 listType:1
                                                                   params:@{}
                                                                 delegate:self];
+    self.dataSource.cacheTimeInSeconds = 60;
 }
 
 - (void)viewDidLoad {
@@ -49,6 +50,31 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+/**
+ *  列表及其控件点击事件回调
+ *
+ *  @param item
+ *  @param actionType 事件类型
+ */
+- (void)actionOnView:(TFTableViewItem *)item actionType:(NSInteger)actionType {
+    
+}
+/**
+ *  开始加载
+ */
+- (void)didStartLoad {
+    
+}
+/**
+ *  加载完成
+ *
+ *  @param loadPolicy 加载类型
+ *  @param error      错误
+ */
+- (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy error:(NSError *)error {
+    self.tableView.tableFooterView = [[UIView alloc] init];
 }
 
 @end

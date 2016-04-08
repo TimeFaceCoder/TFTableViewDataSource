@@ -11,8 +11,8 @@
 @interface TFTableViewDataRequest : TFRequest
 
 @property (nonatomic ,copy) NSString *requestURL;
-@property (nonatomic ,strong) NSDictionary *params;
-
+@property (nonatomic ,strong) NSDictionary *requestArgument;
+@property (nonatomic ,assign) NSInteger cacheTimeInSeconds;
 - (instancetype)initWithRequestURL:(NSString *)url params:(NSDictionary *)params;
 
 @end

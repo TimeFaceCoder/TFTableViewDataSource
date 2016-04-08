@@ -26,7 +26,7 @@
     
     [[TFTableViewDataSourceConfig sharedInstance] mapWithListType:1
                                                       mappingInfo:@{
-                                                                    kTFTableViewDataRequestURLKey:@"http://dev1.v5time.net/tfmobile/time/timelist?currentPage=1&pageSize=20&type=1",
+                                                                    kTFTableViewDataRequestURLKey:@"http://dev1.v5time.net/tfmobile/time/timelist?type=1",
                                                                     
                                                                     kTFTableViewDataManagerClassKey:@"TimeLineDataManager"}];
     return YES;

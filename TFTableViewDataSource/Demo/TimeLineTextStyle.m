@@ -24,7 +24,7 @@
              NSForegroundColorAttributeName:[UIColor darkTextColor]};
 }
 + (NSDictionary *)contentStyle {
-    return @{NSFontAttributeName:[UIFont boldSystemFontOfSize:14],
+    return @{NSFontAttributeName:[UIFont systemFontOfSize:14],
              NSForegroundColorAttributeName:[UIColor darkTextColor]};
 }
 + (NSDictionary *)contentLinkStyle {

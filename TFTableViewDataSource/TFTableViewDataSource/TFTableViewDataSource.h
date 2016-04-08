@@ -118,6 +118,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @property (nonatomic ,assign) NSInteger listType;
 
+@property (nonatomic ,assign) NSInteger cacheTimeInSeconds;
+
+
 - (instancetype)initWithTableView:(ASTableView *)tableView
                          listType:(NSInteger)listType
                            params:(NSDictionary *)params
@@ -141,5 +144,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath;
  *  @param identifier Cell唯一标示
  */
 - (void)refreshCell:(NSInteger)actionType identifier:(NSString *)identifier;
+
+- (void)initTableViewPullRefresh;
+- (void)startTableViewPullRefresh;
+- (void)stopTableViewPullRefresh;
 
 @end

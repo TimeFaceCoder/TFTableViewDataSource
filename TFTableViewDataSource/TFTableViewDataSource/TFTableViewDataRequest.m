@@ -15,9 +15,14 @@
     self = [super init];
     if (self) {
         _requestURL = url;
-        _params = params;
+        _requestArgument = params;
+        _cacheTimeInSeconds = -1;
     }
     return self;
+}
+
+- (NSInteger)cacheTimeInSeconds {
+    return _cacheTimeInSeconds;
 }
 
 - (NSString *)requestUrl {
@@ -25,7 +30,7 @@
 }
 
 - (id)requestArgument {
-    return _params;
+    return _requestArgument;
 }
 
 - (TFRequestMethod)requestMethod {

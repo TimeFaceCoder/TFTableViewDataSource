@@ -19,6 +19,8 @@
     ASTextNode          *_timeNode;
     ASTextNode          *_fromNode;
     ASNetworkImageNode  *_avatarNode;
+    ASTextNode          *_titleNode;
+    ASTextNode          *_contentNode;
 }
 
 @end
@@ -30,7 +32,7 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     _backgroundNode = [[ASDisplayNode alloc] init];
     _backgroundNode.backgroundColor = [UIColor whiteColor];
-    _backgroundNode.cornerRadius = 0.0;
+    _backgroundNode.cornerRadius = 4.0;
     [self addSubnode:_backgroundNode];
     
     // name node
@@ -43,9 +45,11 @@
     [self addSubnode:_nickNameNode];
     // username node
     _timeNode = [[ASTextNode alloc] init];
+    NSTimeInterval date = [[self.tableViewItem.model objectForKey:@"date"] doubleValue];
     [_timeNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
-    _timeNode.attributedString = [[NSAttributedString alloc] initWithString:@"2016-04-06 17:20"
-                                                                 attributes:[TimeLineTextStyle subTextStyle]];
+    _timeNode.attributedString = [[NSAttributedString alloc] initWithString:[self formattedDateWithDate:[NSDate dateWithTimeIntervalSince1970:date] format:@"yyyy-MM-dd HH:mm"]                                                                 attributes:[TimeLineTextStyle subTextStyle]];
+    
+    
     _timeNode.flexShrink = YES;
     _timeNode.truncationMode = NSLineBreakByTruncatingTail;
     _timeNode.maximumNumberOfLines = 1;
@@ -81,6 +85,75 @@
         return modifiedImage;
     };
     [self addSubnode:_avatarNode];
+    
+    // title node
+    _titleNode = [[ASTextNode alloc] init];
+    [_titleNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
+    _titleNode.attributedString = [[NSAttributedString alloc] initWithString:[self.tableViewItem.model objectForKey:@"timeTitle"]
+                                                                  attributes:[TimeLineTextStyle titleStyle]];
+    _titleNode.flexShrink = YES;
+    _titleNode.truncationMode = NSLineBreakByTruncatingTail;
+    _titleNode.maximumNumberOfLines = 1;
+    
+    [self addSubnode:_titleNode];
+    
+    // post node
+    _contentNode = [[ASTextNode alloc] init];
+    _contentNode.maximumNumberOfLines = 4;
+    [_contentNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
+    
+    // processing URLs in post
+    NSString *kLinkAttributeName = @"TextLinkAttributeName";
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        @autoreleasepool {
+            if([self.tableViewItem.model objectForKey:@"content"]) {
+                NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:[self.tableViewItem.model objectForKey:@"content"] attributes:[TimeLineTextStyle contentStyle]];
+                
+                NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+                [paragraphStyle setLineSpacing:12];
+                
+                [attrString addAttribute:NSParagraphStyleAttributeName
+                                   value:paragraphStyle
+                                   range:NSMakeRange(0, attrString.string.length)];
+                NSDataDetector *urlDetector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeLink error:nil];
+                [urlDetector enumerateMatchesInString:attrString.string
+                                              options:kNilOptions
+                                                range:NSMakeRange(0, attrString.string.length)
+                                           usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop)
+                 {
+                     if (result.resultType == NSTextCheckingTypeLink) {
+                         
+                         NSMutableDictionary *linkAttributes = [[NSMutableDictionary alloc] initWithDictionary:[TimeLineTextStyle contentLinkStyle]];
+                         linkAttributes[kLinkAttributeName] = [NSURL URLWithString:result.URL.absoluteString];
+                         [attrString addAttributes:linkAttributes range:result.range];
+                     }
+                 }];
+                
+                // configure node to support tappable links
+                _contentNode.userInteractionEnabled = YES;
+                _contentNode.linkAttributeNames = @[ kLinkAttributeName ];
+                _contentNode.attributedString = attrString;
+                //_contentNode.backgroundColor = [UIColor redColor];
+                
+            }
+        }
+    });
+   
+    
+    [self addSubnode:_contentNode];
+}
+
+
+- (NSString *)formattedDateWithDate:(NSDate *)date format:(NSString *)format {
+    static NSDateFormatter *formatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [[NSDateFormatter alloc] init];
+    });
+    
+    [formatter setDateFormat:format];
+    return [formatter stringFromDate:date];
 }
 
 - (void)layout {
@@ -110,7 +183,9 @@
     
     NSMutableArray *mainStackContent = [[NSMutableArray alloc] init];
     [mainStackContent addObject:avatarStack];
-
+    
+    [mainStackContent addObject:_titleNode];
+    [mainStackContent addObject:_contentNode];
        
     
     

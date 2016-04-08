@@ -13,10 +13,11 @@
 #import <TFNetwork/TFNetwork.h>
 
 @class TFTableViewItem;
+@class MYTableViewSection;
 typedef void (^Completion)(void);
 typedef void (^CellViewClickHandler)(__kindof TFTableViewItem *item ,NSInteger actionType);
 typedef void (^DeletionHandlerWithCompletion)(__kindof TFTableViewItem *item, void (^)(void));
-typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error,NSInteger currentItemCount);
+typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error,MYTableViewSection *section);
 
 
 @protocol TFTableViewDataManagerProtocol <NSObject>
@@ -32,8 +33,6 @@ typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *
  */
 - (instancetype)initWithDataSource:(TFTableViewDataSource *)tableViewDataSource
                           listType:(NSInteger)listType;
-
-- (void)registeredDataRequest;
 
 /**
  *  显示列表数据

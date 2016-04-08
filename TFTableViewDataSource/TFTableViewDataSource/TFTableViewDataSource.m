@@ -14,19 +14,25 @@
 #import "TFTableViewItem.h"
 #import "TFTableViewItemCell.h"
 
+#import <MYTableViewManager/MYTableViewLoadingItem.h>
+#import <MYTableViewManager/MYTableViewLoadingItemCell.h>
+
 @interface TFTableViewDataSource()<MYTableViewManagerDelegate> {
     
 }
 
-@property (nonatomic ,strong) MYTableViewManager *manager;
+@property (nonatomic ,strong) MYTableViewManager       *manager;
 /**
  *  网络数据加载工具
  */
-@property (nonatomic ,strong) TFTableViewDataRequest *dataRequest;
+@property (nonatomic ,strong) TFTableViewDataRequest   *dataRequest;
 
-@property (nonatomic ,strong) TFTableViewDataManager *tableViewDataManager;
+@property (nonatomic ,strong) TFTableViewDataManager   *tableViewDataManager;
 
-@property (nonatomic ,strong) NSMutableDictionary *requestArgument;
+@property (nonatomic ,strong) NSMutableDictionary      *requestArgument;
+
+@property (nonatomic ,assign) BOOL firstLoadOver;
+
 @end
 
 @implementation TFTableViewDataSource
@@ -41,7 +47,7 @@
     }
     _delegate  = delegate;
     _tableView = tableView;
-    _listType = listType;
+    _listType  = listType;
     _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
     _manager = [[MYTableViewManager alloc] initWithTableView:tableView delegate:self];
     [self initTableViewPullRefresh];
@@ -94,6 +100,11 @@
     }
 }
 
+- (void)loadMore {
+    if (_currentPage < _totalPage) {
+        [self load:TFDataLoadPolicyMore context:nil];
+    }
+}
 #pragma mark - 重载以下方法可以自定义下拉刷新组件
 ////////////////////////////////////////////初始化下拉刷新////////////////////////////////////////////
 - (void)initTableViewPullRefresh {
@@ -102,7 +113,8 @@
 
 ////////////////////////////////////////////开始下拉刷新//////////////////////////////////////////////
 - (void)startTableViewPullRefresh {
-    
+    _firstLoadOver = YES;
+    [self load:TFDataLoadPolicyReload context:nil];
 }
 
 ////////////////////////////////////////////结束下拉刷新//////////////////////////////////////////////
@@ -124,6 +136,7 @@
             _dataSourceState = TFDataSourceStateFinished;
             return;
         }
+        _currentPage++;
     } else {
         _currentPage = 1;
         _totalPage = 1;
@@ -131,31 +144,60 @@
     [_requestArgument setObject:[NSNumber numberWithInteger:[TFTableViewDataSourceConfig pageSize]]
                          forKey:@"pageSize"];
     [_requestArgument setObject:[NSNumber numberWithInteger:_currentPage] forKey:@"currentPage"];
+    _dataRequest.requestArgument    = _requestArgument;
+    _dataRequest.cacheTimeInSeconds = _cacheTimeInSeconds;
     //设置操作标示
     _dataSourceState = TFDataSourceStateLoading;
-    if ([_dataRequest cacheResponseObject]) {
+    //加载第一页时候使用缓存数据
+    if ([_dataRequest cacheResponseObject] && !_firstLoadOver) {
         //使用缓存数据绘制UI
-        [self handleResultData:[_dataRequest cacheResponseObject] dataLoadPolicy:loadPolicy context:context];
+        TFTableViewLogDebug(@"use cache data for %@",_dataRequest.requestURL);
+        [self handleResultData:[_dataRequest cacheResponseObject]
+                dataLoadPolicy:TFDataLoadPolicyCache
+                       context:context
+                         error:nil];
     }
-    [_dataRequest startWithCompletionBlockWithSuccess:^(__kindof TFBaseRequest *request) {
-        [self handleResultData:request.responseObject dataLoadPolicy:loadPolicy context:context];
-    } failure:^(__kindof TFBaseRequest *request) {
-        TFTableViewLogDebug(@"get data from %@ error :%@ userinfo:%@",request.requestUrl,request.error,request.userInfo);
-        [self handleResultData:nil dataLoadPolicy:loadPolicy context:context];
-    }];
+    else {
+        [_dataRequest startWithCompletionBlockWithSuccess:^(__kindof TFBaseRequest *request) {
+            TFTableViewLogDebug(@"get data from server %@ page:%@",request.requestUrl,@(_currentPage));
+            [self handleResultData:request.responseObject dataLoadPolicy:loadPolicy context:context error:nil];
+        } failure:^(__kindof TFBaseRequest *request) {
+            TFTableViewLogDebug(@"get data from %@ error :%@ userinfo:%@",request.requestUrl,request.error,request.userInfo);
+            if ([request cacheResponseObject]) {
+                [self handleResultData:[request cacheResponseObject]
+                        dataLoadPolicy:loadPolicy
+                               context:context
+                                 error:nil];
+            }
+            else {
+                [self handleResultData:nil
+                        dataLoadPolicy:loadPolicy
+                               context:context
+                                 error:request.error];
+            }
+        }];
+    }
 }
 
 #pragma mark 处理返回数据并绘制UI
 
-- (void)handleResultData:(NSDictionary *)result dataLoadPolicy:(TFDataLoadPolicy)dataLoadPolicy context:(ASBatchContext *)context{
+- (void)handleResultData:(NSDictionary *)result
+          dataLoadPolicy:(TFDataLoadPolicy)dataLoadPolicy
+                 context:(ASBatchContext *)context
+                   error:(NSError *)error {
     NSError *hanldeError = nil;
+    NSInteger lastSectionIndex = [[self.manager sections] count] - 1;
     if (!result) {
         //数据为空
         hanldeError = [NSError errorWithDomain:@"" code:1 userInfo:@{}];
     }
-    if (dataLoadPolicy == TFDataLoadPolicyReload) {
-        //重新加载列表数据
-        [self.manager removeAllSections];
+    if (dataLoadPolicy == TFDataLoadPolicyMore) {
+        //加载下一页，移除loading item
+        [self.manager removeLastSection];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex]
+                          withRowAnimation:UITableViewRowAnimationFade];
+        });
     }
     [self setTotalPage:[[result objectForKey:@"totalPage"] integerValue]];
     if (_totalPage == 0) {
@@ -163,59 +205,56 @@
         _totalPage = 1;
         _currentPage = 1;
     }
-    if (dataLoadPolicy == TFDataLoadPolicyMore) {
-        //加载下一页，移除loading item
-        NSInteger lastSectionIndex = [[self.manager sections] count] - 1;
-        [self.manager removeLastSection];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex]
-                                withRowAnimation:UITableViewRowAnimationFade];
-        });
-    }
     __weak __typeof(self)weakSelf = self;
     [self.tableViewDataManager reloadView:result
-                                          block:^(BOOL finished, id object, NSError *error, NSInteger currentItemCount)
+                                    block:^(BOOL finished, id object, NSError *error, MYTableViewSection *section)
      {
          typeof(self) strongSelf = weakSelf;
          if (finished) {
+             if (dataLoadPolicy == TFDataLoadPolicyReload) {
+                 //重新加载列表数据
+                 [strongSelf.manager removeAllSections];
+             }
+             NSInteger rangelocation = [strongSelf.manager.sections count];
+             [strongSelf.manager addSection:section];
+             NSInteger rangelength = 1;
+             //需要在主线程执行
+             if (_currentPage < _totalPage) {
+                 //存在下一页数据，在列表尾部追加loading item
+                 MYTableViewSection *section = [MYTableViewSection section];
+                 //loading item
+                 [section addItem:[MYTableViewLoadingItem itemWithTitle:NSLocalizedString(@"正在加载...", nil)]];
+                 [strongSelf.manager addSection:section];
+                 rangelength +=1;
+             }
              dispatch_async(dispatch_get_main_queue(), ^{
-                 //需要在主线程执行
-                 if (_currentPage < _totalPage) {
-                     //存在下一页数据，在列表尾部追加loading item
-                     NSInteger sectionCount = [strongSelf.manager.sections count];
-                     MYTableViewSection *section = [MYTableViewSection section];
-                     //loading item
-                     [strongSelf.manager addSection:section];
-                     [strongSelf.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionCount]
+                 
+                 if (dataLoadPolicy == TFDataLoadPolicyMore) {
+                     [strongSelf.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
                                          withRowAnimation:UITableViewRowAnimationFade];
+                     if (context) {
+                         [context completeBatchFetching:YES];
+                     }
                  }
+                 else {
+                     if (dataLoadPolicy == TFDataLoadPolicyReload) {
+                         [strongSelf stopTableViewPullRefresh];
+                     }
+                     if (dataLoadPolicy == TFDataLoadPolicyCache) {
+                         //第一次从缓存加载数据后触发下拉刷新重新加载
+                         [strongSelf startTableViewPullRefresh];
+                     }
+                     [strongSelf.tableView reloadDataImmediately];
+                     strongSelf.firstLoadOver = YES;
+                 }
+                 
+                 
                  //数据加载完成
                  if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:error:)]) {
                      [strongSelf.delegate didFinishLoad:dataLoadPolicy error:error?error:hanldeError];
-                     [strongSelf stopTableViewPullRefresh];
                  }
                  if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:object:error:)]) {
                      [strongSelf.delegate didFinishLoad:dataLoadPolicy object:object error:error?error:hanldeError];
-                     [strongSelf stopTableViewPullRefresh];
-                 }
-                 switch (dataLoadPolicy) {
-                     case TFDataLoadPolicyNone:
-                         
-                         break;
-                     case TFDataLoadPolicyMore:
-                         if (context) {
-                             [context completeBatchFetching:YES];
-                         }
-                         break;
-                     case TFDataLoadPolicyCache:
-                         
-                         break;
-                     case TFDataLoadPolicyReload:
-                         
-                         break;
-                         
-                     default:
-                         break;
                  }
              });
              strongSelf.dataSourceState = TFDataSourceStateFinished;
@@ -241,11 +280,47 @@
  *  @param context
  */
 - (void)tableView:(ASTableView *)tableView willBeginBatchFetchWithContext:(ASBatchContext *)context {
+    TFTableViewLogDebug(@"Class %@ will fetch next page",NSStringFromClass(self.class));
+    [self load:TFDataLoadPolicyMore context:context];
+}
+
+#pragma mark - UIScrollViewDelegate
+- (void)tableView:(UITableView *)tableView willLayoutCellSubviews:(UITableViewCell *)cell
+forRowAtIndexPath:(NSIndexPath *)indexPath; {
+    
+}
+- (void)tableView:(UITableView *)tableView willLoadCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath; {
     
 }
 
+- (void)tableView:(UITableView *)tableView didLoadCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath; {
+    
+}
 
-#pragma mark 
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView didSelectRowAtIndexPath:indexPath];
+    }
+}
+
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell
+forRowAtIndexPath:(NSIndexPath *)indexPath; {
+    if ([cell isKindOfClass:[MYTableViewLoadingItemCell class]]) {
+        [self performSelector:@selector(loadMore) withObject:nil afterDelay:0.3];
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(tableView:willDisplayCell:forRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
+    }
+}
+
+#pragma mark
 
 - (void)dealloc {
     _manager.delegate = nil;

@@ -157,6 +157,7 @@
 		B03133191CB4B62E005E4E3D /* TableViewDataManager */ = {
 			isa = PBXGroup;
 			children = (
+				B05F06291C995FED0048BB13 /* TFTableViewDataManagerProtocol.h */,
 				B05F06261C995FDA0048BB13 /* TFTableViewDataManager.h */,
 				B05F06271C995FDA0048BB13 /* TFTableViewDataManager.m */,
 				B03133161CB4B3C9005E4E3D /* TFTableViewDataRequest.h */,
@@ -264,15 +265,14 @@
 			isa = PBXGroup;
 			children = (
 				B031331A1CB4B963005E4E3D /* TFTableViewDataSourceKit.h */,
+				B05F06231C995F5D0048BB13 /* TFTableViewDataSource.h */,
+				B05F06241C995F5D0048BB13 /* TFTableViewDataSource.m */,
+				B07E47C21CB3B44900F1D5DD /* TFTableViewDataSourceConfig.h */,
+				B07E47C31CB3B44900F1D5DD /* TFTableViewDataSourceConfig.m */,
 				B031331D1CB4D820005E4E3D /* Common */,
 				B031331C1CB4BA0E005E4E3D /* TableViewItemCell */,
 				B031331B1CB4B9F8005E4E3D /* TableViewItem */,
 				B03133191CB4B62E005E4E3D /* TableViewDataManager */,
-				B05F06231C995F5D0048BB13 /* TFTableViewDataSource.h */,
-				B05F06241C995F5D0048BB13 /* TFTableViewDataSource.m */,
-				B05F06291C995FED0048BB13 /* TFTableViewDataManagerProtocol.h */,
-				B07E47C21CB3B44900F1D5DD /* TFTableViewDataSourceConfig.h */,
-				B07E47C31CB3B44900F1D5DD /* TFTableViewDataSourceConfig.m */,
 			);
 			path = TFTableViewDataSource;
 			sourceTree = "<group>";

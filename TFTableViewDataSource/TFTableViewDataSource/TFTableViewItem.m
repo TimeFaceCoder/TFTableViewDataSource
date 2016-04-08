@@ -21,7 +21,8 @@
 
 + (TFTableViewItem*)itemWithModel:(NSObject *)model
                      clickHandler:(void(^)(TFTableViewItem *item,NSInteger actionType))clickHandler {
-    TFTableViewItem *item = [[TFTableViewItem alloc] init];
+    
+    TFTableViewItem *item = [[[self class] alloc] init];
     item.model = model;
     item.onViewClickHandler = clickHandler;
     return item;
@@ -29,6 +30,10 @@
 
 - (void)clearCompletionBlock {
     self.onViewClickHandler = nil;
+}
+
+- (void)dealloc {
+    [self clearCompletionBlock];
 }
 
 @end
