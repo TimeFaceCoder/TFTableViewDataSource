@@ -53,6 +53,14 @@ typedef NS_ENUM(NSInteger, TFDataSourceState) {
     TFDataSourceStateLoadError = 3,
 };
 
+typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
+    TFTableViewScrollDirectionNone  = 0,
+    TFTableViewScrollDirectionUp    = 1,
+    TFTableViewScrollDirectionDown  = 2,
+    TFTableViewScrollDirectionLeft  = 3,
+    TFTableViewScrollDirectionRight = 4,
+};
+
 @protocol TFTableViewDataSourceDelegate <NSObject>
 
 @required

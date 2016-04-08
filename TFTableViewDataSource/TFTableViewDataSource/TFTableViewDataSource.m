@@ -21,6 +21,27 @@
     
 }
 
+/**
+ *  向上滚动阈值
+ */
+@property (nonatomic ,assign) CGFloat                        upThresholdY;
+/**
+ *  向下阈值
+ */
+@property (nonatomic ,assign) CGFloat                        downThresholdY;
+/**
+ *  当前滚动方向
+ */
+@property (nonatomic ,assign) NSInteger                previousScrollDirection;
+/**
+ *  Y轴偏移
+ */
+@property (nonatomic ,assign) CGFloat                        previousOffsetY;
+/**
+ *  Y积累总量
+ */
+@property (nonatomic ,assign) CGFloat                        accumulatedY;
+
 @property (nonatomic ,strong) MYTableViewManager       *manager;
 /**
  *  网络数据加载工具
@@ -63,6 +84,7 @@
 
 - (void)stopLoading {
     _dataSourceState = TFDataSourceStateFinished;
+    [self stopTableViewPullRefresh];
 }
 
 - (void)startLoadingWithParams:(NSDictionary *)params {
@@ -77,7 +99,9 @@
 
 
 - (void)refreshCell:(NSInteger)actionType identifier:(NSString *)identifier {
-    
+    if (_tableViewDataManager) {
+        [_tableViewDataManager refreshCell:actionType identifier:identifier];
+    }
 }
 
 
@@ -108,18 +132,19 @@
 #pragma mark - 重载以下方法可以自定义下拉刷新组件
 ////////////////////////////////////////////初始化下拉刷新////////////////////////////////////////////
 - (void)initTableViewPullRefresh {
-    
+    TFTableViewLogDebug(@"%s",__func__);
 }
 
 ////////////////////////////////////////////开始下拉刷新//////////////////////////////////////////////
 - (void)startTableViewPullRefresh {
+    TFTableViewLogDebug(@"%s",__func__);
     _firstLoadOver = YES;
     [self load:TFDataLoadPolicyReload context:nil];
 }
 
 ////////////////////////////////////////////结束下拉刷新//////////////////////////////////////////////
 - (void)stopTableViewPullRefresh {
-    
+    TFTableViewLogDebug(@"%s",__func__);
 }
 
 #pragma mark - 数据加载核心方法
@@ -185,9 +210,10 @@
           dataLoadPolicy:(TFDataLoadPolicy)dataLoadPolicy
                  context:(ASBatchContext *)context
                    error:(NSError *)error {
+    TFTableViewLogDebug(@"%s",__func__);
     NSError *hanldeError = nil;
     NSInteger lastSectionIndex = [[self.manager sections] count] - 1;
-    if (!result) {
+    if (!result || [[result objectForKey:@"dataList"] count] <= 0) {
         //数据为空
         hanldeError = [NSError errorWithDomain:@"" code:1 userInfo:@{}];
     }
@@ -228,7 +254,6 @@
                  rangelength +=1;
              }
              dispatch_async(dispatch_get_main_queue(), ^{
-                 
                  if (dataLoadPolicy == TFDataLoadPolicyMore) {
                      [strongSelf.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
                                          withRowAnimation:UITableViewRowAnimationFade];
@@ -237,6 +262,8 @@
                      }
                  }
                  else {
+                     [strongSelf reloadTableView];
+                     strongSelf.firstLoadOver = YES;
                      if (dataLoadPolicy == TFDataLoadPolicyReload) {
                          [strongSelf stopTableViewPullRefresh];
                      }
@@ -244,11 +271,7 @@
                          //第一次从缓存加载数据后触发下拉刷新重新加载
                          [strongSelf startTableViewPullRefresh];
                      }
-                     [strongSelf.tableView reloadDataImmediately];
-                     strongSelf.firstLoadOver = YES;
                  }
-                 
-                 
                  //数据加载完成
                  if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:error:)]) {
                      [strongSelf.delegate didFinishLoad:dataLoadPolicy error:error?error:hanldeError];
@@ -260,6 +283,23 @@
              strongSelf.dataSourceState = TFDataSourceStateFinished;
          }
      }];
+}
+
+#pragma mark - 刷新列表
+- (void)reloadTableView {
+    [self.tableView reloadData];
+    UIView *snapshot = [self.tableView snapshotViewAfterScreenUpdates:NO];
+    [self.tableView.superview insertSubview:snapshot aboveSubview:_tableView];
+    [self.tableView beginUpdates];
+    [self.tableView reloadDataImmediately];
+    [self.tableView endUpdatesAnimated:NO completion:^(BOOL completed) {
+        [UIView animateWithDuration:0.75 animations:^{
+            snapshot.alpha = 0;
+        } completion:^(BOOL finished) {
+            [snapshot removeFromSuperview];
+        }];
+    }];
+
 }
 
 #pragma mark - MYTableViewManagerDelegate
@@ -319,6 +359,138 @@ forRowAtIndexPath:(NSIndexPath *)indexPath; {
         [self.delegate tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
     }
 }
+
+/**
+ *  滚动方向判断
+ *
+ *  @param currentOffsetY
+ *  @param previousOffsetY
+ *
+ *  @return ScrollDirection
+ */
+- (NSInteger)detectScrollDirection:(CGFloat)currentOffsetY previousOffsetY:(CGFloat)previousOffsetY {
+    return currentOffsetY > previousOffsetY ? TFTableViewScrollDirectionUp   :
+    currentOffsetY < previousOffsetY ? TFTableViewScrollDirectionDown :
+    TFTableViewScrollDirectionNone;
+}
+
+- (NSString*)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NSLocalizedString(@"删除", nil);
+}
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        [tableView beginUpdates];
+        [tableView deleteRowsAtIndexPaths:[NSArray
+                                           arrayWithObjects:indexPath,nil]
+                         withRowAnimation:UITableViewRowAnimationFade];
+        [tableView endUpdates];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+}
+
+#pragma mark - UIScrollViewDelegate
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (_delegate && [_delegate respondsToSelector:@selector(scrollViewDidScroll:)]) {
+        [_delegate scrollViewDidScroll:_tableView];
+    }
+    
+    
+    CGFloat currentOffsetY = scrollView.contentOffset.y;
+    NSInteger currentScrollDirection = [self detectScrollDirection:currentOffsetY previousOffsetY:_previousOffsetY];
+    CGFloat topBoundary = -scrollView.contentInset.top;
+    CGFloat bottomBoundary = scrollView.contentSize.height + scrollView.contentInset.bottom;
+    
+    BOOL isOverTopBoundary = currentOffsetY <= topBoundary;
+    BOOL isOverBottomBoundary = currentOffsetY >= bottomBoundary;
+    
+    BOOL isBouncing = (isOverTopBoundary && currentScrollDirection != TFTableViewScrollDirectionDown) || (isOverBottomBoundary && currentScrollDirection != TFTableViewScrollDirectionUp);
+    if (isBouncing || !scrollView.isDragging) {
+        return;
+    }
+    
+    CGFloat deltaY = _previousOffsetY - currentOffsetY;
+    _accumulatedY += deltaY;
+    
+    if (currentScrollDirection == TFTableViewScrollDirectionUp) {
+        BOOL isOverThreshold = _accumulatedY < -_upThresholdY;
+        
+        if (isOverThreshold || isOverBottomBoundary)  {
+            if (_delegate && [_delegate respondsToSelector:@selector(scrollViewDidScrollUp:)]) {
+                [_delegate scrollViewDidScrollUp:deltaY];
+            }
+        }
+    }
+    else if (currentScrollDirection == TFTableViewScrollDirectionDown) {
+        BOOL isOverThreshold = _accumulatedY > _downThresholdY;
+        
+        if (isOverThreshold || isOverTopBoundary) {
+            if (_delegate && [_delegate respondsToSelector:@selector(scrollViewDidScrollDown:)]) {
+                [_delegate scrollViewDidScrollDown:deltaY];
+            }
+        }
+    }
+    else {
+        
+    }
+    
+    
+    // reset acuumulated y when move opposite direction
+    if (!isOverTopBoundary && !isOverBottomBoundary && _previousScrollDirection != currentScrollDirection) {
+        _accumulatedY = 0;
+    }
+    
+    _previousScrollDirection = currentScrollDirection;
+    _previousOffsetY = currentOffsetY;
+    
+    
+    
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    
+    CGFloat currentOffsetY = scrollView.contentOffset.y;
+    
+    CGFloat topBoundary = -scrollView.contentInset.top;
+    CGFloat bottomBoundary = scrollView.contentSize.height + scrollView.contentInset.bottom;
+    
+    if (_previousScrollDirection == TFTableViewScrollDirectionUp) {
+        BOOL isOverThreshold = _accumulatedY < -_upThresholdY;
+        BOOL isOverBottomBoundary = currentOffsetY >= bottomBoundary;
+        
+        if (isOverThreshold || isOverBottomBoundary) {
+            if ([_delegate respondsToSelector:@selector(scrollFullScreenScrollViewDidEndDraggingScrollUp)]) {
+                [_delegate scrollFullScreenScrollViewDidEndDraggingScrollUp];
+            }
+        }
+    }
+    else if (_previousScrollDirection == TFTableViewScrollDirectionDown) {
+        BOOL isOverThreshold = _accumulatedY > _downThresholdY;
+        BOOL isOverTopBoundary = currentOffsetY <= topBoundary;
+        
+        if (isOverThreshold || isOverTopBoundary) {
+            if ([_delegate respondsToSelector:@selector(scrollFullScreenScrollViewDidEndDraggingScrollDown)]) {
+                [_delegate scrollFullScreenScrollViewDidEndDraggingScrollDown];
+            }
+        }
+    }
+    else {
+        
+    }
+}
+
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
+    BOOL ret = YES;
+    if ([_delegate respondsToSelector:@selector(scrollFullScreenScrollViewDidEndDraggingScrollDown)]) {
+        [_delegate scrollFullScreenScrollViewDidEndDraggingScrollDown];
+    }
+    return ret;
+}
+
+
 
 #pragma mark
 

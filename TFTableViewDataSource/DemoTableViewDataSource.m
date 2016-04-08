@@ -7,29 +7,37 @@
 //
 
 #import "DemoTableViewDataSource.h"
-
+#import <UzysAnimatedGifPullToRefresh/UIScrollView+UzysAnimatedGifPullToRefresh.h>
 @interface DemoTableViewDataSource() {
     
 }
-
-@property (nonatomic ,strong) UIRefreshControl *refreshControl;
 
 @end
 
 @implementation DemoTableViewDataSource
 
 - (void)initTableViewPullRefresh {
-    self.refreshControl = [[UIRefreshControl alloc] init];
-    [self.refreshControl addTarget:self action:@selector(startTableViewPullRefresh) forControlEvents:UIControlEventValueChanged];
-    [self.tableView addSubview:self.refreshControl];
+    NSMutableArray *progress =[NSMutableArray array];
+    for (int i=1;i<=20;i++) {
+        NSString *fname = [NSString stringWithFormat:@"Loading%02d",i];
+        [progress addObject:[UIImage imageNamed:fname]];
+    }
+    [self.tableView addPullToRefreshActionHandler:^{
+        [super startTableViewPullRefresh];
+    }
+                                   ProgressImages:progress
+                                    LoadingImages:progress
+                          ProgressScrollThreshold:60
+                           LoadingImagesFrameRate:60];
+    
 }
 
 - (void)startTableViewPullRefresh {
-    [super startTableViewPullRefresh];
+    [self.tableView triggerPullToRefresh];
 }
 
 - (void)stopTableViewPullRefresh {
-    [self.refreshControl endRefreshing];
+    [self.tableView stopPullToRefreshAnimation];
     [super stopTableViewPullRefresh];
 }
 

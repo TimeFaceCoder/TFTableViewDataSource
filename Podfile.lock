@@ -14,6 +14,7 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
+  - AnimatedGIFImageSerialization (0.2.0)
   - AsyncDisplayKit (1.9.8):
     - AsyncDisplayKit/PINRemoteImage (= 1.9.8)
   - AsyncDisplayKit/ASDealloc2MainObject (1.9.8)
@@ -36,12 +37,17 @@ PODS:
   - TFNetwork (0.0.1):
     - AFNetworking
     - MPMessagePack
+  - UzysAnimatedGifPullToRefresh (0.9.7):
+    - AnimatedGIFImageSerialization (~> 0.2.0)
+  - YYDispatchQueuePool (1.0)
 
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit.git`)
   - JSONModel
   - MYTableViewManager (from `https://github.com/TimeFaceCoder/MYTableViewManager.git`)
   - TFNetwork (from `https://github.com/TimeFaceCoder/TFNetwork.git`)
+  - UzysAnimatedGifPullToRefresh
+  - YYDispatchQueuePool
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -64,6 +70,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  AnimatedGIFImageSerialization: b0f0cfe71eac1ee45a3d57ae533c23b8e6f29501
   AsyncDisplayKit: a0a50ce59bdad7cf2fbd9dfda35c03ce60d98469
   GHODictionary: 1f7873492445e0f33ac19575a358c3c91926b564
   JSONModel: 12523685c4b623553ccf844bbbf7007624317b2c
@@ -73,5 +80,7 @@ SPEC CHECKSUMS:
   PINRemoteImage: 2ce3f1fcc52f0360a3821f91f1a1bc653c5d2338
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   TFNetwork: 2c70cbf58bb7be5293fd10b837224280b15bf223
+  UzysAnimatedGifPullToRefresh: add7a5b1b0afbba7b374f95d2cc0a86545b4a1cd
+  YYDispatchQueuePool: 3dfb2274bcc74207688dde8ac6f7bdd46871dd7b
 
 COCOAPODS: 0.39.0

@@ -24,9 +24,10 @@
                              @"VERSION":@"10"};
     [[TFNetworkConfig sharedInstance] setRequestHeaderFieldValueDictionary:header];
     
+    [TFTableViewDataSourceConfig setPageSize:60];
     [[TFTableViewDataSourceConfig sharedInstance] mapWithListType:1
                                                       mappingInfo:@{
-                                                                    kTFTableViewDataRequestURLKey:@"http://dev1.v5time.net/tfmobile/time/timelist?type=1",
+                                                                    kTFTableViewDataRequestURLKey:@"http://timefaceapi.timeface.cn/tfmobile/time/timelist?type=1",
                                                                     
                                                                     kTFTableViewDataManagerClassKey:@"TimeLineDataManager"}];
     return YES;

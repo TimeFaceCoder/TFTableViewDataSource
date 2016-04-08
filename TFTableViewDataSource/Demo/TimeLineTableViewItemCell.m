@@ -8,6 +8,7 @@
 
 #import "TimeLineTableViewItemCell.h"
 #import "TimeLineTextStyle.h"
+#import <YYDispatchQueuePool/YYDispatchQueuePool.h>
 
 @interface TimeLineTableViewItemCell() {
     /**
@@ -105,41 +106,24 @@
     // processing URLs in post
     NSString *kLinkAttributeName = @"TextLinkAttributeName";
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        @autoreleasepool {
-            if([self.tableViewItem.model objectForKey:@"content"]) {
-                NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:[self.tableViewItem.model objectForKey:@"content"] attributes:[TimeLineTextStyle contentStyle]];
-                
-                NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-                [paragraphStyle setLineSpacing:12];
-                
-                [attrString addAttribute:NSParagraphStyleAttributeName
-                                   value:paragraphStyle
-                                   range:NSMakeRange(0, attrString.string.length)];
-                NSDataDetector *urlDetector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeLink error:nil];
-                [urlDetector enumerateMatchesInString:attrString.string
-                                              options:kNilOptions
-                                                range:NSMakeRange(0, attrString.string.length)
-                                           usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop)
-                 {
-                     if (result.resultType == NSTextCheckingTypeLink) {
-                         
-                         NSMutableDictionary *linkAttributes = [[NSMutableDictionary alloc] initWithDictionary:[TimeLineTextStyle contentLinkStyle]];
-                         linkAttributes[kLinkAttributeName] = [NSURL URLWithString:result.URL.absoluteString];
-                         [attrString addAttributes:linkAttributes range:result.range];
-                     }
-                 }];
-                
-                // configure node to support tappable links
-                _contentNode.userInteractionEnabled = YES;
-                _contentNode.linkAttributeNames = @[ kLinkAttributeName ];
-                _contentNode.attributedString = attrString;
-                //_contentNode.backgroundColor = [UIColor redColor];
-                
-            }
+    @autoreleasepool {
+        if([self.tableViewItem.model objectForKey:@"content"]) {
+            NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:[self.tableViewItem.model objectForKey:@"content"] attributes:[TimeLineTextStyle contentStyle]];
+            
+            NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+            [paragraphStyle setLineSpacing:12];
+            [attrString addAttribute:NSParagraphStyleAttributeName
+                               value:paragraphStyle
+                               range:NSMakeRange(0, attrString.string.length)];
+            
+            // configure node to support tappable links
+            _contentNode.userInteractionEnabled = YES;
+            _contentNode.linkAttributeNames = @[ kLinkAttributeName ];
+            _contentNode.attributedString = attrString;
+            //_contentNode.backgroundColor = [UIColor redColor];
+            
         }
-    });
-   
+    }
     
     [self addSubnode:_contentNode];
 }
@@ -186,7 +170,7 @@
     
     [mainStackContent addObject:_titleNode];
     [mainStackContent addObject:_contentNode];
-       
+    
     
     
     //Vertical spec of cell main content
