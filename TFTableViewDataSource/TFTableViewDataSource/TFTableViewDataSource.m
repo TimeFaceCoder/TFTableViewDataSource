@@ -275,9 +275,6 @@
                      }
                  }
                  //数据加载完成
-                 if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:error:)]) {
-                     [strongSelf.delegate didFinishLoad:dataLoadPolicy error:error?error:hanldeError];
-                 }
                  if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:object:error:)]) {
                      [strongSelf.delegate didFinishLoad:dataLoadPolicy object:object error:error?error:hanldeError];
                  }

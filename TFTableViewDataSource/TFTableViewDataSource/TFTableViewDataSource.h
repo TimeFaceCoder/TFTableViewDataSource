@@ -78,13 +78,13 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
  *  加载完成
  *
  *  @param loadPolicy 加载类型
+ *  @param object     返回数据
  *  @param error      错误
  */
-- (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy error:(NSError *)error;
+- (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy object:(id)object error:(NSError *)error;
 
 @optional
 
-- (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy object:(id)object error:(NSError *)error;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 

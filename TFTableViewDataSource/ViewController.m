@@ -73,9 +73,10 @@
  *  @param loadPolicy 加载类型
  *  @param error      错误
  */
-- (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy error:(NSError *)error {
+- (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy object:(id)object error:(NSError *)error {
     self.tableView.tableFooterView = [[UIView alloc] init];
 }
+
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell
 forRowAtIndexPath:(NSIndexPath *)indexPath {
