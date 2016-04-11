@@ -233,7 +233,7 @@
     }
     __weak __typeof(self)weakSelf = self;
     [self.tableViewDataManager reloadView:result
-                                    block:^(BOOL finished, id object, NSError *error, MYTableViewSection *section)
+                                    block:^(BOOL finished, id object, NSError *error, NSArray <MYTableViewSection *> *sections)
      {
          typeof(self) strongSelf = weakSelf;
          if (finished) {
@@ -242,7 +242,9 @@
                  [strongSelf.manager removeAllSections];
              }
              NSInteger rangelocation = [strongSelf.manager.sections count];
-             [strongSelf.manager addSection:section];
+//             [strongSelf.manager addSection:section];
+             [strongSelf.manager addSectionsFromArray:sections];
+             
              NSInteger rangelength = 1;
              //需要在主线程执行
              if (_currentPage < _totalPage) {
@@ -251,7 +253,7 @@
                  //loading item
                  [section addItem:[MYTableViewLoadingItem itemWithTitle:NSLocalizedString(@"正在加载...", nil)]];
                  [strongSelf.manager addSection:section];
-                 rangelength +=1;
+                 rangelength += sections.count;
              }
              dispatch_async(dispatch_get_main_queue(), ^{
                  if (dataLoadPolicy == TFDataLoadPolicyMore) {

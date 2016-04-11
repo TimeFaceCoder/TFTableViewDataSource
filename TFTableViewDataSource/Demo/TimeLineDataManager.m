@@ -17,11 +17,15 @@
         @autoreleasepool {
             NSArray *dataList = [result objectForKey:@"dataList"];
             MYTableViewSection *section = [MYTableViewSection section];
+            
             for (NSDictionary *entry in dataList) {
                 [section addItem:[TimeLineTableViewItem itemWithModel:entry
                                                          clickHandler:weakSelf.cellViewClickHandler]];
             }
-            completionBlock(YES,nil,nil,section);
+            
+            NSMutableArray *sections = [NSMutableArray array];
+            [sections addObject:section];
+            completionBlock(YES,nil,nil,sections);
         }
     });
 }

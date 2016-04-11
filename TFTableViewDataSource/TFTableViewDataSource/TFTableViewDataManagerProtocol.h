@@ -17,7 +17,7 @@
 typedef void (^Completion)(void);
 typedef void (^CellViewClickHandler)(__kindof TFTableViewItem *item ,NSInteger actionType);
 typedef void (^DeletionHandlerWithCompletion)(__kindof TFTableViewItem *item, void (^)(void));
-typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error,MYTableViewSection *section);
+typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error, NSArray <MYTableViewSection *> *sections);
 
 
 @protocol TFTableViewDataManagerProtocol <NSObject>
