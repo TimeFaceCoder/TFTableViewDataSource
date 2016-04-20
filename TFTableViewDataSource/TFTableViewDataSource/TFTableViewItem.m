@@ -30,7 +30,7 @@
     return self;
 }
 
-+ (TFTableViewItem*)itemWithModel:(NSObject *)model
++ (instancetype)itemWithModel:(NSObject *)model
                      clickHandler:(void(^)(TFTableViewItem *item,NSInteger actionType))clickHandler {
     
     TFTableViewItem *item = [[[self class] alloc] init];
