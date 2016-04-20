@@ -16,6 +16,17 @@
         return nil;
     }
     //
+    /**
+     *  用于cell点击事件的传递
+     *
+     *     GR. 2016 - 4 - 20
+     */
+    __weak typeof(self) weakself = self;
+    self.selectionHandler = ^(id item){
+        if (weakself.onViewClickHandler) {
+            weakself.onViewClickHandler(item, -1);
+        }
+    };
     return self;
 }
 
