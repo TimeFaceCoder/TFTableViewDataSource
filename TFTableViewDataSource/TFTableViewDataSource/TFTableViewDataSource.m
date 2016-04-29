@@ -237,7 +237,7 @@
      {
          typeof(self) strongSelf = weakSelf;
          if (finished) {
-             if (dataLoadPolicy == TFDataLoadPolicyReload) {
+             if (dataLoadPolicy == TFDataLoadPolicyReload || dataLoadPolicy == TFDataLoadPolicyNone) {
                  //重新加载列表数据
                  [strongSelf.manager removeAllSections];
              }
