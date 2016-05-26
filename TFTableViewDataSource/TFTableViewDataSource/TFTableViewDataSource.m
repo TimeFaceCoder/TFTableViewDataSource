@@ -109,6 +109,9 @@
 
 #pragma mark - 初始化数据加载方法
 - (void)setupDataSource {
+    _downThresholdY = 200.0;
+    _upThresholdY = 25.0;
+    
     NSString *requestURL = [[TFTableViewDataSourceConfig sharedInstance] requestURLByListType:_listType];
     NSString *className = [[TFTableViewDataSourceConfig sharedInstance] classNameByListType:_listType];
     _dataRequest = [[TFTableViewDataRequest alloc] initWithRequestURL:requestURL params:_requestArgument];
