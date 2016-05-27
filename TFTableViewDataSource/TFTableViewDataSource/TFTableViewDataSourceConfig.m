@@ -10,6 +10,7 @@
 
 NSString *const kTFTableViewDataRequestURLKey = @"kTFTableViewDataRequestURLKey";
 NSString *const kTFTableViewDataManagerClassKey = @"kTFTableViewDataManagerClassKey";
+NSInteger const kTFTableViewActionTypeCellSelection  = -1;
 
 @interface TFTableViewDataSourceConfig() {
     

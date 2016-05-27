@@ -32,4 +32,7 @@
     });
 }
 
+- (void)cellViewClickHandler:(TFTableViewItem *)item actionType:(NSInteger)actionType {
+    NSLog(@"%zd", actionType);
+}
 @end
