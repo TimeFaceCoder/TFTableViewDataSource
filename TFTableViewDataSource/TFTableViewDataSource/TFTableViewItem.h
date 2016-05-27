@@ -10,7 +10,7 @@
 
 @interface TFTableViewItem : MYTableViewItem
 
-@property (nonatomic ,copy) id model;
+@property (nonatomic ,strong) NSObject *model;
 @property (nonatomic ,copy) void (^onViewClickHandler)(TFTableViewItem *item,NSInteger actionType);
 
 + (TFTableViewItem*)itemWithModel:(NSObject *)model

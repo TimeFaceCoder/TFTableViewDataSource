@@ -38,7 +38,7 @@
     
     // name node
     _nickNameNode = [[ASTextNode alloc] init];
-    NSString *nickName = [[self.tableViewItem.model objectForKey:@"author"] objectForKey:@"nickName"];
+    NSString *nickName = [[(NSDictionary *)self.tableViewItem.model objectForKey:@"author"] objectForKey:@"nickName"];
     _nickNameNode.attributedString = [[NSAttributedString alloc] initWithString:nickName ? nickName: @""
                                                                      attributes:[TimeLineTextStyle nickNameStyle]];
     [_nickNameNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
@@ -46,7 +46,7 @@
     [self addSubnode:_nickNameNode];
     // username node
     _timeNode = [[ASTextNode alloc] init];
-    NSTimeInterval date = [[self.tableViewItem.model objectForKey:@"date"] doubleValue];
+    NSTimeInterval date = [[(NSDictionary *)self.tableViewItem.model objectForKey:@"date"] doubleValue];
     [_timeNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
     _timeNode.attributedString = [[NSAttributedString alloc] initWithString:[self formattedDateWithDate:[NSDate dateWithTimeIntervalSince1970:date] format:@"yyyy-MM-dd HH:mm"]                                                                 attributes:[TimeLineTextStyle subTextStyle]];
     
@@ -59,7 +59,7 @@
     
     _fromNode = [[ASTextNode alloc] init];
     [_fromNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
-    _fromNode.attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"来自%@",[self.tableViewItem.model objectForKey:@"client"]]
+    _fromNode.attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"来自%@",[(NSDictionary *)self.tableViewItem.model objectForKey:@"client"]]
                                                                  attributes:[TimeLineTextStyle subTextStyle]];
     _fromNode.flexShrink = YES;
     _fromNode.truncationMode = NSLineBreakByTruncatingTail;
@@ -73,7 +73,7 @@
     _avatarNode.backgroundColor = ASDisplayNodeDefaultPlaceholderColor();
     _avatarNode.preferredFrameSize = CGSizeMake(44, 44);
     _avatarNode.cornerRadius = 22.0;
-    NSString *url = [[self.tableViewItem.model objectForKey:@"author"] objectForKey:@"avatar"];
+    NSString *url = [[(NSDictionary *)self.tableViewItem.model objectForKey:@"author"] objectForKey:@"avatar"];
     _avatarNode.URL = [NSURL URLWithString:url];
     _avatarNode.imageModificationBlock = ^UIImage *(UIImage *image) {
         UIImage *modifiedImage;
@@ -90,7 +90,7 @@
     // title node
     _titleNode = [[ASTextNode alloc] init];
     [_titleNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
-    _titleNode.attributedString = [[NSAttributedString alloc] initWithString:[self.tableViewItem.model objectForKey:@"timeTitle"]
+    _titleNode.attributedString = [[NSAttributedString alloc] initWithString:[(NSDictionary *)self.tableViewItem.model objectForKey:@"timeTitle"]
                                                                   attributes:[TimeLineTextStyle titleStyle]];
     _titleNode.flexShrink = YES;
     _titleNode.truncationMode = NSLineBreakByTruncatingTail;
@@ -107,8 +107,8 @@
     NSString *kLinkAttributeName = @"TextLinkAttributeName";
     
     @autoreleasepool {
-        if([self.tableViewItem.model objectForKey:@"content"]) {
-            NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:[self.tableViewItem.model objectForKey:@"content"] attributes:[TimeLineTextStyle contentStyle]];
+        if([(NSDictionary *)self.tableViewItem.model objectForKey:@"content"]) {
+            NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:[(NSDictionary *)self.tableViewItem.model objectForKey:@"content"] attributes:[TimeLineTextStyle contentStyle]];
             
             NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
             [paragraphStyle setLineSpacing:12];
