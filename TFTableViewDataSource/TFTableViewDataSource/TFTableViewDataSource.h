@@ -84,7 +84,7 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 - (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy object:(id)object error:(NSError *)error;
 
 @optional
-
+- (BOOL)showPullRefresh;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 
