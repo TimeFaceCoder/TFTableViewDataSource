@@ -29,7 +29,7 @@
                                                       mappingInfo:@{
                                                                     kTFTableViewDataRequestURLKey:@"http://timefaceapi.timeface.cn/tfmobile/time/timelist?type=1",
                                                                     
-                                                                    kTFTableViewDataManagerClassKey:@"TimeLineDataManager"}];
+                                                                    kTFTableViewDataManagerClassKey:@"TimeLineDataManager"} dataSourceClass:NSClassFromString(@"DemoTableViewDataSource")];
     return YES;
 }
 

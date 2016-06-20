@@ -60,6 +60,11 @@ NSInteger const kTFTableViewActionTypeCellSelection  = -1;
 }
 
 - (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo {
+    [self mapWithListType:listType mappingInfo:mappingInfo dataSourceClass:NSClassFromString(@"TFTableViewDataSource")];
+}
+
+- (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo dataSourceClass:(Class)dataSourceClass {
+    self.dataSourceClass = dataSourceClass;
     if ([self validatorMappingInfo:mappingInfo]) {
         [_mappingInfo setObject:mappingInfo forKey:[NSNumber numberWithInteger:listType]];
     }

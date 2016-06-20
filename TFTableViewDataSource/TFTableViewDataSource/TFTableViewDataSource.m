@@ -245,9 +245,7 @@
                  [strongSelf.manager removeAllSections];
              }
              NSInteger rangelocation = [strongSelf.manager.sections count];
-//             [strongSelf.manager addSection:section];
              [strongSelf.manager addSectionsFromArray:sections];
-             
              NSInteger rangelength = 1;
              //需要在主线程执行
              if (_currentPage < _totalPage) {

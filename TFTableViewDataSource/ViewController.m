@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 #import "DemoTableViewDataSource.h"
+#import "TFTableViewDataSourceConfig.h"
+
 @interface ViewController ()<TFTableViewDataSourceDelegate>
 
 @property (nonatomic ,strong) DemoTableViewDataSource *dataSource;
@@ -29,10 +31,10 @@
 }
 
 - (void)createDataSource {
-    self.dataSource = [[DemoTableViewDataSource alloc] initWithTableView:self.tableView
-                                                                listType:1
-                                                                  params:@{}
-                                                                delegate:self];
+    self.dataSource = [[[[TFTableViewDataSourceConfig sharedInstance] dataSourceClass] alloc] initWithTableView:self.tableView
+                                                                                                       listType:1
+                                                                                                         params:@{}
+                                                                                                       delegate:self];
     self.dataSource.cacheTimeInSeconds = 60;
 }
 

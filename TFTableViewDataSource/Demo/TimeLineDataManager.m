@@ -19,8 +19,10 @@
             MYTableViewSection *section = [MYTableViewSection section];
             
             for (NSDictionary *entry in dataList) {
-                [section addItem:[TimeLineTableViewItem itemWithModel:entry
-                                                         clickHandler:weakSelf.cellViewClickHandler]];
+                TimeLineTableViewItem *item = [TimeLineTableViewItem itemWithModel:entry
+                                                                      clickHandler:weakSelf.cellViewClickHandler];
+                item.editingStyle = UITableViewCellEditingStyleDelete;
+                [section addItem:item];
             }
             
             NSMutableArray *sections = [NSMutableArray array];
