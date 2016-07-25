@@ -20,6 +20,8 @@ extern NSString *const kTFTableViewDataRequestURLKey;
 
 extern NSString *const kTFTableViewDataManagerClassKey;
 
+extern NSString *const kTFTableViewDataSourceClassKey;
+
 extern NSInteger const kTFTableViewActionTypeCellSelection;
 
 @interface TFTableViewDataSourceConfig : NSObject
@@ -37,15 +39,12 @@ extern NSInteger const kTFTableViewActionTypeCellSelection;
 
 + (TFTableViewDataSourceConfig *)sharedInstance;
 
-@property (nonatomic ,strong) Class dataSourceClass;
-
 - (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo;
-
-- (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo dataSourceClass:(Class)dataSourceClass;
 
 - (NSString *)classNameByListType:(NSInteger)listType;
 
 - (NSString *)requestURLByListType:(NSInteger)listType;
 
+- (Class)dataSourceByListType:(NSInteger)listType;
 
 @end

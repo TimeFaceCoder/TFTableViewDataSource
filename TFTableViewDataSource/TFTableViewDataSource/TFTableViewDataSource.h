@@ -111,7 +111,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
-@interface TFTableViewDataSource : NSObject
+@interface TFTableViewDataSource : NSObject <UITableViewDelegate>
 
 @property (nonatomic ,weak) id<TFTableViewDataSourceDelegate> delegate;
 @property (nonatomic ,strong ,readonly ,getter = manager) MYTableViewManager *manager;

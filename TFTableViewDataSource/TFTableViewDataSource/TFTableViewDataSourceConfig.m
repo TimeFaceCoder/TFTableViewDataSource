@@ -10,6 +10,7 @@
 
 NSString *const kTFTableViewDataRequestURLKey = @"kTFTableViewDataRequestURLKey";
 NSString *const kTFTableViewDataManagerClassKey = @"kTFTableViewDataManagerClassKey";
+NSString *const kTFTableViewDataSourceClassKey = @"kTFTableViewDataSourceClassKey";
 NSInteger const kTFTableViewActionTypeCellSelection  = -1;
 
 @interface TFTableViewDataSourceConfig() {
@@ -60,11 +61,6 @@ NSInteger const kTFTableViewActionTypeCellSelection  = -1;
 }
 
 - (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo {
-    [self mapWithListType:listType mappingInfo:mappingInfo dataSourceClass:NSClassFromString(@"TFTableViewDataSource")];
-}
-
-- (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo dataSourceClass:(Class)dataSourceClass {
-    self.dataSourceClass = dataSourceClass;
     if ([self validatorMappingInfo:mappingInfo]) {
         [_mappingInfo setObject:mappingInfo forKey:[NSNumber numberWithInteger:listType]];
     }
@@ -84,6 +80,16 @@ NSInteger const kTFTableViewActionTypeCellSelection  = -1;
     }
     return [entry objectForKey:kTFTableViewDataRequestURLKey];
 }
+
+- (Class)dataSourceByListType:(NSInteger)listType {
+    NSDictionary *entry = [_mappingInfo objectForKey:[NSNumber numberWithInteger:listType]];
+    NSString *dataSourceClassName =[entry objectForKey:kTFTableViewDataSourceClassKey];
+    if (!dataSourceClassName) {
+        dataSourceClassName = @"TFTableViewDataSource";
+    }
+    return NSClassFromString(dataSourceClassName);
+}
+
 
 - (BOOL)validatorMappingInfo:(NSDictionary *)mappingInfo {
     if ([mappingInfo isKindOfClass:[NSDictionary class]]) {

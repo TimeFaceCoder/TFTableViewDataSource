@@ -389,6 +389,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath; {
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableView:didDeselectRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView didSelectRowAtIndexPath:indexPath];
+    }
 }
 
 #pragma mark - UIScrollViewDelegate
