@@ -216,10 +216,10 @@
     TFTableViewLogDebug(@"%s",__func__);
     NSError *hanldeError = nil;
     NSInteger lastSectionIndex = [[self.manager sections] count] - 1;
-    if (!result || [[result objectForKey:@"dataList"] count] <= 0) {
-        //数据为空
-        hanldeError = [NSError errorWithDomain:@"" code:1 userInfo:@{}];
-    }
+//    if (!result || [[result objectForKey:@"dataList"] count] <= 0) {
+//        //数据为空
+//        hanldeError = [NSError errorWithDomain:@"" code:1 userInfo:@{}];
+//    }
     if (dataLoadPolicy == TFDataLoadPolicyMore) {
         //加载下一页，移除loading item
         [self.manager removeLastSection];
