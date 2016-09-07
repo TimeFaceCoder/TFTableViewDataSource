@@ -109,6 +109,8 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 forRowAtIndexPath:(NSIndexPath *)indexPath;
 
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
 @interface TFTableViewDataSource : NSObject <UITableViewDelegate>

@@ -31,10 +31,10 @@
 }
 
 - (void)createDataSource {
-    self.dataSource = [[[[TFTableViewDataSourceConfig sharedInstance] dataSourceClass] alloc] initWithTableView:self.tableView
-                                                                                                       listType:1
-                                                                                                         params:@{}
-                                                                                                       delegate:self];
+    self.dataSource = [[[[TFTableViewDataSourceConfig sharedInstance] dataSourceByListType:1] alloc] initWithTableView:_tableView
+                                                                                                                          listType:1
+                                                                                                                params:@{}
+                                                                                                                          delegate:self];
     self.dataSource.cacheTimeInSeconds = 60;
 }
 

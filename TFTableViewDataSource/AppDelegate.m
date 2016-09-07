@@ -26,10 +26,11 @@
     
     [TFTableViewDataSourceConfig setPageSize:60];
     [[TFTableViewDataSourceConfig sharedInstance] mapWithListType:1
-                                                      mappingInfo:@{
-                                                                    kTFTableViewDataRequestURLKey:@"http://timefaceapi.timeface.cn/tfmobile/time/timelist?type=1",
-                                                                    
-                                                                    kTFTableViewDataManagerClassKey:@"TimeLineDataManager"} dataSourceClass:NSClassFromString(@"DemoTableViewDataSource")];
+                                                      mappingInfo:@{kTFTableViewDataRequestURLKey:@"http://timefaceapi.timeface.cn/tfmobile/time/timelist?type=1",
+                                                                    kTFTableViewDataManagerClassKey:@"TimeLineDataManager",
+                                                                    kTFTableViewDataSourceClassKey:@"DemoTableViewDataSource",
+                                                                    }];
+    
     return YES;
 }
 
