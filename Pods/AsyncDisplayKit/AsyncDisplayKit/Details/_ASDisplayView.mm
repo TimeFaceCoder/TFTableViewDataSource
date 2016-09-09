@@ -1,19 +1,17 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  _ASDisplayView.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "_ASDisplayView.h"
-
-#import <objc/runtime.h>
+#import "_ASDisplayViewAccessiblity.h"
 
 #import "_ASCoreAnimationExtras.h"
-#import "_ASAsyncTransactionContainer.h"
-#import "ASAssert.h"
-#import "ASDisplayNodeExtras.h"
 #import "ASDisplayNodeInternal.h"
 #import "ASDisplayNode+FrameworkPrivate.h"
 #import "ASDisplayNode+Subclasses.h"
@@ -29,8 +27,12 @@
 @implementation _ASDisplayView
 {
   __unsafe_unretained ASDisplayNode *_node;  // Though UIView has a .node property added via category, since we can add an ivar to a subclass, use that for performance.
+
   BOOL _inHitTest;
   BOOL _inPointInside;
+
+  NSArray *_accessibleElements;
+  CGRect _lastAccessibleElementsFrame;
 }
 
 @synthesize asyncdisplaykit_node = _node;
@@ -41,10 +43,6 @@
 }
 
 #pragma mark - NSObject Overrides
-- (id)init
-{
-  return [self initWithFrame:CGRectZero];
-}
 
 - (NSString *)description
 {
@@ -54,14 +52,6 @@
 }
 
 #pragma mark - UIView Overrides
-
-- (id)initWithFrame:(CGRect)frame
-{
-  if (!(self = [super initWithFrame:frame]))
-    return nil;
-
-  return self;
-}
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
@@ -88,14 +78,6 @@
   UIView *currentSuperview = self.superview;
   if (!currentSuperview && newSuperview) {
     self.keepalive_node = _node;
-  }
-  else if (currentSuperview && !newSuperview) {
-    // Clearing keepalive_node may cause deallocation of the node.  In this case, __exitHierarchy may not have an opportunity (e.g. _node will be cleared
-    // by the time -didMoveToWindow occurs after this) to clear the Visible interfaceState, which we need to do before deallocation to meet an API guarantee.
-    if (_node.inHierarchy) {
-      [_node __exitHierarchy];
-    }
-    self.keepalive_node = nil;
   }
   
   if (newSuperview) {
@@ -127,17 +109,25 @@
       [newSuperview.asyncdisplaykit_node addSubnode:_node];
     }
   }
-
 }
 
 - (void)didMoveToSuperview
 {
+  UIView *superview = self.superview;
+  if (superview == nil) {
+    // Clearing keepalive_node may cause deallocation of the node.  In this case, __exitHierarchy may not have an opportunity (e.g. _node will be cleared
+    // by the time -didMoveToWindow occurs after this) to clear the Visible interfaceState, which we need to do before deallocation to meet an API guarantee.
+    if (_node.inHierarchy) {
+      [_node __exitHierarchy];
+    }
+    self.keepalive_node = nil;
+  }
+
   ASDisplayNode *supernode = _node.supernode;
   ASDisplayNodeAssert(!supernode.isLayerBacked, @"Shouldn't be possible for superview's node to be layer-backed.");
   
   if (supernode) {
     ASDisplayNodeAssertTrue(_node.nodeLoaded);
-    UIView *superview = self.superview;
     BOOL supernodeLoaded = supernode.nodeLoaded;
     BOOL needsSupernodeRemoval = NO;
     
@@ -170,27 +160,29 @@
   }
 }
 
-- (void)setNeedsDisplay
+- (void)addSubview:(UIView *)view
 {
-  // Standard implementation does not actually get to the layer, at least for views that don't implement drawRect:.
-  if (ASDisplayNodeThreadIsMain()) {
-    [self.layer setNeedsDisplay];
-  } else {
-    dispatch_async(dispatch_get_main_queue(), ^ {
-      [self.layer setNeedsDisplay];
-    });
-  }
+  [super addSubview:view];
+  
+#ifndef ASDK_ACCESSIBILITY_DISABLE
+  self.accessibleElements = nil;
+#endif
 }
 
-- (void)setNeedsLayout
+- (void)willRemoveSubview:(UIView *)subview
 {
-  if (ASDisplayNodeThreadIsMain()) {
-    [super setNeedsLayout];
-  } else {
-    dispatch_async(dispatch_get_main_queue(), ^ {
-      [super setNeedsLayout];
-    });
-  }
+  [super willRemoveSubview:subview];
+  
+#ifndef ASDK_ACCESSIBILITY_DISABLE
+  self.accessibleElements = nil;
+#endif
+}
+
+- (void)setNeedsDisplay
+{
+  ASDisplayNodeAssertMainThread();
+  // Standard implementation does not actually get to the layer, at least for views that don't implement drawRect:.
+  [self.layer setNeedsDisplay];
 }
 
 - (UIViewContentMode)contentMode

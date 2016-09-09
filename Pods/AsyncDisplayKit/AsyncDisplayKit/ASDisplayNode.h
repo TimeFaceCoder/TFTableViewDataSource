@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASDisplayNode.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <UIKit/UIKit.h>
 
@@ -14,6 +16,9 @@
 #import <AsyncDisplayKit/ASDimension.h>
 #import <AsyncDisplayKit/ASAsciiArtBoxCreator.h>
 #import <AsyncDisplayKit/ASLayoutable.h>
+#import <AsyncDisplayKit/ASContextTransitioning.h>
+
+#define ASDisplayNodeLoggingEnabled 0
 
 @class ASDisplayNode;
 
@@ -43,9 +48,14 @@ typedef void (^ASDisplayNodeDidLoadBlock)(ASDisplayNode * _Nonnull node);
 typedef void (^ASDisplayNodeContextModifier)(_Nonnull CGContextRef context);
 
 /**
+ * ASDisplayNode layout spec block. This block can be used instead of implementing layoutSpecThatFits: in subclass
+ */
+typedef ASLayoutSpec * _Nonnull(^ASLayoutSpecBlock)(ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize);
+
+/**
  Interface state is available on ASDisplayNode and ASViewController, and
  allows checking whether a node is in an interface situation where it is prudent to trigger certain
- actions: measurement, data fetching, display, and visibility (the latter for animations or other onscreen-only effects).
+ actions: measurement, data loading, display, and visibility (the latter for animations or other onscreen-only effects).
  */
 
 typedef NS_OPTIONS(NSUInteger, ASInterfaceState)
@@ -55,7 +65,7 @@ typedef NS_OPTIONS(NSUInteger, ASInterfaceState)
   /** The element may be added to a view soon that could become visible.  Measure the layout, including size calculation. */
   ASInterfaceStateMeasureLayout = 1 << 0,
   /** The element is likely enough to come onscreen that disk and/or network data required for display should be fetched. */
-  ASInterfaceStateFetchData     = 1 << 1,
+  ASInterfaceStatePreload       = 1 << 1,
   /** The element is very likely to become visible, and concurrent rendering should be executed for any -setNeedsDisplay. */
   ASInterfaceStateDisplay       = 1 << 2,
   /** The element is physically onscreen by at least 1 pixel.
@@ -68,7 +78,7 @@ typedef NS_OPTIONS(NSUInteger, ASInterfaceState)
    * Currently we only set `interfaceState` to other values for
    * nodes contained in table views or collection views.
    */
-  ASInterfaceStateInHierarchy   = ASInterfaceStateMeasureLayout | ASInterfaceStateFetchData | ASInterfaceStateDisplay | ASInterfaceStateVisible,
+  ASInterfaceStateInHierarchy   = ASInterfaceStateMeasureLayout | ASInterfaceStatePreload | ASInterfaceStateDisplay | ASInterfaceStateVisible,
 };
 
 /**
@@ -156,7 +166,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @abstract The name of this node, which will be displayed in `description`. The default value is nil.
  */
-@property (nullable, atomic, copy) NSString *name;
+@property (nullable, nonatomic, copy) NSString *name;
 
 /** 
  * @abstract Returns whether the node is synchronous.
@@ -184,7 +194,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return YES if a view is loaded, or if layerBacked is YES and layer is not nil; NO otherwise.
  */
-@property (atomic, readonly, assign, getter=isNodeLoaded) BOOL nodeLoaded;
+@property (nonatomic, readonly, assign, getter=isNodeLoaded) BOOL nodeLoaded;
 
 /** 
  * @abstract Returns whether the node rely on a layer instead of a view.
@@ -205,13 +215,34 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong) CALayer * _Nonnull layer;
 
 /**
+ * Returns YES if the node is – at least partially – visible in a window.
+ *
+ * @see didEnterVisibleState and didExitVisibleState
+ */
+@property (readonly, getter=isVisible) BOOL visible;
+
+/**
+ * Returns YES if the node is in the preloading interface state.
+ *
+ * @see didEnterPreloadState and didExitPreloadState
+ */
+@property (readonly, getter=isInPreloadState) BOOL inPreloadState;
+
+/**
+ * Returns YES if the node is in the displaying interface state.
+ *
+ * @see didEnterDisplayState and didExitDisplayState
+ */
+@property (readonly, getter=isInDisplayState) BOOL inDisplayState;
+
+/**
  * @abstract Returns the Interface State of the node.
  *
  * @return The current ASInterfaceState of the node, indicating whether it is visible and other situational properties.
  *
  * @see ASInterfaceState
  */
-@property (nonatomic, readonly) ASInterfaceState interfaceState;
+@property (readonly) ASInterfaceState interfaceState;
 
 
 /** @name Managing dimensions */
@@ -252,6 +283,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (ASLayout *)measureWithSizeRange:(ASSizeRange)constrainedSize;
 
+
+/**
+ * @abstract Provides a way to declare a block to provide an ASLayoutSpec without having to subclass ASDisplayNode and
+ * implement layoutSpecThatFits:
+ *
+ * @return A block that takes a constrainedSize ASSizeRange argument, and must return an ASLayoutSpec that includes all
+ * of the subnodes to position in the layout. This input-output relationship is identical to the subclass override
+ * method -layoutSpecThatFits:
+ *
+ * @warning Subclasses that implement -layoutSpecThatFits: must not also use .layoutSpecBlock. Doing so will trigger
+ * an exception. A future version of the framework may support using both, calling them serially, with the
+ * .layoutSpecBlock superseding any values set by the method override.
+ */
+@property (nonatomic, readwrite, copy, nullable) ASLayoutSpecBlock layoutSpecBlock;
+
 /** 
  * @abstract Return the calculated size.
  *
@@ -279,7 +325,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return The preferred frame size of this node
  */
-@property (atomic, assign, readwrite) CGSize preferredFrameSize;
+@property (nonatomic, assign, readwrite) CGSize preferredFrameSize;
 
 /** @name Managing the nodes hierarchy */
 
@@ -475,7 +521,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)recursivelyFetchData;
 
 /**
- * @abstract Triggers a recursive call to fetchData when the node has an interfaceState of ASInterfaceStateFetchData
+ * @abstract Triggers a recursive call to fetchData when the node has an interfaceState of ASInterfaceStatePreload
  */
 - (void)setNeedsDataFetch;
 
@@ -591,7 +637,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END
+
 /**
  * ## UIView bridge
  *
@@ -622,27 +668,27 @@ NS_ASSUME_NONNULL_END
  */
 - (void)setNeedsLayout;
 
-@property (atomic, strong, nullable) id contents;                           // default=nil
-@property (atomic, assign)           BOOL clipsToBounds;                    // default==NO
-@property (atomic, getter=isOpaque)  BOOL opaque;                           // default==YES
+@property (nonatomic, strong, nullable) id contents;                           // default=nil
+@property (nonatomic, assign)           BOOL clipsToBounds;                    // default==NO
+@property (nonatomic, getter=isOpaque)  BOOL opaque;                           // default==YES
 
-@property (atomic, assign)           BOOL allowsEdgeAntialiasing;
-@property (atomic, assign)           unsigned int edgeAntialiasingMask;     // default==all values from CAEdgeAntialiasingMask
+@property (nonatomic, assign)           BOOL allowsEdgeAntialiasing;
+@property (nonatomic, assign)           unsigned int edgeAntialiasingMask;     // default==all values from CAEdgeAntialiasingMask
 
-@property (atomic, getter=isHidden)  BOOL hidden;                           // default==NO
-@property (atomic, assign)           BOOL needsDisplayOnBoundsChange;       // default==NO
-@property (atomic, assign)           BOOL autoresizesSubviews;              // default==YES (undefined for layer-backed nodes)
-@property (atomic, assign)           UIViewAutoresizing autoresizingMask;   // default==UIViewAutoresizingNone  (undefined for layer-backed nodes)
-@property (atomic, assign)           CGFloat alpha;                         // default=1.0f
-@property (atomic, assign)           CGRect bounds;                         // default=CGRectZero
-@property (atomic, assign)           CGRect frame;                          // default=CGRectZero
-@property (atomic, assign)           CGPoint anchorPoint;                   // default={0.5, 0.5}
-@property (atomic, assign)           CGFloat zPosition;                     // default=0.0
-@property (atomic, assign)           CGPoint position;                      // default=CGPointZero
-@property (atomic, assign)           CGFloat cornerRadius;                  // default=0.0
-@property (atomic, assign)           CGFloat contentsScale;                 // default=1.0f. See @contentsScaleForDisplay for more info
-@property (atomic, assign)           CATransform3D transform;               // default=CATransform3DIdentity
-@property (atomic, assign)           CATransform3D subnodeTransform;        // default=CATransform3DIdentity
+@property (nonatomic, getter=isHidden)  BOOL hidden;                           // default==NO
+@property (nonatomic, assign)           BOOL needsDisplayOnBoundsChange;       // default==NO
+@property (nonatomic, assign)           BOOL autoresizesSubviews;              // default==YES (undefined for layer-backed nodes)
+@property (nonatomic, assign)           UIViewAutoresizing autoresizingMask;   // default==UIViewAutoresizingNone  (undefined for layer-backed nodes)
+@property (nonatomic, assign)           CGFloat alpha;                         // default=1.0f
+@property (nonatomic, assign)           CGRect bounds;                         // default=CGRectZero
+@property (nonatomic, assign)           CGRect frame;                          // default=CGRectZero
+@property (nonatomic, assign)           CGPoint anchorPoint;                   // default={0.5, 0.5}
+@property (nonatomic, assign)           CGFloat zPosition;                     // default=0.0
+@property (nonatomic, assign)           CGPoint position;                      // default=CGPointZero
+@property (nonatomic, assign)           CGFloat cornerRadius;                  // default=0.0
+@property (nonatomic, assign)           CGFloat contentsScale;                 // default=1.0f. See @contentsScaleForDisplay for more info
+@property (nonatomic, assign)           CATransform3D transform;               // default=CATransform3DIdentity
+@property (nonatomic, assign)           CATransform3D subnodeTransform;        // default=CATransform3DIdentity
 
 /**
  * @abstract The node view's background color.
@@ -650,9 +696,9 @@ NS_ASSUME_NONNULL_END
  * @discussion In contrast to UIView, setting a transparent color will not set opaque = NO.
  * This only affects nodes that implement +drawRect like ASTextNode.
 */
-@property (atomic, strong, nullable) UIColor *backgroundColor;              // default=nil
+@property (nonatomic, strong, nullable) UIColor *backgroundColor;              // default=nil
 
-@property (atomic, strong, null_resettable)    UIColor *tintColor;          // default=Blue
+@property (nonatomic, strong, null_resettable)    UIColor *tintColor;          // default=Blue
 - (void)tintColorDidChange;     // Notifies the node when the tintColor has changed.
 
 /**
@@ -663,18 +709,18 @@ NS_ASSUME_NONNULL_END
  * Thus, UIViewContentModeRedraw is not allowed; use needsDisplayOnBoundsChange = YES instead, and pick an appropriate 
  * contentMode for your content while it's being re-rendered.
  */
-@property (atomic, assign)           UIViewContentMode contentMode;         // default=UIViewContentModeScaleToFill
+@property (nonatomic, assign)           UIViewContentMode contentMode;         // default=UIViewContentModeScaleToFill
 
-@property (atomic, assign, getter=isUserInteractionEnabled) BOOL userInteractionEnabled; // default=YES (NO for layer-backed nodes)
+@property (nonatomic, assign, getter=isUserInteractionEnabled) BOOL userInteractionEnabled; // default=YES (NO for layer-backed nodes)
 #if TARGET_OS_IOS
-@property (atomic, assign, getter=isExclusiveTouch) BOOL exclusiveTouch;    // default=NO
+@property (nonatomic, assign, getter=isExclusiveTouch) BOOL exclusiveTouch;    // default=NO
 #endif
-@property (atomic, assign, nullable) CGColorRef shadowColor;                // default=opaque rgb black
-@property (atomic, assign)           CGFloat shadowOpacity;                 // default=0.0
-@property (atomic, assign)           CGSize shadowOffset;                   // default=(0, -3)
-@property (atomic, assign)           CGFloat shadowRadius;                  // default=3
-@property (atomic, assign)           CGFloat borderWidth;                   // default=0
-@property (atomic, assign, nullable) CGColorRef borderColor;                // default=opaque rgb black
+@property (nonatomic, assign, nullable) CGColorRef shadowColor;                // default=opaque rgb black
+@property (nonatomic, assign)           CGFloat shadowOpacity;                 // default=0.0
+@property (nonatomic, assign)           CGSize shadowOffset;                   // default=(0, -3)
+@property (nonatomic, assign)           CGFloat shadowRadius;                  // default=3
+@property (nonatomic, assign)           CGFloat borderWidth;                   // default=0
+@property (nonatomic, assign, nullable) CGColorRef borderColor;                // default=opaque rgb black
 
 // UIResponder methods
 // By default these fall through to the underlying view, but can be overridden.
@@ -695,26 +741,124 @@ NS_ASSUME_NONNULL_END
 - (nullable UIView *)preferredFocusedView;
 #endif
 
+@end
+
+@interface ASDisplayNode (UIViewBridgeAccessibility)
+
 // Accessibility support
-@property (atomic, assign)           BOOL isAccessibilityElement;
-@property (nullable, atomic, copy)   NSString *accessibilityLabel;
-@property (nullable, atomic, copy)   NSString *accessibilityHint;
-@property (nullable, atomic, copy)   NSString *accessibilityValue;
-@property (atomic, assign)           UIAccessibilityTraits accessibilityTraits;
-@property (atomic, assign)           CGRect accessibilityFrame;
-@property (nullable, atomic, strong) NSString *accessibilityLanguage;
-@property (atomic, assign)           BOOL accessibilityElementsHidden;
-@property (atomic, assign)           BOOL accessibilityViewIsModal;
-@property (atomic, assign)           BOOL shouldGroupAccessibilityChildren;
+@property (nonatomic, assign)           BOOL isAccessibilityElement;
+@property (nonatomic, copy, nullable)   NSString *accessibilityLabel;
+@property (nonatomic, copy, nullable)   NSString *accessibilityHint;
+@property (nonatomic, copy, nullable)   NSString *accessibilityValue;
+@property (nonatomic, assign)           UIAccessibilityTraits accessibilityTraits;
+@property (nonatomic, assign)           CGRect accessibilityFrame;
+@property (nonatomic, copy, nullable)   UIBezierPath *accessibilityPath;
+@property (nonatomic, assign)           CGPoint accessibilityActivationPoint;
+@property (nonatomic, copy, nullable)   NSString *accessibilityLanguage;
+@property (nonatomic, assign)           BOOL accessibilityElementsHidden;
+@property (nonatomic, assign)           BOOL accessibilityViewIsModal;
+@property (nonatomic, assign)           BOOL shouldGroupAccessibilityChildren;
+@property (nonatomic, assign)           UIAccessibilityNavigationStyle accessibilityNavigationStyle;
+#if TARGET_OS_TV
+@property(nonatomic, copy, nullable) 	NSArray *accessibilityHeaderElements;
+#endif
 
 // Accessibility identification support
-@property (nullable, nonatomic, copy) NSString *accessibilityIdentifier;
+@property (nonatomic, copy, nullable)   NSString *accessibilityIdentifier;
+
+@end
+
+@interface ASDisplayNode (LayoutTransitioning)
+
+/**
+ * @abstract The amount of time it takes to complete the default transition animation. Default is 0.2.
+ */
+@property (nonatomic, assign) NSTimeInterval defaultLayoutTransitionDuration;
+
+/**
+ * @abstract The amount of time (measured in seconds) to wait before beginning the default transition animation.
+ *           Default is 0.0.
+ */
+@property (nonatomic, assign) NSTimeInterval defaultLayoutTransitionDelay;
+
+/**
+ * @abstract A mask of options indicating how you want to perform the default transition animations.
+ *           For a list of valid constants, see UIViewAnimationOptions.
+ */
+@property (nonatomic, assign) UIViewAnimationOptions defaultLayoutTransitionOptions;
+
+/**
+ * @discussion A place to perform your animation. New nodes have been inserted here. You can also use this time to re-order the hierarchy.
+ */
+- (void)animateLayoutTransition:(nonnull id<ASContextTransitioning>)context;
+
+/**
+ * @discussion A place to clean up your nodes after the transition
+ */
+- (void)didCompleteLayoutTransition:(nonnull id<ASContextTransitioning>)context;
+
+/**
+ * @abstract Transitions the current layout with a new constrained size. Must be called on main thread.
+ *
+ * @param animated Animation is optional, but will still proceed through your `animateLayoutTransition` implementation with `isAnimated == NO`.
+ * @param shouldMeasureAsync Measure the layout asynchronously.
+ * @param measurementCompletion Optional completion block called only if a new layout is calculated.
+ * It is called on main, right after the measurement and before -animateLayoutTransition:.
+ *
+ * @discussion If the passed constrainedSize is the the same as the node's current constrained size, this method is noop. If passed YES to shouldMeasureAsync it's guaranteed that measurement is happening on a background thread, otherwise measaurement will happen on the thread that the method was called on. The measurementCompletion callback is always called on the main thread right after the measurement and before -animateLayoutTransition:.
+ *
+ * @see animateLayoutTransition:
+ *
+ */
+- (void)transitionLayoutWithSizeRange:(ASSizeRange)constrainedSize
+                             animated:(BOOL)animated
+                   shouldMeasureAsync:(BOOL)shouldMeasureAsync
+                measurementCompletion:(nullable void(^)())completion;
+
+
+/**
+ * @abstract Invalidates the current layout and begins a relayout of the node with the current `constrainedSize`. Must be called on main thread.
+ *
+ * @discussion It is called right after the measurement and before -animateLayoutTransition:.
+ *
+ * @param animated Animation is optional, but will still proceed through your `animateLayoutTransition` implementation with `isAnimated == NO`.
+ * @param shouldMeasureAsync Measure the layout asynchronously.
+ * @param measurementCompletion Optional completion block called only if a new layout is calculated.
+ *
+ * @see animateLayoutTransition:
+ *
+ */
+- (void)transitionLayoutWithAnimation:(BOOL)animated
+                   shouldMeasureAsync:(BOOL)shouldMeasureAsync
+                measurementCompletion:(nullable void(^)())completion;
+
+/**
+ * @abstract Cancels all performing layout transitions. Can be called on any thread.
+ */
+- (void)cancelLayoutTransition;
+
 
 @end
 
 /*
- ASDisplayNode participates in ASAsyncTransactions, so you can determine when your subnodes are done rendering.
- See: -(void)asyncdisplaykit_asyncTransactionContainerStateDidChange in ASDisplayNodeSubclass.h
+ * ASDisplayNode support for automatic subnode management.
+ */
+@interface ASDisplayNode (AutomaticSubnodeManagement)
+
+/**
+ * @abstract A boolean that shows whether the node automatically inserts and removes nodes based on the presence or
+ * absence of the node and its subnodes is completely determined in its layoutSpecThatFits: method.
+ *
+ * @discussion If flag is YES the node no longer require addSubnode: or removeFromSupernode method calls. The presence
+ * or absence of subnodes is completely determined in its layoutSpecThatFits: method.
+ */
+@property (nonatomic, assign) BOOL automaticallyManagesSubnodes;
+
+@end
+
+/*
+ * ASDisplayNode participates in ASAsyncTransactions, so you can determine when your subnodes are done rendering.
+ * See: -(void)asyncdisplaykit_asyncTransactionContainerStateDidChange in ASDisplayNodeSubclass.h
  */
 @interface ASDisplayNode (ASDisplayNodeAsyncTransactionContainer) <ASDisplayNodeAsyncTransactionContainer>
 @end
@@ -729,7 +873,9 @@ NS_ASSUME_NONNULL_END
 - (void)addSubnode:(nonnull ASDisplayNode *)node;
 @end
 
-/** CALayer(AsyncDisplayKit) defines convenience method for adding sub-ASDisplayNode to a CALayer. */
+/*
+ * CALayer(AsyncDisplayKit) defines convenience method for adding sub-ASDisplayNode to a CALayer.
+ */
 @interface CALayer (AsyncDisplayKit)
 /**
  * Convenience method, equivalent to [layer addSublayer:node.layer].
@@ -737,13 +883,7 @@ NS_ASSUME_NONNULL_END
  * @param node The node to be added.
  */
 - (void)addSubnode:(nonnull ASDisplayNode *)node;
-@end
-
-
-@interface ASDisplayNode (Deprecated)
-
-- (void)reclaimMemory ASDISPLAYNODE_DEPRECATED;
-- (void)recursivelyReclaimMemory ASDISPLAYNODE_DEPRECATED;
-@property (nonatomic, assign) BOOL placeholderFadesOut ASDISPLAYNODE_DEPRECATED;
 
 @end
+
+NS_ASSUME_NONNULL_END

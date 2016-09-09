@@ -1,13 +1,16 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  _ASAsyncTransaction.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <Foundation/Foundation.h>
 
+#define ASDISPLAYNODE_DELAY_DISPLAY 0
 
 @class _ASAsyncTransaction;
 
@@ -54,8 +57,8 @@ extern NSInteger const ASDefaultTransactionPriority;
  @param callbackQueue The dispatch queue that the completion blocks will be called on.
  @param completionBlock A block that is called when the transaction is completed. May be NULL.
  */
-- (id)initWithCallbackQueue:(dispatch_queue_t)callbackQueue
-            completionBlock:(asyncdisplaykit_async_transaction_completion_block_t)completionBlock;
+- (instancetype)initWithCallbackQueue:(dispatch_queue_t)callbackQueue
+                      completionBlock:(asyncdisplaykit_async_transaction_completion_block_t)completionBlock;
 
 /**
  @summary Block the main thread until the transaction is complete, including callbacks.

@@ -1,33 +1,30 @@
-/*
- *  Copyright (c) 2014-present, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- */
+//
+//  ASStackLayoutSpec.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <numeric>
 #import <vector>
 
-#import "ASBaseDefines.h"
 #import "ASInternalHelpers.h"
 
 #import "ASLayoutSpecUtilities.h"
 #import "ASStackBaselinePositionedLayout.h"
-#import "ASStackLayoutSpecUtilities.h"
-#import "ASStackUnpositionedLayout.h"
 #import "ASThread.h"
 
 @implementation ASStackLayoutSpec
 {
-  ASDN::RecursiveMutex _propertyLock;
+  ASDN::RecursiveMutex __instanceLock__;
 }
 
 - (instancetype)init
 {
-  return [self initWithDirection:ASStackLayoutDirectionHorizontal spacing:0.0 justifyContent:ASStackLayoutJustifyContentStart alignItems:ASStackLayoutAlignItemsStart children:nil];
+  return [self initWithDirection:ASStackLayoutDirectionHorizontal spacing:0.0 justifyContent:ASStackLayoutJustifyContentStart alignItems:ASStackLayoutAlignItemsStretch children:nil];
 }
 
 + (instancetype)stackLayoutSpecWithDirection:(ASStackLayoutDirection)direction spacing:(CGFloat)spacing justifyContent:(ASStackLayoutJustifyContent)justifyContent alignItems:(ASStackLayoutAlignItems)alignItems children:(NSArray *)children
@@ -121,30 +118,21 @@
   _baselineRelativeArrangement = baselineRelativeArrangement;
 }
 
-- (void)setChild:(id<ASLayoutable>)child forIdentifier:(NSString *)identifier
-{
-  ASDisplayNodeAssert(NO, @"ASStackLayoutSpec only supports setChildren");
-}
-
-- (id<ASLayoutable>)childForIdentifier:(NSString *)identifier
-{
-  ASDisplayNodeAssert(NO, @"ASStackLayoutSpec only supports children");
-  return nil;
-}
-
 - (ASLayout *)measureWithSizeRange:(ASSizeRange)constrainedSize
 {
-  if (self.children.count == 0) {
-    return [ASLayout layoutWithLayoutableObject:self size:constrainedSize.min];
+  std::vector<id<ASLayoutable>> stackChildren;
+  for (id<ASLayoutable> child in self.children) {
+    stackChildren.push_back(child);
+  }
+  
+  if (stackChildren.empty()) {
+    return [ASLayout layoutWithLayoutableObject:self
+                           constrainedSizeRange:constrainedSize
+                                           size:constrainedSize.min];
   }
   
   ASStackLayoutSpecStyle style = {.direction = _direction, .spacing = _spacing, .justifyContent = _justifyContent, .alignItems = _alignItems, .baselineRelativeArrangement = _baselineRelativeArrangement};
   BOOL needsBaselinePass = _baselineRelativeArrangement || _alignItems == ASStackLayoutAlignItemsBaselineFirst || _alignItems == ASStackLayoutAlignItemsBaselineLast;
-  
-  std::vector<id<ASLayoutable>> stackChildren = std::vector<id<ASLayoutable>>();
-  for (id<ASLayoutable> child in self.children) {
-    stackChildren.push_back(child);
-  }
   
   const auto unpositionedLayout = ASStackUnpositionedLayout::compute(stackChildren, style, constrainedSize);
   const auto positionedLayout = ASStackPositionedLayout::compute(unpositionedLayout, style, constrainedSize);
@@ -156,11 +144,11 @@
   // and min descender in case this spec is a child in another spec that wants to align to a baseline.
   const auto baselinePositionedLayout = ASStackBaselinePositionedLayout::compute(positionedLayout, style, constrainedSize);
   if (self.direction == ASStackLayoutDirectionVertical) {
-    ASDN::MutexLocker l(_propertyLock);
-    self.ascender = [[self.children firstObject] ascender];
-    self.descender = [[self.children lastObject] descender];
+    ASDN::MutexLocker l(__instanceLock__);
+    self.ascender = [stackChildren.front() ascender];
+    self.descender = [stackChildren.back() descender];
   } else {
-    ASDN::MutexLocker l(_propertyLock);
+    ASDN::MutexLocker l(__instanceLock__);
     self.ascender = baselinePositionedLayout.ascender;
     self.descender = baselinePositionedLayout.descender;
   }
@@ -174,6 +162,7 @@
   }
   
   return [ASLayout layoutWithLayoutableObject:self
+                         constrainedSizeRange:constrainedSize
                                          size:ASSizeRangeClamp(constrainedSize, finalSize)
                                    sublayouts:sublayouts];
 }

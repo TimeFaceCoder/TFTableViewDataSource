@@ -1,20 +1,19 @@
-/*
- *  Copyright (c) 2014-present, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- */
+//
+//  ASStackPositionedLayout.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "ASStackPositionedLayout.h"
 
+#import <tgmath.h>
+
 #import "ASInternalHelpers.h"
 #import "ASLayoutSpecUtilities.h"
-#import "ASStackLayoutSpecUtilities.h"
-#import "ASLayoutable.h"
-#import "ASAssert.h"
 
 static CGFloat crossOffset(const ASStackLayoutSpecStyle &style,
                            const ASStackUnpositionedItem &l,
@@ -108,16 +107,16 @@ ASStackPositionedLayout ASStackPositionedLayout::compute(const ASStackUnposition
     case ASStackLayoutJustifyContentStart:
       return stackedLayout(style, 0, unpositionedLayout, constrainedSize);
     case ASStackLayoutJustifyContentCenter:
-      return stackedLayout(style, floorf(violation / 2), unpositionedLayout, constrainedSize);
+      return stackedLayout(style, std::floor(violation / 2), unpositionedLayout, constrainedSize);
     case ASStackLayoutJustifyContentEnd:
       return stackedLayout(style, violation, unpositionedLayout, constrainedSize);
     case ASStackLayoutJustifyContentSpaceBetween: {
       const auto numOfSpacings = numOfItems - 1;
-      return stackedLayout(style, 0, floorf(violation / numOfSpacings), fmodf(violation, numOfSpacings), unpositionedLayout, constrainedSize);
+      return stackedLayout(style, 0, std::floor(violation / numOfSpacings), std::fmod(violation, numOfSpacings), unpositionedLayout, constrainedSize);
     }
     case ASStackLayoutJustifyContentSpaceAround: {
       // Spacing between items are twice the spacing on the edges
-      CGFloat spacingUnit = floorf(violation / (numOfItems * 2));
+      CGFloat spacingUnit = std::floor(violation / (numOfItems * 2));
       return stackedLayout(style, spacingUnit, spacingUnit * 2, 0, unpositionedLayout, constrainedSize);
     }
   }

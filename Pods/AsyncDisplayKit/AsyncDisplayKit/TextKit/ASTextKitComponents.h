@@ -1,29 +1,17 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASTextKitComponents.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <UIKit/UIKit.h>
 #import <AsyncDisplayKit/ASBaseDefines.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-ASDISPLAYNODE_INLINE CGFloat ceilPixelValueForScale(CGFloat f, CGFloat scale)
-{
-  // Round up to device pixel (.5 on retina)
-  return ceilf(f * scale) / scale;
-}
-
-ASDISPLAYNODE_INLINE CGSize ceilSizeValue(CGSize s)
-{
-  CGFloat screenScale = [UIScreen mainScreen].scale;
-  s.width = ceilPixelValueForScale(s.width, screenScale);
-  s.height = ceilPixelValueForScale(s.height, screenScale);
-  return s;
-}
 
 @interface ASTextKitComponents : NSObject
 

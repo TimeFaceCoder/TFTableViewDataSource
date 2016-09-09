@@ -1,44 +1,154 @@
 //
 //  ASPINRemoteImageDownloader.m
-//  Pods
+//  AsyncDisplayKit
 //
 //  Created by Garrett Moon on 2/5/16.
 //
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#ifdef PIN_REMOTE_IMAGE
+#if PIN_REMOTE_IMAGE
 #import "ASPINRemoteImageDownloader.h"
 
 #import "ASAssert.h"
 #import "ASThread.h"
+#import "ASImageContainerProtocolCategories.h"
+
+#if __has_include ("PINAnimatedImage.h")
+#define PIN_ANIMATED_AVAILABLE 1
+#import "PINAnimatedImage.h"
+#import <PINRemoteImage/PINAlternateRepresentationProvider.h>
+#else
+#define PIN_ANIMATED_AVAILABLE 0
+#endif
 
 #import <PINRemoteImage/PINRemoteImageManager.h>
+#import <PINRemoteImage/NSData+ImageDetectors.h>
 #import <PINCache/PINCache.h>
+
+#if PIN_ANIMATED_AVAILABLE
+
+@interface ASPINRemoteImageDownloader () <PINRemoteImageManagerAlternateRepresentationProvider>
+
+@end
+
+@interface PINAnimatedImage (ASPINRemoteImageDownloader) <ASAnimatedImageProtocol>
+
+@end
+
+@implementation PINAnimatedImage (ASPINRemoteImageDownloader)
+
+- (void)setCoverImageReadyCallback:(void (^)(UIImage * _Nonnull))coverImageReadyCallback
+{
+  self.infoCompletion = coverImageReadyCallback;
+}
+
+- (void (^)(UIImage * _Nonnull))coverImageReadyCallback
+{
+  return self.infoCompletion;
+}
+
+- (void)setPlaybackReadyCallback:(dispatch_block_t)playbackReadyCallback
+{
+  self.fileReady = playbackReadyCallback;
+}
+
+- (dispatch_block_t)playbackReadyCallback
+{
+  return self.fileReady;
+}
+
+- (BOOL)isDataSupported:(NSData *)data
+{
+  return [data pin_isGIF];
+}
+
+@end
+#endif
+
+@interface ASPINRemoteImageManager : PINRemoteImageManager
+@end
+
+@implementation ASPINRemoteImageManager
+
+//Share image cache with sharedImageManager image cache.
+- (PINCache *)defaultImageCache
+{
+    return [[PINRemoteImageManager sharedImageManager] cache];
+}
+
+@end
 
 @implementation ASPINRemoteImageDownloader
 
 + (instancetype)sharedDownloader
 {
   static ASPINRemoteImageDownloader *sharedDownloader = nil;
-  static dispatch_once_t once = 0;
-  dispatch_once(&once, ^{
+  static dispatch_once_t onceToken = 0;
+  dispatch_once(&onceToken, ^{
     sharedDownloader = [[ASPINRemoteImageDownloader alloc] init];
   });
   return sharedDownloader;
 }
 
+- (PINRemoteImageManager *)sharedPINRemoteImageManager
+{
+  static ASPINRemoteImageManager *sharedPINRemoteImageManager = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+  
+#if PIN_ANIMATED_AVAILABLE
+    // Check that Carthage users have linked both PINRemoteImage & PINCache by testing for one file each
+    if (!(NSClassFromString(@"PINRemoteImageManager"))) {
+        NSException *e = [NSException
+                          exceptionWithName:@"FrameworkSetupException"
+                          reason:@"Missing the path to the PINRemoteImage framework."
+                          userInfo:nil];
+        @throw e;
+    }
+    if (!(NSClassFromString(@"PINCache"))) {
+        NSException *e = [NSException
+                          exceptionWithName:@"FrameworkSetupException"
+                          reason:@"Missing the path to the PINCache framework."
+                          userInfo:nil];
+        @throw e;
+    }
+    sharedPINRemoteImageManager = [[ASPINRemoteImageManager alloc] initWithSessionConfiguration:nil alternativeRepresentationProvider:self];
+#else
+    sharedPINRemoteImageManager = [[ASPINRemoteImageManager alloc] initWithSessionConfiguration:nil];
+#endif
+  });
+  return sharedPINRemoteImageManager;
+}
+
 #pragma mark ASImageProtocols
 
-- (UIImage *)synchronouslyFetchedCachedImageWithURL:(NSURL *)URL
+#if PIN_ANIMATED_AVAILABLE
+- (nullable id <ASAnimatedImageProtocol>)animatedImageWithData:(NSData *)animatedImageData
 {
-  NSString *key = [[PINRemoteImageManager sharedImageManager] cacheKeyForURL:URL processorKey:nil];
-  PINRemoteImageManagerResult *result = [[PINRemoteImageManager sharedImageManager] synchronousImageFromCacheWithCacheKey:key options:PINRemoteImageManagerDownloadOptionsSkipDecode];
+  return [[PINAnimatedImage alloc] initWithAnimatedImageData:animatedImageData];
+}
+#endif
+
+- (id <ASImageContainerProtocol>)synchronouslyFetchedCachedImageWithURL:(NSURL *)URL;
+{
+  PINRemoteImageManager *manager = [self sharedPINRemoteImageManager];
+  NSString *key = [manager cacheKeyForURL:URL processorKey:nil];
+  PINRemoteImageManagerResult *result = [manager synchronousImageFromCacheWithCacheKey:key options:PINRemoteImageManagerDownloadOptionsSkipDecode];
+#if PIN_ANIMATED_AVAILABLE
+  if (result.alternativeRepresentation) {
+    return result.alternativeRepresentation;
+  }
+#endif
   return result.image;
 }
 
-- (void)fetchCachedImageWithURL:(NSURL *)URL
-                  callbackQueue:(dispatch_queue_t)callbackQueue
-                     completion:(void (^)(CGImageRef imageFromCache))completion
+- (void)cachedImageWithURL:(NSURL *)URL
+             callbackQueue:(dispatch_queue_t)callbackQueue
+                completion:(ASImageCacherCompletion)completion
 {
   // We do not check the cache here and instead check it in downloadImageWithURL to avoid checking the cache twice.
   // If we're targeting the main queue and we're on the main thread, complete immediately.
@@ -53,23 +163,50 @@
 
 - (void)clearFetchedImageFromCacheWithURL:(NSURL *)URL
 {
-  PINRemoteImageManager *manager = [PINRemoteImageManager sharedImageManager];
+  PINRemoteImageManager *manager = [self sharedPINRemoteImageManager];
   NSString *key = [manager cacheKeyForURL:URL processorKey:nil];
   [[[manager cache] memoryCache] removeObjectForKey:key];
 }
 
 - (nullable id)downloadImageWithURL:(NSURL *)URL
                       callbackQueue:(dispatch_queue_t)callbackQueue
-                   downloadProgress:(void (^)(CGFloat progress))downloadProgressBlock
-                         completion:(void (^)(UIImage *image, NSError * error, id downloadIdentifier))completion
+                   downloadProgress:(ASImageDownloaderProgress)downloadProgress
+                         completion:(ASImageDownloaderCompletion)completion;
 {
-  return [[PINRemoteImageManager sharedImageManager] downloadImageWithURL:URL options:PINRemoteImageManagerDownloadOptionsSkipDecode completion:^(PINRemoteImageManagerResult *result) {
-    /// If we're targeting the main queue and we're on the main thread, complete immediately.
+  return [[self sharedPINRemoteImageManager] downloadImageWithURL:URL options:PINRemoteImageManagerDownloadOptionsSkipDecode progressDownload:^(int64_t completedBytes, int64_t totalBytes) {
+    if (downloadProgress == nil) { return; }
+    
+    /// If we're targeting the main queue and we're on the main thread, call immediately.
     if (ASDisplayNodeThreadIsMain() && callbackQueue == dispatch_get_main_queue()) {
-      completion(result.image, result.error, result.UUID);      
+      downloadProgress(completedBytes / (CGFloat)totalBytes);
     } else {
       dispatch_async(callbackQueue, ^{
+        downloadProgress(completedBytes / (CGFloat)totalBytes);
+      });
+    }
+  } completion:^(PINRemoteImageManagerResult * _Nonnull result) {
+    /// If we're targeting the main queue and we're on the main thread, complete immediately.
+    if (ASDisplayNodeThreadIsMain() && callbackQueue == dispatch_get_main_queue()) {
+#if PIN_ANIMATED_AVAILABLE
+      if (result.alternativeRepresentation) {
+        completion(result.alternativeRepresentation, result.error, result.UUID);
+      } else {
         completion(result.image, result.error, result.UUID);
+      }
+#else
+      completion(result.image, result.error, result.UUID);
+#endif
+    } else {
+      dispatch_async(callbackQueue, ^{
+#if PIN_ANIMATED_AVAILABLE
+        if (result.alternativeRepresentation) {
+          completion(result.alternativeRepresentation, result.error, result.UUID);
+        } else {
+          completion(result.image, result.error, result.UUID);
+        }
+#else
+        completion(result.image, result.error, result.UUID);
+#endif
       });
     }
   }];
@@ -77,8 +214,12 @@
 
 - (void)cancelImageDownloadForIdentifier:(id)downloadIdentifier
 {
+  if (!downloadIdentifier) {
+    return;
+  }
+  
   ASDisplayNodeAssert([downloadIdentifier isKindOfClass:[NSUUID class]], @"downloadIdentifier must be NSUUID");
-  [[PINRemoteImageManager sharedImageManager] cancelTaskWithUUID:downloadIdentifier];
+  [[self sharedPINRemoteImageManager] cancelTaskWithUUID:downloadIdentifier];
 }
 
 - (void)setProgressImageBlock:(ASImageDownloaderProgressImage)progressBlock callbackQueue:(dispatch_queue_t)callbackQueue withDownloadIdentifier:(id)downloadIdentifier
@@ -86,13 +227,13 @@
   ASDisplayNodeAssert([downloadIdentifier isKindOfClass:[NSUUID class]], @"downloadIdentifier must be NSUUID");
   
   if (progressBlock) {
-    [[PINRemoteImageManager sharedImageManager] setProgressImageCallback:^(PINRemoteImageManagerResult * _Nonnull result) {
+    [[self sharedPINRemoteImageManager] setProgressImageCallback:^(PINRemoteImageManagerResult * _Nonnull result) {
       dispatch_async(callbackQueue, ^{
-        progressBlock(result.image, result.UUID);
+        progressBlock(result.image, result.renderedImageQuality, result.UUID);
       });
     } ofTaskWithUUID:downloadIdentifier];
   } else {
-    [[PINRemoteImageManager sharedImageManager] setProgressImageCallback:nil ofTaskWithUUID:downloadIdentifier];
+    [[self sharedPINRemoteImageManager] setProgressImageCallback:nil ofTaskWithUUID:downloadIdentifier];
   }
 }
 
@@ -114,7 +255,19 @@
       pi_priority = PINRemoteImageManagerPriorityVeryHigh;
       break;
   }
-  [[PINRemoteImageManager sharedImageManager] setPriority:pi_priority ofTaskWithUUID:downloadIdentifier];
+  [[self sharedPINRemoteImageManager] setPriority:pi_priority ofTaskWithUUID:downloadIdentifier];
+}
+
+#pragma mark - PINRemoteImageManagerAlternateRepresentationProvider
+
+- (id)alternateRepresentationWithData:(NSData *)data options:(PINRemoteImageManagerDownloadOptions)options
+{
+#if PIN_ANIMATED_AVAILABLE
+    if ([data pin_isGIF]) {
+        return data;
+    }
+#endif
+    return nil;
 }
 
 @end

@@ -1,14 +1,17 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASHighlightOverlayLayer.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "ASHighlightOverlayLayer.h"
 
 #import <UIKit/UIKit.h>
+#import <tgmath.h>
 
 #import "ASInternalHelpers.h"
 
@@ -49,12 +52,12 @@ static const UIEdgeInsets padding = {2, 4, 1.5, 4};
   return (id<CAAction>)[NSNull null];
 }
 
-- (id)initWithRects:(NSArray *)rects
+- (instancetype)initWithRects:(NSArray *)rects
 {
   return [self initWithRects:rects targetLayer:nil];
 }
 
-- (id)initWithRects:(NSArray *)rects targetLayer:(id)targetLayer
+- (instancetype)initWithRects:(NSArray *)rects targetLayer:(id)targetLayer
 {
   if (self = [super init]) {
     _rects = [rects copy];
@@ -84,7 +87,7 @@ static const UIEdgeInsets padding = {2, 4, 1.5, 4};
     if (targetLayer != nil) {
       rect = [self convertRect:rect fromLayer:targetLayer];
     }
-    rect = CGRectMake(roundf(rect.origin.x), roundf(rect.origin.y), roundf(rect.size.width), roundf(rect.size.height));
+    rect = CGRectMake(std::round(rect.origin.x), std::round(rect.origin.y), std::round(rect.size.width), std::round(rect.size.height));
 
     CGFloat minX = rect.origin.x - padding.left;
     CGFloat maxX = CGRectGetMaxX(rect) + padding.right;

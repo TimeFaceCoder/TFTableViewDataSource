@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASDisplayNode+AsyncDisplay.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "_ASCoreAnimationExtras.h"
 #import "_ASAsyncTransaction.h"
@@ -12,67 +14,22 @@
 #import "ASAssert.h"
 #import "ASDisplayNodeInternal.h"
 #import "ASDisplayNode+FrameworkPrivate.h"
-#import "ASDisplayNode+Beta.h"
 
 @interface ASDisplayNode () <_ASDisplayLayerDelegate>
 @end
 
 @implementation ASDisplayNode (AsyncDisplay)
 
-/**
- * Support for limiting the number of concurrent displays.
- * Set __ASDisplayLayerMaxConcurrentDisplayCount to change the maximum allowed number of concurrent displays.
- */
-
-#define ASDISPLAYNODE_DELAY_DISPLAY 0
-
 #if ASDISPLAYNODE_DELAY_DISPLAY
-static long __ASDisplayLayerMaxConcurrentDisplayCount = 1;
-#define ASDN_DELAY_FOR_DISPLAY() usleep( (long)(0.1 * USEC_PER_SEC) )
+  #define ASDN_DELAY_FOR_DISPLAY() usleep( (long)(0.1 * USEC_PER_SEC) )
 #else
-// Basing this off of CPU core count would make sense, but first some experimentation should be done to understand
-// if having more ready-to-run work keeps the CPU clock up (or other interesting scheduler effects).
-static long __ASDisplayLayerMaxConcurrentDisplayCount = 8;
-#define ASDN_DELAY_FOR_DISPLAY()
+  #define ASDN_DELAY_FOR_DISPLAY()
 #endif
 
-static dispatch_semaphore_t __ASDisplayLayerConcurrentDisplaySemaphore;
-
-/*
- * Call __ASDisplayLayerIncrementConcurrentDisplayCount() upon entry into a display block (either drawRect: or display).
- * This will block if the number of currently executing displays is equal or greater to the limit.
- */
-static void __ASDisplayLayerIncrementConcurrentDisplayCount(BOOL displayIsAsync, BOOL isRasterizing)
-{
-  // Displays while rasterizing are not counted as concurrent displays, because they draw in serial when their rasterizing container displays.
-  if (isRasterizing) {
-    return;
-  }
-
-  static dispatch_once_t onceToken;
-  if (displayIsAsync) {
-    dispatch_once(&onceToken, ^{
-      __ASDisplayLayerConcurrentDisplaySemaphore = dispatch_semaphore_create(__ASDisplayLayerMaxConcurrentDisplayCount);
-    });
-
-    dispatch_semaphore_wait(__ASDisplayLayerConcurrentDisplaySemaphore, DISPATCH_TIME_FOREVER);
-  }
-}
-
-/*
- * Call __ASDisplayLayerDecrementConcurrentDisplayCount() upon exit from a display block, matching calls to __ASDisplayLayerIncrementConcurrentDisplayCount().
- */
-static void __ASDisplayLayerDecrementConcurrentDisplayCount(BOOL displayIsAsync, BOOL isRasterizing)
-{
-  // Displays while rasterizing are not counted as concurrent displays, because they draw in serial when their rasterizing container displays.
-  if (isRasterizing) {
-    return;
-  }
-
-  if (displayIsAsync) {
-    dispatch_semaphore_signal(__ASDisplayLayerConcurrentDisplaySemaphore);
-  }
-}
+#define CHECK_CANCELLED_AND_RETURN_NIL(expr)                      if (isCancelledBlock()) { \
+                                                                    expr; \
+                                                                    return nil; \
+                                                                  } \
 
 - (NSObject *)drawParameters
 {
@@ -141,7 +98,7 @@ static void __ASDisplayLayerDecrementConcurrentDisplayCount(BOOL displayIsAsync,
         if (cornerRadius) {
           [[UIBezierPath bezierPathWithRoundedRect:bounds cornerRadius:cornerRadius] addClip];
         } else {
-          [[UIBezierPath bezierPathWithRect:bounds] addClip];
+          CGContextClipToRect(context, bounds);
         }
       }
 
@@ -178,137 +135,118 @@ static void __ASDisplayLayerDecrementConcurrentDisplayCount(BOOL displayIsAsync,
   }
 }
 
-- (asyncdisplaykit_async_transaction_operation_block_t)_displayBlockWithAsynchronous:(BOOL)asynchronous isCancelledBlock:(asdisplaynode_iscancelled_block_t)isCancelledBlock rasterizing:(BOOL)rasterizing
+- (asyncdisplaykit_async_transaction_operation_block_t)_displayBlockWithAsynchronous:(BOOL)asynchronous
+                                                                    isCancelledBlock:(asdisplaynode_iscancelled_block_t)isCancelledBlock
+                                                                         rasterizing:(BOOL)rasterizing
 {
   asyncdisplaykit_async_transaction_operation_block_t displayBlock = nil;
+  ASDisplayNodeFlags flags;
+  
+  __instanceLock__.lock();
 
-  ASDisplayNodeAssert(rasterizing || !(_hierarchyState & ASHierarchyStateRasterized), @"Rasterized descendants should never display unless being drawn into the rasterized container.");
+  flags = _flags;
+  
+  // We always create a graphics context, unless a -display method is used, OR if we are a subnode drawing into a rasterized parent.
+  BOOL shouldCreateGraphicsContext = (flags.implementsInstanceImageDisplay == NO && flags.implementsImageDisplay == NO && rasterizing == NO);
+  BOOL shouldBeginRasterizing = (rasterizing == NO && flags.shouldRasterizeDescendants);
+  BOOL usesInstanceMethodDisplay = (flags.implementsInstanceDrawRect || flags.implementsInstanceImageDisplay);
+  BOOL usesImageDisplay = (flags.implementsImageDisplay || flags.implementsInstanceImageDisplay);
+  BOOL usesDrawRect = (flags.implementsDrawRect || flags.implementsInstanceDrawRect);
+  
+  if (usesImageDisplay == NO && usesDrawRect == NO && shouldBeginRasterizing == NO) {
+    // Early exit before requesting more expensive properties like bounds and opaque from the layer.
+    __instanceLock__.unlock();
+    return nil;
+  }
+  
+  BOOL opaque = self.opaque;
+  CGRect bounds = self.bounds;
+  CGFloat contentsScaleForDisplay = _contentsScaleForDisplay;
 
-  if (!rasterizing && self.shouldRasterizeDescendants) {
-    CGRect bounds = self.bounds;
-    if (CGRectIsEmpty(bounds)) {
-      return nil;
-    }
+  // Capture drawParameters from delegate on main thread, if this node is displaying itself rather than recursively rasterizing.
+  id drawParameters = (shouldBeginRasterizing == NO ? [self drawParameters] : nil);
 
+  __instanceLock__.unlock();
+  
+  // Only the -display methods should be called if we can't size the graphics buffer to use.
+  if (CGRectIsEmpty(bounds) && (shouldBeginRasterizing || shouldCreateGraphicsContext)) {
+    return nil;
+  }
+  
+  ASDisplayNodeAssert(contentsScaleForDisplay != 0.0, @"Invalid contents scale");
+  ASDisplayNodeAssert(usesInstanceMethodDisplay == NO || (flags.implementsDrawRect == NO && flags.implementsImageDisplay == NO),
+                      @"Node %@ should not implement both class and instance method display or draw", self);
+  ASDisplayNodeAssert(rasterizing || !(_hierarchyState & ASHierarchyStateRasterized),
+                      @"Rasterized descendants should never display unless being drawn into the rasterized container.");
+
+  if (shouldBeginRasterizing) {
     // Collect displayBlocks for all descendants.
     NSMutableArray *displayBlocks = [NSMutableArray array];
     [self _recursivelyRasterizeSelfAndSublayersWithIsCancelledBlock:isCancelledBlock displayBlocks:displayBlocks];
-
-    CGFloat contentsScaleForDisplay = self.contentsScaleForDisplay;
-    BOOL opaque = self.opaque && CGColorGetAlpha(self.backgroundColor.CGColor) == 1.0f;
-
-    ASDisplayNodeAssert(self.contentsScaleForDisplay != 0.0, @"Invalid contents scale");
+    CHECK_CANCELLED_AND_RETURN_NIL();
+    
+    // If [UIColor clearColor] or another semitransparent background color is used, include alpha channel when rasterizing.
+    // Unlike CALayer drawing, we include the backgroundColor as a base during rasterization.
+    opaque = opaque && CGColorGetAlpha(self.backgroundColor.CGColor) == 1.0f;
 
     displayBlock = ^id{
-      __ASDisplayLayerIncrementConcurrentDisplayCount(asynchronous, rasterizing);
-      if (isCancelledBlock()) {
-        __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-        return nil;
-      }
-
-      ASDN_DELAY_FOR_DISPLAY();
+      CHECK_CANCELLED_AND_RETURN_NIL();
+      
       UIGraphicsBeginImageContextWithOptions(bounds.size, opaque, contentsScaleForDisplay);
 
       for (dispatch_block_t block in displayBlocks) {
-        if (isCancelledBlock()) {
-          UIGraphicsEndImageContext();
-          __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-          return nil;
-        }
+        CHECK_CANCELLED_AND_RETURN_NIL(UIGraphicsEndImageContext());
         block();
       }
-
+      
       UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
       UIGraphicsEndImageContext();
 
-      __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-
+      ASDN_DELAY_FOR_DISPLAY();
       return image;
     };
-  } else if (_flags.implementsInstanceImageDisplay || _flags.implementsImageDisplay) {
-    // Capture drawParameters from delegate on main thread
-    id drawParameters = [self drawParameters];
-    
+  } else {
     displayBlock = ^id{
-      __ASDisplayLayerIncrementConcurrentDisplayCount(asynchronous, rasterizing);
-      if (isCancelledBlock()) {
-        __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-        return nil;
-      }
-      
-      ASDN_DELAY_FOR_DISPLAY();
-      
-      UIImage *result = nil;
-      //We can't call _willDisplayNodeContentWithRenderingContext or _didDisplayNodeContentWithRenderingContext because we don't
-      //have a context. We rely on implementors of displayWithParameters:isCancelled: to call
-      if (_flags.implementsInstanceImageDisplay) {
-        result = [self displayWithParameters:drawParameters isCancelled:isCancelledBlock];
-      } else {
-        result = [[self class] displayWithParameters:drawParameters isCancelled:isCancelledBlock];
-      }
-      __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-      return result;
-    };
-    
-  } else if (_flags.implementsInstanceDrawRect || _flags.implementsDrawRect) {
+      CHECK_CANCELLED_AND_RETURN_NIL();
 
-    CGRect bounds = self.bounds;
-    if (CGRectIsEmpty(bounds)) {
-      return nil;
-    }
-
-    // Capture drawParameters from delegate on main thread
-    id drawParameters = [self drawParameters];
-    CGFloat contentsScaleForDisplay = self.contentsScaleForDisplay;
-    BOOL opaque = self.opaque;
-
-    displayBlock = ^id{
-      __ASDisplayLayerIncrementConcurrentDisplayCount(asynchronous, rasterizing);
-      if (isCancelledBlock()) {
-        __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-        return nil;
-      }
-
-      ASDN_DELAY_FOR_DISPLAY();
-
-      if (!rasterizing) {
+      if (shouldCreateGraphicsContext) {
         UIGraphicsBeginImageContextWithOptions(bounds.size, opaque, contentsScaleForDisplay);
+        CHECK_CANCELLED_AND_RETURN_NIL( UIGraphicsEndImageContext(); );
       }
 
       CGContextRef currentContext = UIGraphicsGetCurrentContext();
+      UIImage *image = nil;
+
+      // For -display methods, we don't have a context, and thus will not call the _willDisplayNodeContentWithRenderingContext or
+      // _didDisplayNodeContentWithRenderingContext blocks. It's up to the implementation of -display... to do what it needs.
       if (currentContext && _willDisplayNodeContentWithRenderingContext) {
         _willDisplayNodeContentWithRenderingContext(currentContext);
       }
       
-      if (_flags.implementsInstanceDrawRect) {
-        [self drawRect:bounds withParameters:drawParameters isCancelled:isCancelledBlock isRasterizing:rasterizing];
-      } else {
-        [[self class] drawRect:bounds withParameters:drawParameters isCancelled:isCancelledBlock isRasterizing:rasterizing];
+      // Decide if we use a class or instance method to draw or display.
+      id object = usesInstanceMethodDisplay ? self : [self class];
+      
+      if (usesImageDisplay) {                                   // If we are using a display method, we'll get an image back directly.
+        image = [object displayWithParameters:drawParameters
+                                  isCancelled:isCancelledBlock];
+      } else if (usesDrawRect) {                                // If we're using a draw method, this will operate on the currentContext.
+        [object drawRect:bounds withParameters:drawParameters
+             isCancelled:isCancelledBlock isRasterizing:rasterizing];
       }
       
       if (currentContext && _didDisplayNodeContentWithRenderingContext) {
         _didDisplayNodeContentWithRenderingContext(currentContext);
       }
-
-      if (isCancelledBlock()) {
-        if (!rasterizing) {
-          UIGraphicsEndImageContext();
-        }
-        __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-        return nil;
-      }
-
-      UIImage *image = nil;
-      if (!rasterizing) {
+      
+      if (shouldCreateGraphicsContext) {
+        CHECK_CANCELLED_AND_RETURN_NIL( UIGraphicsEndImageContext(); );
         image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
       }
 
-      __ASDisplayLayerDecrementConcurrentDisplayCount(asynchronous, rasterizing);
-
+      ASDN_DELAY_FOR_DISPLAY();
       return image;
     };
-
   }
 
   return [displayBlock copy];
@@ -318,7 +256,7 @@ static void __ASDisplayLayerDecrementConcurrentDisplayCount(BOOL displayIsAsync,
 {
   ASDisplayNodeAssertMainThread();
 
-  ASDN::MutexLocker l(_propertyLock);
+  ASDN::MutexLocker l(__instanceLock__);
 
   if (_hierarchyState & ASHierarchyStateRasterized) {
     return;
@@ -351,7 +289,7 @@ static void __ASDisplayLayerDecrementConcurrentDisplayCount(BOOL displayIsAsync,
     ASDisplayNodeCAssertMainThread();
     if (!canceled && !isCancelledBlock()) {
       UIImage *image = (UIImage *)value;
-      BOOL stretchable = !UIEdgeInsetsEqualToEdgeInsets(image.capInsets, UIEdgeInsetsZero);
+      BOOL stretchable = (NO == UIEdgeInsetsEqualToEdgeInsets(image.capInsets, UIEdgeInsetsZero));
       if (stretchable) {
         ASDisplayNodeSetupLayerContentsWithResizableImage(_layer, image);
       } else {
@@ -393,25 +331,25 @@ static void __ASDisplayLayerDecrementConcurrentDisplayCount(BOOL displayIsAsync,
 
 - (ASDisplayNodeContextModifier)willDisplayNodeContentWithRenderingContext
 {
-  ASDN::MutexLocker l(_propertyLock);
+  ASDN::MutexLocker l(__instanceLock__);
   return _willDisplayNodeContentWithRenderingContext;
 }
 
 - (ASDisplayNodeContextModifier)didDisplayNodeContentWithRenderingContext
 {
-  ASDN::MutexLocker l(_propertyLock);
+  ASDN::MutexLocker l(__instanceLock__);
   return _didDisplayNodeContentWithRenderingContext;
 }
 
 - (void)setWillDisplayNodeContentWithRenderingContext:(ASDisplayNodeContextModifier)contextModifier
 {
-  ASDN::MutexLocker l(_propertyLock);
+  ASDN::MutexLocker l(__instanceLock__);
   _willDisplayNodeContentWithRenderingContext = contextModifier;
 }
 
 - (void)setDidDisplayNodeContentWithRenderingContext:(ASDisplayNodeContextModifier)contextModifier;
 {
-  ASDN::MutexLocker l(_propertyLock);
+  ASDN::MutexLocker l(__instanceLock__);
   _didDisplayNodeContentWithRenderingContext = contextModifier;
 }
 

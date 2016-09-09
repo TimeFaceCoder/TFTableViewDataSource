@@ -1,12 +1,12 @@
-/*
- *  Copyright (c) 2014-present, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- */
+//
+//  ASEnvironmentInternal.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "ASEnvironmentInternal.h"
 
@@ -14,6 +14,19 @@
 
 //#define LOG(...) NSLog(__VA_ARGS__)
 #define LOG(...)
+
+#define AS_SUPPORT_PROPAGATION YES
+#define AS_DOES_NOT_SUPPORT_PROPAGATION NO
+
+BOOL ASEnvironmentStatePropagationEnabled()
+{
+  return AS_DOES_NOT_SUPPORT_PROPAGATION;
+}
+
+BOOL ASEnvironmentStateTraitCollectionPropagationEnabled()
+{
+  return AS_SUPPORT_PROPAGATION;
+}
 
 #pragma mark - Traversing an ASEnvironment Tree
 
@@ -98,13 +111,17 @@ UIEdgeInsets _ASEnvironmentLayoutOptionsExtensionGetEdgeInsetsAtIndex(id<ASEnvir
 
 ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environmentState, ASEnvironmentHierarchyState hierarchyState, ASEnvironmentStatePropagation propagation) {
     // Merge object and hierarchy state
-  LOG(@"Merge object and state: %@ - ASEnvironmentHierarchyState", object);
+  LOG(@"Merge object and state: %@ - ASEnvironmentHierarchyState", hierarchyState);
   return environmentState;
 }
 
 ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environmentState, ASEnvironmentLayoutOptionsState layoutOptionsState, ASEnvironmentStatePropagation propagation) {
   // Merge object and layout options state
-  LOG(@"Merge object and state: %@ - ASEnvironmentLayoutOptionsState", object);
+  LOG(@"Merge object and state: %@ - ASEnvironmentLayoutOptionsState", layoutOptionsState);
+  
+  if (!ASEnvironmentStatePropagationEnabled() && propagation == ASEnvironmentStatePropagation::UP) {
+    return environmentState;
+  }
   
   // Support propagate up
   if (propagation == ASEnvironmentStatePropagation::UP) {
@@ -138,10 +155,12 @@ ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environme
     }
     
     if (ASRelativeSizeRangeEqualToRelativeSizeRange(parentLayoutOptionsState.sizeRange, defaultState.sizeRange)) {
-      parentLayoutOptionsState.sizeRange = layoutOptionsState.sizeRange;
+      // For now it is unclear if we should be up-propagating sizeRange or layoutPosition.
+      // parentLayoutOptionsState.sizeRange = layoutOptionsState.sizeRange;
     }
     if (CGPointEqualToPoint(parentLayoutOptionsState.layoutPosition, defaultState.layoutPosition)) {
-      parentLayoutOptionsState.layoutPosition = layoutOptionsState.layoutPosition;
+      // For now it is unclear if we should be up-propagating sizeRange or layoutPosition.
+      // parentLayoutOptionsState.layoutPosition = layoutOptionsState.layoutPosition;
     }
     
     // Merge extended values if necessary
@@ -173,4 +192,24 @@ ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environme
   }
   
   return environmentState;
+}
+
+ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState childEnvironmentState, ASEnvironmentTraitCollection parentTraitCollection, ASEnvironmentStatePropagation propagation) {
+  if (propagation == ASEnvironmentStatePropagation::DOWN && !ASEnvironmentStateTraitCollectionPropagationEnabled()) {
+    return childEnvironmentState;
+  }
+  
+  // Support propagate down
+  if (propagation == ASEnvironmentStatePropagation::DOWN) {
+    ASEnvironmentTraitCollection childTraitCollection = childEnvironmentState.environmentTraitCollection;
+    childTraitCollection.horizontalSizeClass = parentTraitCollection.horizontalSizeClass;
+    childTraitCollection.verticalSizeClass = parentTraitCollection.verticalSizeClass;
+    childTraitCollection.userInterfaceIdiom = parentTraitCollection.userInterfaceIdiom;
+    childTraitCollection.forceTouchCapability = parentTraitCollection.forceTouchCapability;
+    childTraitCollection.displayScale = parentTraitCollection.displayScale;
+    childTraitCollection.containerSize = parentTraitCollection.containerSize;
+    childEnvironmentState.environmentTraitCollection = childTraitCollection;
+
+  }
+  return childEnvironmentState;
 }

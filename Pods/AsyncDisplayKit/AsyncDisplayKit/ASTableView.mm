@@ -1,30 +1,30 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASTableView.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "ASTableViewInternal.h"
 
 #import "ASAssert.h"
+#import "ASAvailability.h"
 #import "ASBatchFetching.h"
 #import "ASCellNode+Internal.h"
 #import "ASChangeSetDataController.h"
 #import "ASDelegateProxy.h"
 #import "ASDisplayNodeExtras.h"
-#import "ASDisplayNode+Beta.h"
 #import "ASDisplayNode+FrameworkPrivate.h"
 #import "ASInternalHelpers.h"
 #import "ASLayout.h"
-#import "ASLayoutController.h"
-#import "ASRangeController.h"
-#import "ASRangeControllerUpdateRangeProtocol+Beta.h"
 #import "_ASDisplayLayer.h"
+#import "ASTableNode.h"
+#import "ASEqualityHelpers.h"
 
-#import <CoreFoundation/CoreFoundation.h>
-
+static const ASSizeRange kInvalidSizeRange = {CGSizeZero, CGSizeZero};
 static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
 //#define LOG(...) NSLog(__VA_ARGS__)
@@ -63,20 +63,27 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 - (void)setNode:(ASCellNode *)node
 {
   _node = node;
-  node.selected = self.selected;
-  node.highlighted = self.highlighted;
+  [node __setSelectedFromUIKit:self.selected];
+  [node __setHighlightedFromUIKit:self.highlighted];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
   [super setSelected:selected animated:animated];
-  _node.selected = selected;
+  [_node __setSelectedFromUIKit:selected];
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
   [super setHighlighted:highlighted animated:animated];
-  _node.highlighted = highlighted;
+  [_node __setHighlightedFromUIKit:highlighted];
+}
+
+- (void)prepareForReuse
+{
+  // Need to clear node pointer before UIKit calls setSelected:NO / setHighlighted:NO on its cells
+  self.node = nil;
+  [super prepareForReuse];
 }
 
 @end
@@ -88,9 +95,7 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 - (instancetype)_initWithTableView:(ASTableView *)tableView;
 @end
 
-@interface ASTableView () <ASRangeControllerDataSource, ASRangeControllerDelegate,
-                           ASDataControllerSource,     _ASTableViewCellDelegate,
-                           ASCellNodeLayoutDelegate,    ASDelegateProxyInterceptor>
+@interface ASTableView () <ASRangeControllerDataSource, ASRangeControllerDelegate, ASDataControllerSource, _ASTableViewCellDelegate, ASCellNodeInteractionDelegate, ASDelegateProxyInterceptor, ASBatchFetchingScrollView, ASDataControllerEnvironmentDelegate>
 {
   ASTableViewProxy *_proxyDataSource;
   ASTableViewProxy *_proxyDelegate;
@@ -98,8 +103,6 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   ASFlowLayoutController *_layoutController;
 
   ASRangeController *_rangeController;
-
-  BOOL _asyncDataFetchingEnabled;
 
   ASBatchContext *_batchContext;
 
@@ -109,17 +112,43 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   CGFloat _contentOffsetAdjustment;
   
   CGPoint _deceleratingVelocity;
+  
+  /**
+   * Our layer, retained. Under iOS < 9, when table views are removed from the hierarchy,
+   * their layers may be deallocated and become dangling pointers. This puts the table view
+   * into a very dangerous state where pretty much any call will crash it. So we manually retain our layer.
+   *
+   * You should never access this, and it will be nil under iOS >= 9.
+   */
+  CALayer *_retainedLayer;
 
   CGFloat _nodesConstrainedWidth;
   BOOL _ignoreNodesConstrainedWidthChange;
   BOOL _queuedNodeHeightUpdate;
   BOOL _isDeallocating;
-  BOOL _dataSourceImplementsNodeBlockForRowAtIndexPath;
-  BOOL _asyncDelegateImplementsScrollviewDidScroll;
+  BOOL _performingBatchUpdates;
   NSMutableSet *_cellsForVisibilityUpdates;
+  
+  struct {
+    unsigned int asyncDelegateScrollViewDidScroll:1;
+    unsigned int asyncDelegateScrollViewWillBeginDragging:1;
+    unsigned int asyncDelegateScrollViewDidEndDragging:1;
+    unsigned int asyncDelegateTableViewWillDisplayNodeForRowAtIndexPath:1;
+    unsigned int asyncDelegateTableViewDidEndDisplayingNodeForRowAtIndexPath:1;
+    unsigned int asyncDelegateTableViewDidEndDisplayingNodeForRowAtIndexPathDeprecated:1;
+    unsigned int asyncDelegateScrollViewWillEndDraggingWithVelocityTargetContentOffset:1;
+    unsigned int asyncDelegateTableViewWillBeginBatchFetchWithContext:1;
+    unsigned int asyncDelegateShouldBatchFetchForTableView:1;
+    unsigned int asyncDelegateTableViewConstrainedSizeForRowAtIndexPath:1;
+  } _asyncDelegateFlags;
+  
+  struct {
+    unsigned int asyncDataSourceNumberOfSectionsInTableView:1;
+    unsigned int asyncDataSourceTableViewNodeBlockForRowAtIndexPath:1;
+    unsigned int asyncDataSourceTableViewNodeForRowAtIndexPath:1;
+  } _asyncDataSourceFlags;
 }
 
-@property (atomic, assign) BOOL asyncDataSourceLocked;
 @property (nonatomic, strong, readwrite) ASDataController *dataController;
 
 // Used only when ASTableView is created directly rather than through ASTableNode.
@@ -131,6 +160,7 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 // Always set, whether ASCollectionView is created directly or via ASCollectionNode.
 @property (nonatomic, weak)   ASTableNode *tableNode;
 
+@property (nonatomic) BOOL test_enableSuperUpdateCallLogging;
 @end
 
 @implementation ASTableView
@@ -158,14 +188,11 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   _rangeController.dataSource = self;
   _rangeController.delegate = self;
   
-  _dataController = [[dataControllerClass alloc] initWithAsyncDataFetching:NO];
-  _dataController.dataSource = self;
+  _dataController = [[dataControllerClass alloc] initWithDataSource:self];
   _dataController.delegate = _rangeController;
+  _dataController.environmentDelegate = self;
   
   _layoutController.dataSource = _dataController;
-
-  _asyncDataFetchingEnabled = NO;
-  _asyncDataSourceLocked = NO;
 
   _leadingScreensForBatching = 2.0;
   _batchContext = [[ASBatchContext alloc] init];
@@ -218,6 +245,10 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
     self.strongTableNode = tableNode;
   }
   
+  if (!AS_AT_LEAST_IOS9) {
+    _retainedLayer = self.layer;
+  }
+  
   return self;
 }
 
@@ -254,21 +285,25 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 {
   // Note: It's common to check if the value hasn't changed and short-circuit but we aren't doing that here to handle
   // the (common) case of nilling the asyncDataSource in the ViewController's dealloc. In this case our _asyncDataSource
-  // will return as nil (ARC magic) even though the _proxyDataSource still exists. It's really important to nil out
-  // super.dataSource in this case because calls to ASTableViewProxy will start failing and cause crashes.
-  
-  super.dataSource = nil;
+  // will return as nil (ARC magic) even though the _proxyDataSource still exists. It's really important to hold a strong
+  // reference to the old dataSource in this case because calls to ASTableViewProxy will start failing and cause crashes.
+  NS_VALID_UNTIL_END_OF_SCOPE id oldDataSource = self.dataSource;
   
   if (asyncDataSource == nil) {
     _asyncDataSource = nil;
     _proxyDataSource = _isDeallocating ? nil : [[ASTableViewProxy alloc] initWithTarget:nil interceptor:self];
-    _dataSourceImplementsNodeBlockForRowAtIndexPath = NO;
+    
+    memset(&_asyncDataSourceFlags, 0, sizeof(_asyncDataSourceFlags));
   } else {
     _asyncDataSource = asyncDataSource;
-    _dataSourceImplementsNodeBlockForRowAtIndexPath = [_asyncDataSource respondsToSelector:@selector(tableView:nodeBlockForRowAtIndexPath:)];
-    // Data source must implement tableView:nodeBlockForRowAtIndexPath: or tableView:nodeForRowAtIndexPath:
-    ASDisplayNodeAssertTrue(_dataSourceImplementsNodeBlockForRowAtIndexPath || [_asyncDataSource respondsToSelector:@selector(tableView:nodeForRowAtIndexPath:)]);
     _proxyDataSource = [[ASTableViewProxy alloc] initWithTarget:_asyncDataSource interceptor:self];
+    
+    _asyncDataSourceFlags.asyncDataSourceNumberOfSectionsInTableView = [_asyncDataSource respondsToSelector:@selector(numberOfSectionsInTableView:)];
+    _asyncDataSourceFlags.asyncDataSourceTableViewNodeForRowAtIndexPath = [_asyncDataSource respondsToSelector:@selector(tableView:nodeForRowAtIndexPath:)];
+    _asyncDataSourceFlags.asyncDataSourceTableViewNodeBlockForRowAtIndexPath = [_asyncDataSource respondsToSelector:@selector(tableView:nodeBlockForRowAtIndexPath:)];
+    
+    // Data source must implement tableView:nodeBlockForRowAtIndexPath: or tableView:nodeForRowAtIndexPath:
+    ASDisplayNodeAssertTrue(_asyncDataSourceFlags.asyncDataSourceTableViewNodeBlockForRowAtIndexPath || _asyncDataSourceFlags.asyncDataSourceTableViewNodeForRowAtIndexPath);
   }
   
   super.dataSource = (id<UITableViewDataSource>)_proxyDataSource;
@@ -278,22 +313,30 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 {
   // Note: It's common to check if the value hasn't changed and short-circuit but we aren't doing that here to handle
   // the (common) case of nilling the asyncDelegate in the ViewController's dealloc. In this case our _asyncDelegate
-  // will return as nil (ARC magic) even though the _proxyDelegate still exists. It's really important to nil out
-  // super.delegate in this case because calls to ASTableViewProxy will start failing and cause crashes.
-  
-  // Order is important here, the asyncDelegate must be callable while nilling super.delegate to avoid random crashes
-  // in UIScrollViewAccessibility.
-
-  super.delegate = nil;
+  // will return as nil (ARC magic) even though the _proxyDataSource still exists. It's really important to hold a strong
+  // reference to the old delegate in this case because calls to ASTableViewProxy will start failing and cause crashes.
+  NS_VALID_UNTIL_END_OF_SCOPE id oldDelegate = super.delegate;
   
   if (asyncDelegate == nil) {
     _asyncDelegate = nil;
     _proxyDelegate = _isDeallocating ? nil : [[ASTableViewProxy alloc] initWithTarget:nil interceptor:self];
-    _asyncDelegateImplementsScrollviewDidScroll = NO;
+    
+    memset(&_asyncDelegateFlags, 0, sizeof(_asyncDelegateFlags));
   } else {
     _asyncDelegate = asyncDelegate;
-    _asyncDelegateImplementsScrollviewDidScroll = [_asyncDelegate respondsToSelector:@selector(scrollViewDidScroll:)];
     _proxyDelegate = [[ASTableViewProxy alloc] initWithTarget:_asyncDelegate interceptor:self];
+    
+    _asyncDelegateFlags.asyncDelegateScrollViewDidScroll = [_asyncDelegate respondsToSelector:@selector(scrollViewDidScroll:)];
+    _asyncDelegateFlags.asyncDelegateTableViewWillDisplayNodeForRowAtIndexPath = [_asyncDelegate respondsToSelector:@selector(tableView:willDisplayNodeForRowAtIndexPath:)];
+    _asyncDelegateFlags.asyncDelegateTableViewDidEndDisplayingNodeForRowAtIndexPath = [_asyncDelegate respondsToSelector:@selector(tableView:didEndDisplayingNode:forRowAtIndexPath:)];
+    _asyncDelegateFlags.asyncDelegateTableViewDidEndDisplayingNodeForRowAtIndexPathDeprecated = [_asyncDelegate respondsToSelector:@selector(tableView:didEndDisplayingNodeForRowAtIndexPath:)];
+    _asyncDelegateFlags.asyncDelegateScrollViewWillEndDraggingWithVelocityTargetContentOffset = [_asyncDelegate respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)];
+    _asyncDelegateFlags.asyncDelegateTableViewWillBeginBatchFetchWithContext = [_asyncDelegate respondsToSelector:@selector(tableView:willBeginBatchFetchWithContext:)];
+    _asyncDelegateFlags.asyncDelegateShouldBatchFetchForTableView = [_asyncDelegate respondsToSelector:@selector(shouldBatchFetchForTableView:)];
+    _asyncDelegateFlags.asyncDelegateScrollViewWillBeginDragging = [_asyncDelegate respondsToSelector:@selector(scrollViewWillBeginDragging:)];
+    _asyncDelegateFlags.asyncDelegateScrollViewDidEndDragging = [_asyncDelegate respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)];
+    _asyncDelegateFlags.asyncDelegateTableViewConstrainedSizeForRowAtIndexPath = [_asyncDelegate respondsToSelector:@selector(tableView:constrainedSizeForRowAtIndexPath:)];
+
   }
   
   super.delegate = (id<UITableViewDelegate>)_proxyDelegate;
@@ -328,24 +371,29 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   [super reloadData];
 }
 
+- (void)relayoutItems
+{
+  [_dataController relayoutAllNodes];
+}
+
 - (void)setTuningParameters:(ASRangeTuningParameters)tuningParameters forRangeType:(ASLayoutRangeType)rangeType
 {
-  [_layoutController setTuningParameters:tuningParameters forRangeMode:ASLayoutRangeModeFull rangeType:rangeType];
+  [_rangeController setTuningParameters:tuningParameters forRangeMode:ASLayoutRangeModeFull rangeType:rangeType];
 }
 
 - (ASRangeTuningParameters)tuningParametersForRangeType:(ASLayoutRangeType)rangeType
 {
-  return [_layoutController tuningParametersForRangeMode:ASLayoutRangeModeFull rangeType:rangeType];
+  return [_rangeController tuningParametersForRangeMode:ASLayoutRangeModeFull rangeType:rangeType];
 }
 
 - (void)setTuningParameters:(ASRangeTuningParameters)tuningParameters forRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType
 {
-  [_layoutController setTuningParameters:tuningParameters forRangeMode:rangeMode rangeType:rangeType];
+  [_rangeController setTuningParameters:tuningParameters forRangeMode:rangeMode rangeType:rangeType];
 }
 
 - (ASRangeTuningParameters)tuningParametersForRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType
 {
-  return [_layoutController tuningParametersForRangeMode:rangeMode rangeType:rangeType];
+  return [_rangeController tuningParametersForRangeMode:rangeMode rangeType:rangeType];
 }
 
 - (NSArray<NSArray <ASCellNode *> *> *)completedNodes
@@ -363,11 +411,11 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   return [_dataController indexPathForNode:cellNode];
 }
 
-- (NSArray *)visibleNodes
+- (NSArray<ASCellNode *> *)visibleNodes
 {
-  NSArray *indexPaths = [self indexPathsForVisibleRows];
-  NSMutableArray *visibleNodes = [[NSMutableArray alloc] init];
-
+  NSArray *indexPaths = [self visibleNodeIndexPathsForRangeController:_rangeController];
+  
+  NSMutableArray<ASCellNode *> *visibleNodes = [NSMutableArray array];
   for (NSIndexPath *indexPath in indexPaths) {
     ASCellNode *node = [self nodeForRowAtIndexPath:indexPath];
     if (node) {
@@ -402,6 +450,30 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   [_dataController waitUntilAllUpdatesAreCommitted];
 }
 
+- (void)scrollToRowAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UITableViewScrollPosition)scrollPosition animated:(BOOL)animated
+{
+  ASDisplayNodeAssertMainThread();
+
+  [self waitUntilAllUpdatesAreCommitted];
+  [super scrollToRowAtIndexPath:indexPath atScrollPosition:scrollPosition animated:animated];
+}
+
+- (void)scrollToNearestSelectedRowAtScrollPosition:(UITableViewScrollPosition)scrollPosition animated:(BOOL)animated
+{
+  ASDisplayNodeAssertMainThread();
+  
+  [self waitUntilAllUpdatesAreCommitted];
+  [super scrollToNearestSelectedRowAtScrollPosition:scrollPosition animated:animated];
+}
+
+- (void)selectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition
+{
+  ASDisplayNodeAssertMainThread();
+  
+  [self waitUntilAllUpdatesAreCommitted];
+  [super selectRowAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+}
+
 - (void)layoutSubviews
 {
   if (_nodesConstrainedWidth != self.bounds.size.width) {
@@ -420,6 +492,7 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   
   // To ensure _nodesConstrainedWidth is up-to-date for every usage, this call to super must be done last
   [super layoutSubviews];
+  [_rangeController updateIfNeeded];
 }
 
 #pragma mark -
@@ -428,18 +501,21 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 - (void)insertSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation
 {
   ASDisplayNodeAssertMainThread();
+  if (sections.count == 0) { return; }
   [_dataController insertSections:sections withAnimationOptions:animation];
 }
 
 - (void)deleteSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation
 {
   ASDisplayNodeAssertMainThread();
+  if (sections.count == 0) { return; }
   [_dataController deleteSections:sections withAnimationOptions:animation];
 }
 
 - (void)reloadSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation
 {
   ASDisplayNodeAssertMainThread();
+  if (sections.count == 0) { return; }
   [_dataController reloadSections:sections withAnimationOptions:animation];
 }
 
@@ -452,18 +528,21 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 - (void)insertRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
 {
   ASDisplayNodeAssertMainThread();
+  if (indexPaths.count == 0) { return; }
   [_dataController insertRowsAtIndexPaths:indexPaths withAnimationOptions:animation];
 }
 
 - (void)deleteRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
 {
   ASDisplayNodeAssertMainThread();
+  if (indexPaths.count == 0) { return; }
   [_dataController deleteRowsAtIndexPaths:indexPaths withAnimationOptions:animation];
 }
 
 - (void)reloadRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
 {
   ASDisplayNodeAssertMainThread();
+  if (indexPaths.count == 0) { return; }
   [_dataController reloadRowsAtIndexPaths:indexPaths withAnimationOptions:animation];
 }
 
@@ -524,8 +603,8 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   }
 }
 
-#pragma mark -
-#pragma mark Intercepted selectors
+
+#pragma mark - Intercepted selectors
 
 - (void)setTableHeaderView:(UIView *)tableHeaderView
 {
@@ -549,16 +628,27 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   cell.delegate = self;
 
   ASCellNode *node = [_dataController nodeAtIndexPath:indexPath];
-  [_rangeController configureContentView:cell.contentView forCellNode:node];
+  if (node) {
+    [_rangeController configureContentView:cell.contentView forCellNode:node];
 
-  cell.node = node;
-  cell.backgroundColor = node.backgroundColor;
-  cell.selectionStyle = node.selectionStyle;
-
-  // the following ensures that we clip the entire cell to it's bounds if node.clipsToBounds is set (the default)
-  // This is actually a workaround for a bug we are seeing in some rare cases (selected background view
-  // overlaps other cells if size of ASCellNode has changed.)
-  cell.clipsToBounds = node.clipsToBounds;
+    cell.node = node;
+    cell.backgroundColor = node.backgroundColor;
+    cell.selectionStyle = node.selectionStyle;
+    cell.accessoryType = node.accessoryType;
+    if (node.accessoryView) {
+          cell.accessoryView = node.accessoryView;
+    }
+      if (!node.separatorSunk) {
+          self.preservesSuperviewLayoutMargins = NO;
+          UIEdgeInsets lineInsets =  UIEdgeInsetsZero;
+          self.separatorInset = lineInsets;
+          self.layoutMargins = lineInsets;
+      }
+    // the following ensures that we clip the entire cell to it's bounds if node.clipsToBounds is set (the default)
+    // This is actually a workaround for a bug we are seeing in some rare cases (selected background view
+    // overlaps other cells if size of ASCellNode has changed.)
+    cell.clipsToBounds = node.clipsToBounds;
+  }
 
   return cell;
 }
@@ -579,28 +669,51 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   return [_dataController numberOfRowsInSection:section];
 }
 
-- (ASScrollDirection)scrollDirection
+- (void)tableView:(UITableView *)tableView willDisplayCell:(_ASTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  CGPoint scrollVelocity;
-  if (self.isTracking) {
-    scrollVelocity = [self.panGestureRecognizer velocityInView:self.superview];
-  } else {
-    scrollVelocity = _deceleratingVelocity;
+  _pendingVisibleIndexPath = indexPath;
+  
+  ASCellNode *cellNode = [cell node];
+  cellNode.scrollView = tableView;
+
+  if (_asyncDelegateFlags.asyncDelegateTableViewWillDisplayNodeForRowAtIndexPath) {
+    [_asyncDelegate tableView:self willDisplayNodeForRowAtIndexPath:indexPath];
   }
-  ASScrollDirection scrollDirection = [self _scrollDirectionForVelocity:scrollVelocity];
-  return ASScrollDirectionApplyTransform(scrollDirection, self.transform);
+  
+  [_rangeController setNeedsUpdate];
+  
+  if (ASSubclassOverridesSelector([ASCellNode class], [cellNode class], @selector(cellNodeVisibilityEvent:inScrollView:withCellFrame:))) {
+    [_cellsForVisibilityUpdates addObject:cell];
+  }
 }
 
-- (ASScrollDirection)_scrollDirectionForVelocity:(CGPoint)velocity
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(_ASTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  ASScrollDirection direction = ASScrollDirectionNone;
-  if (velocity.y < 0.0) {
-    direction = ASScrollDirectionDown;
-  } else if (velocity.y > 0.0) {
-    direction = ASScrollDirectionUp;
+  if (ASObjectIsEqual(_pendingVisibleIndexPath, indexPath)) {
+    _pendingVisibleIndexPath = nil;
   }
-  return direction;
+  
+  ASCellNode *cellNode = [cell node];
+
+  [_rangeController setNeedsUpdate];
+
+  if (_asyncDelegateFlags.asyncDelegateTableViewDidEndDisplayingNodeForRowAtIndexPath) {
+    ASDisplayNodeAssertNotNil(cellNode, @"Expected node associated with removed cell not to be nil.");
+    [_asyncDelegate tableView:self didEndDisplayingNode:cellNode forRowAtIndexPath:indexPath];
+  }
+
+  [_cellsForVisibilityUpdates removeObject:cell];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  if (_asyncDelegateFlags.asyncDelegateTableViewDidEndDisplayingNodeForRowAtIndexPathDeprecated) {
+    [_asyncDelegate tableView:self didEndDisplayingNodeForRowAtIndexPath:indexPath];
+  }
+#pragma clang diagnostic pop
+  
+  cellNode.scrollView = nil;
 }
+
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -615,103 +728,152 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
                                  inScrollView:scrollView
                                 withCellFrame:tableCell.frame];
   }
-  if (_asyncDelegateImplementsScrollviewDidScroll) {
+  if (_asyncDelegateFlags.asyncDelegateScrollViewDidScroll) {
     [_asyncDelegate scrollViewDidScroll:scrollView];
   }
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(_ASTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-  _pendingVisibleIndexPath = indexPath;
-  
-  ASCellNode *cellNode = [cell node];
-  cellNode.scrollView = tableView;
-
-  if ([_asyncDelegate respondsToSelector:@selector(tableView:willDisplayNodeForRowAtIndexPath:)]) {
-    [_asyncDelegate tableView:self willDisplayNodeForRowAtIndexPath:indexPath];
-  }
-  
-  [_rangeController visibleNodeIndexPathsDidChangeWithScrollDirection:self.scrollDirection];
-
-  if (cellNode.neverShowPlaceholders) {
-    [cellNode recursivelyEnsureDisplaySynchronously:YES];
-  }
-  
-  if (ASSubclassOverridesSelector([ASCellNode class], [cellNode class], @selector(cellNodeVisibilityEvent:inScrollView:withCellFrame:))) {
-    [_cellsForVisibilityUpdates addObject:cell];
-  }
-}
-
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(_ASTableViewCell *)cell forRowAtIndexPath:(NSIndexPath*)indexPath
-{
-  if ([_pendingVisibleIndexPath isEqual:indexPath]) {
-    _pendingVisibleIndexPath = nil;
-  }
-  
-  ASCellNode *cellNode = [cell node];
-
-  [_rangeController visibleNodeIndexPathsDidChangeWithScrollDirection:self.scrollDirection];
-
-  if ([_asyncDelegate respondsToSelector:@selector(tableView:didEndDisplayingNode:forRowAtIndexPath:)]) {
-    ASDisplayNodeAssertNotNil(cellNode, @"Expected node associated with removed cell not to be nil.");
-    [_asyncDelegate tableView:self didEndDisplayingNode:cellNode forRowAtIndexPath:indexPath];
-  }
-
-  if ([_cellsForVisibilityUpdates containsObject:cell]) {
-    [_cellsForVisibilityUpdates removeObject:cell];
-  }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  if ([_asyncDelegate respondsToSelector:@selector(tableView:didEndDisplayingNodeForRowAtIndexPath:)]) {
-    [_asyncDelegate tableView:self didEndDisplayingNodeForRowAtIndexPath:indexPath];
-  }
-#pragma clang diagnostic pop
-  
-  cellNode.scrollView = nil;
-}
-
-
-#pragma mark - 
-#pragma mark Batch Fetching
-
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
+  CGPoint contentOffset = scrollView.contentOffset;
   _deceleratingVelocity = CGPointMake(
-    scrollView.contentOffset.x - ((targetContentOffset != NULL) ? targetContentOffset->x : 0),
-    scrollView.contentOffset.y - ((targetContentOffset != NULL) ? targetContentOffset->y : 0)
+    contentOffset.x - ((targetContentOffset != NULL) ? targetContentOffset->x : 0),
+    contentOffset.y - ((targetContentOffset != NULL) ? targetContentOffset->y : 0)
   );
 
   if (targetContentOffset != NULL) {
-    [self handleBatchFetchScrollingToOffset:*targetContentOffset];
+    ASDisplayNodeAssert(_batchContext != nil, @"Batch context should exist");
+    [self _beginBatchFetchingIfNeededWithScrollView:self forScrollDirection:[self scrollDirection] contentOffset:*targetContentOffset];
   }
-
-  if ([_asyncDelegate respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)]) {
-    [_asyncDelegate scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+  
+  if (_asyncDelegateFlags.asyncDelegateScrollViewWillEndDraggingWithVelocityTargetContentOffset) {
+    [_asyncDelegate scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:(targetContentOffset ? : &contentOffset)];
   }
 }
 
-- (BOOL)shouldBatchFetch
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+  for (_ASTableViewCell *tableViewCell in _cellsForVisibilityUpdates) {
+    [[tableViewCell node] cellNodeVisibilityEvent:ASCellNodeVisibilityEventWillBeginDragging
+                                          inScrollView:scrollView
+                                         withCellFrame:tableViewCell.frame];
+  }
+  if (_asyncDelegateFlags.asyncDelegateScrollViewWillBeginDragging) {
+    [_asyncDelegate scrollViewWillBeginDragging:scrollView];
+  }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+  for (_ASTableViewCell *tableViewCell in _cellsForVisibilityUpdates) {
+    [[tableViewCell node] cellNodeVisibilityEvent:ASCellNodeVisibilityEventDidEndDragging
+                                          inScrollView:scrollView
+                                         withCellFrame:tableViewCell.frame];
+  }
+  if (_asyncDelegateFlags.asyncDelegateScrollViewDidEndDragging) {
+    [_asyncDelegate scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+  }
+}
+
+#pragma mark - Scroll Direction
+
+- (ASScrollDirection)scrollDirection
+{
+  CGPoint scrollVelocity;
+  if (self.isTracking) {
+    scrollVelocity = [self.panGestureRecognizer velocityInView:self.superview];
+  } else {
+    scrollVelocity = _deceleratingVelocity;
+  }
+  
+  ASScrollDirection scrollDirection = [self _scrollDirectionForVelocity:scrollVelocity];
+  return ASScrollDirectionApplyTransform(scrollDirection, self.transform);
+}
+
+- (ASScrollDirection)_scrollDirectionForVelocity:(CGPoint)scrollVelocity
+{
+  ASScrollDirection direction = ASScrollDirectionNone;
+  ASScrollDirection scrollableDirections = [self scrollableDirections];
+  
+  if (ASScrollDirectionContainsVerticalDirection(scrollableDirections)) { // Can scroll vertically.
+    if (scrollVelocity.y < 0.0) {
+      direction |= ASScrollDirectionDown;
+    } else if (scrollVelocity.y > 0.0) {
+      direction |= ASScrollDirectionUp;
+    }
+  }
+  
+  return direction;
+}
+
+- (ASScrollDirection)scrollableDirections
+{
+  ASScrollDirection scrollableDirection = ASScrollDirectionNone;
+  CGFloat totalContentWidth = self.contentSize.width + self.contentInset.left + self.contentInset.right;
+  CGFloat totalContentHeight = self.contentSize.height + self.contentInset.top + self.contentInset.bottom;
+  
+  if (self.alwaysBounceHorizontal || totalContentWidth > self.bounds.size.width) { // Can scroll horizontally.
+    scrollableDirection |= ASScrollDirectionHorizontalDirections;
+  }
+  if (self.alwaysBounceVertical || totalContentHeight > self.bounds.size.height) { // Can scroll vertically.
+    scrollableDirection |= ASScrollDirectionVerticalDirections;
+  }
+  return scrollableDirection;
+}
+
+
+#pragma mark - Batch Fetching
+
+- (ASBatchContext *)batchContext
+{
+  return _batchContext;
+}
+
+- (BOOL)canBatchFetch
 {
   // if the delegate does not respond to this method, there is no point in starting to fetch
-  BOOL canFetch = [_asyncDelegate respondsToSelector:@selector(tableView:willBeginBatchFetchWithContext:)];
-  if (canFetch && [_asyncDelegate respondsToSelector:@selector(shouldBatchFetchForTableView:)]) {
+  BOOL canFetch = _asyncDelegateFlags.asyncDelegateTableViewWillBeginBatchFetchWithContext;
+  if (canFetch && _asyncDelegateFlags.asyncDelegateShouldBatchFetchForTableView) {
     return [_asyncDelegate shouldBatchFetchForTableView:self];
   } else {
     return canFetch;
   }
 }
 
-- (void)handleBatchFetchScrollingToOffset:(CGPoint)targetOffset
+- (void)_scheduleCheckForBatchFetchingForNumberOfChanges:(NSUInteger)changes
 {
-  ASDisplayNodeAssert(_batchContext != nil, @"Batch context should exist");
-
-  if (![self shouldBatchFetch]) {
+  // Prevent fetching will continually trigger in a loop after reaching end of content and no new content was provided
+  if (changes == 0) {
     return;
   }
 
-  if (ASDisplayShouldFetchBatchForContext(_batchContext, [self scrollDirection], self.bounds, self.contentSize, targetOffset, _leadingScreensForBatching)) {
-    [_batchContext beginBatchFetching];
+  // Push this to the next runloop to be sure the scroll view has the right content size
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self _checkForBatchFetching];
+  });
+}
+
+- (void)_checkForBatchFetching
+{
+  // Dragging will be handled in scrollViewWillEndDragging:withVelocity:targetContentOffset:
+  if (self.isDragging || self.isTracking) {
+    return;
+  }
+  
+  [self _beginBatchFetchingIfNeededWithScrollView:self forScrollDirection:[self scrollableDirections] contentOffset:self.contentOffset];
+}
+
+- (void)_beginBatchFetchingIfNeededWithScrollView:(UIScrollView<ASBatchFetchingScrollView> *)scrollView forScrollDirection:(ASScrollDirection)scrollDirection contentOffset:(CGPoint)contentOffset
+{
+  if (ASDisplayShouldFetchBatchForScrollView(self, scrollDirection, contentOffset)) {
+    [self _beginBatchFetching];
+  }
+}
+
+- (void)_beginBatchFetching
+{
+  [_batchContext beginBatchFetching];
+  if (_asyncDelegateFlags.asyncDelegateTableViewWillBeginBatchFetchWithContext) {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       [_asyncDelegate tableView:self willBeginBatchFetchWithContext:_batchContext];
     });
@@ -720,65 +882,51 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
 #pragma mark - ASRangeControllerDataSource
 
+- (ASRangeController *)rangeController
+{
+    return _rangeController;
+}
+
 - (NSArray *)visibleNodeIndexPathsForRangeController:(ASRangeController *)rangeController
 {
   ASDisplayNodeAssertMainThread();
   
   // Calling indexPathsForVisibleRows will trigger UIKit to call reloadData if it never has, which can result
   // in incorrect layout if performed at zero size.  We can use the fact that nothing can be visible at zero size to return fast.
-  if (CGRectEqualToRect(self.bounds, CGRectZero)) {
+  if (CGSizeEqualToSize(self.bounds.size, CGSizeZero)) {
     return @[];
   }
   
-  NSArray *visibleIndexPaths = self.indexPathsForVisibleRows;
+  // NOTE: A prior comment claimed that `indexPathsForVisibleRows` may return extra index paths for grouped-style
+  // tables. This is seen as an acceptable issue for the time being.
   
-  if (_pendingVisibleIndexPath) {
-    NSMutableSet *indexPaths = [NSMutableSet setWithArray:self.indexPathsForVisibleRows];
-    
-    BOOL (^isAfter)(NSIndexPath *, NSIndexPath *) = ^BOOL(NSIndexPath *indexPath, NSIndexPath *anchor) {
-      if (!anchor || !indexPath) {
-        return NO;
-      }
-      if (indexPath.section == anchor.section) {
-        return (indexPath.row == anchor.row+1); // assumes that indexes are valid
-        
-      } else if (indexPath.section > anchor.section && indexPath.row == 0) {
-        if (anchor.row != [_dataController numberOfRowsInSection:anchor.section] -1) {
-          return NO;  // anchor is not at the end of the section
-        }
-        
-        NSInteger nextSection = anchor.section+1;
-        while([_dataController numberOfRowsInSection:nextSection] == 0) {
-          ++nextSection;
-        }
-        
-        return indexPath.section == nextSection;
-      }
-      
-      return NO;
-    };
-    
-    BOOL (^isBefore)(NSIndexPath *, NSIndexPath *) = ^BOOL(NSIndexPath *indexPath, NSIndexPath *anchor) {
-      return isAfter(anchor, indexPath);
-    };
-    
-    if ([indexPaths containsObject:_pendingVisibleIndexPath]) {
-      _pendingVisibleIndexPath = nil; // once it has shown up in visibleIndexPaths, we can stop tracking it
-    } else if (!isBefore(_pendingVisibleIndexPath, visibleIndexPaths.firstObject) &&
-               !isAfter(_pendingVisibleIndexPath, visibleIndexPaths.lastObject)) {
-      _pendingVisibleIndexPath = nil; // not contiguous, ignore.
-    } else {
-      [indexPaths addObject:_pendingVisibleIndexPath];
-      visibleIndexPaths = [indexPaths.allObjects sortedArrayUsingSelector:@selector(compare:)];
-    }
+  NSIndexPath *pendingVisibleIndexPath = _pendingVisibleIndexPath;
+  if (pendingVisibleIndexPath == nil) {
+    return self.indexPathsForVisibleRows;
   }
   
+  NSMutableArray *visibleIndexPaths = [self.indexPathsForVisibleRows mutableCopy];
+  [visibleIndexPaths sortUsingSelector:@selector(compare:)];
+
+  BOOL isPendingIndexPathVisible = (NSNotFound != [visibleIndexPaths indexOfObject:pendingVisibleIndexPath inSortedRange:NSMakeRange(0, visibleIndexPaths.count) options:kNilOptions usingComparator:^(id  _Nonnull obj1, id  _Nonnull obj2) {
+    return [obj1 compare:obj2];
+  }]);
+  
+  if (isPendingIndexPathVisible) {
+    _pendingVisibleIndexPath = nil; // once it has shown up in visibleIndexPaths, we can stop tracking it
+  } else if ([self isIndexPath:visibleIndexPaths.firstObject immediateSuccessorOfIndexPath:pendingVisibleIndexPath]) {
+    [visibleIndexPaths insertObject:pendingVisibleIndexPath atIndex:0];
+  } else if ([self isIndexPath:pendingVisibleIndexPath immediateSuccessorOfIndexPath:visibleIndexPaths.lastObject]) {
+    [visibleIndexPaths addObject:pendingVisibleIndexPath];
+  } else {
+    _pendingVisibleIndexPath = nil; // not contiguous, ignore.
+  }
   return visibleIndexPaths;
 }
 
-- (NSArray *)rangeController:(ASRangeController *)rangeController nodesAtIndexPaths:(NSArray *)indexPaths
+- (ASScrollDirection)scrollDirectionForRangeController:(ASRangeController *)rangeController
 {
-  return [_dataController nodesAtIndexPaths:indexPaths];
+  return self.scrollDirection;
 }
 
 - (ASDisplayNode *)rangeController:(ASRangeController *)rangeController nodeAtIndexPath:(NSIndexPath *)indexPath
@@ -797,6 +945,11 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   return ASInterfaceStateForDisplayNode(self.tableNode, self.window);
 }
 
+- (NSString *)nameForRangeControllerDataSource
+{
+  return self.asyncDataSource ? NSStringFromClass([self.asyncDataSource class]) : NSStringFromClass([self class]);
+}
+
 #pragma mark - ASRangeControllerDelegate
 
 - (void)didBeginUpdatesInRangeController:(ASRangeController *)rangeController
@@ -808,6 +961,7 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
     return; // if the asyncDataSource has become invalid while we are processing, ignore this request to avoid crashes
   }
 
+  _performingBatchUpdates = YES;
   [super beginUpdates];
 
   if (_automaticallyAdjustsContentOffset) {
@@ -833,11 +987,18 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
   ASPerformBlockWithoutAnimation(!animated, ^{
     [super endUpdates];
+    [_rangeController updateIfNeeded];
   });
 
+  _performingBatchUpdates = NO;
   if (completion) {
     completion(YES);
   }
+}
+
+- (void)didCompleteUpdatesInRangeController:(ASRangeController *)rangeController
+{
+  [self _checkForBatchFetching];
 }
 
 - (void)rangeController:(ASRangeController *)rangeController didInsertNodes:(NSArray *)nodes atIndexPaths:(NSArray *)indexPaths withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions
@@ -851,7 +1012,14 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
   BOOL preventAnimation = animationOptions == UITableViewRowAnimationNone;
   ASPerformBlockWithoutAnimation(preventAnimation, ^{
+    if (self.test_enableSuperUpdateCallLogging) {
+      NSLog(@"-[super insertRowsAtIndexPaths]: %@", indexPaths);
+    }
     [super insertRowsAtIndexPaths:indexPaths withRowAnimation:(UITableViewRowAnimation)animationOptions];
+    if (!_performingBatchUpdates) {
+      [_rangeController updateIfNeeded];
+    }
+    [self _scheduleCheckForBatchFetchingForNumberOfChanges:indexPaths.count];
   });
 
   if (_automaticallyAdjustsContentOffset) {
@@ -870,7 +1038,14 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
   BOOL preventAnimation = animationOptions == UITableViewRowAnimationNone;
   ASPerformBlockWithoutAnimation(preventAnimation, ^{
+    if (self.test_enableSuperUpdateCallLogging) {
+      NSLog(@"-[super deleteRowsAtIndexPaths]: %@", indexPaths);
+    }
     [super deleteRowsAtIndexPaths:indexPaths withRowAnimation:(UITableViewRowAnimation)animationOptions];
+    if (!_performingBatchUpdates) {
+      [_rangeController updateIfNeeded];
+    }
+    [self _scheduleCheckForBatchFetchingForNumberOfChanges:indexPaths.count];
   });
 
   if (_automaticallyAdjustsContentOffset) {
@@ -890,7 +1065,14 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
   BOOL preventAnimation = animationOptions == UITableViewRowAnimationNone;
   ASPerformBlockWithoutAnimation(preventAnimation, ^{
+    if (self.test_enableSuperUpdateCallLogging) {
+      NSLog(@"-[super insertSections]: %@", indexSet);
+    }
     [super insertSections:indexSet withRowAnimation:(UITableViewRowAnimation)animationOptions];
+    if (!_performingBatchUpdates) {
+      [_rangeController updateIfNeeded];
+    }
+    [self _scheduleCheckForBatchFetchingForNumberOfChanges:indexSet.count];
   });
 }
 
@@ -905,7 +1087,14 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
   BOOL preventAnimation = animationOptions == UITableViewRowAnimationNone;
   ASPerformBlockWithoutAnimation(preventAnimation, ^{
+    if (self.test_enableSuperUpdateCallLogging) {
+      NSLog(@"-[super deleteSections]: %@", indexSet);
+    }
     [super deleteSections:indexSet withRowAnimation:(UITableViewRowAnimation)animationOptions];
+    if (!_performingBatchUpdates) {
+      [_rangeController updateIfNeeded];
+    }
+    [self _scheduleCheckForBatchFetchingForNumberOfChanges:indexSet.count];
   });
 }
 
@@ -919,8 +1108,8 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
     return ^{
       __typeof__(self) strongSelf = weakSelf;
       [node enterHierarchyState:ASHierarchyStateRangeManaged];
-      if (node.layoutDelegate == nil) {
-        node.layoutDelegate = strongSelf;
+      if (node.interactionDelegate == nil) {
+        node.interactionDelegate = strongSelf;
       }
       return node;
     };
@@ -932,8 +1121,8 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
     __typeof__(self) strongSelf = weakSelf;
     ASCellNode *node = block();
     [node enterHierarchyState:ASHierarchyStateRangeManaged];
-    if (node.layoutDelegate == nil) {
-      node.layoutDelegate = strongSelf;
+    if (node.interactionDelegate == nil) {
+      node.interactionDelegate = strongSelf;
     }
     return node;
   };
@@ -942,30 +1131,17 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
 - (ASSizeRange)dataController:(ASDataController *)dataController constrainedSizeForNodeAtIndexPath:(NSIndexPath *)indexPath
 {
-  return ASSizeRangeMake(CGSizeMake(_nodesConstrainedWidth, 0),
-                         CGSizeMake(_nodesConstrainedWidth, FLT_MAX));
-}
-
-- (void)dataControllerLockDataSource
-{
-  ASDisplayNodeAssert(!self.asyncDataSourceLocked, @"The data source has already been locked");
-
-  self.asyncDataSourceLocked = YES;
-
-  if ([_asyncDataSource respondsToSelector:@selector(tableViewLockDataSource:)]) {
-    [_asyncDataSource tableViewLockDataSource:self];
+  ASSizeRange constrainedSize = kInvalidSizeRange;
+  if (_asyncDelegateFlags.asyncDelegateTableViewConstrainedSizeForRowAtIndexPath) {
+    ASSizeRange delegateConstrainedSize = [_asyncDelegate tableView:self constrainedSizeForRowAtIndexPath:indexPath];
+    // ignore widths in the returned size range (for TableView)
+    constrainedSize = ASSizeRangeMake(CGSizeMake(_nodesConstrainedWidth, delegateConstrainedSize.min.height),
+                                      CGSizeMake(_nodesConstrainedWidth, delegateConstrainedSize.max.height));
+  } else {
+    constrainedSize = ASSizeRangeMake(CGSizeMake(_nodesConstrainedWidth, 0),
+                                      CGSizeMake(_nodesConstrainedWidth, FLT_MAX));
   }
-}
-
-- (void)dataControllerUnlockDataSource
-{
-  ASDisplayNodeAssert(self.asyncDataSourceLocked, @"The data source has already been unlocked");
-
-  self.asyncDataSourceLocked = NO;
-
-  if ([_asyncDataSource respondsToSelector:@selector(tableViewUnlockDataSource:)]) {
-    [_asyncDataSource tableViewUnlockDataSource:self];
-  }
+  return constrainedSize;
 }
 
 - (NSUInteger)dataController:(ASDataController *)dataController rowsInSection:(NSUInteger)section
@@ -975,19 +1151,33 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
 
 - (NSUInteger)numberOfSectionsInDataController:(ASDataController *)dataController
 {
-  if ([_asyncDataSource respondsToSelector:@selector(numberOfSectionsInTableView:)]) {
+  if (_asyncDataSourceFlags.asyncDataSourceNumberOfSectionsInTableView) {
     return [_asyncDataSource numberOfSectionsInTableView:self];
   } else {
     return 1; // default section number
   }
 }
 
+#pragma mark - ASDataControllerEnvironmentDelegate
+
+- (id<ASEnvironment>)dataControllerEnvironment
+{
+  if (self.tableNode) {
+    return self.tableNode;
+  }
+  return self.strongTableNode;
+}
+
 #pragma mark - _ASTableViewCellDelegate
 
 - (void)didLayoutSubviewsOfTableViewCell:(_ASTableViewCell *)tableViewCell
 {
-  CGFloat contentViewWidth = tableViewCell.contentView.bounds.size.width;
   ASCellNode *node = tableViewCell.node;
+  if (node == nil) {
+    return;
+  }
+  
+  CGFloat contentViewWidth = tableViewCell.contentView.bounds.size.width;
   ASSizeRange constrainedSize = node.constrainedSizeForCalculatedLayout;
   
   // Table view cells should always fill its content view width.
@@ -1011,7 +1201,27 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   }
 }
 
-#pragma mark - ASCellNodeLayoutDelegate
+#pragma mark - ASCellNodeDelegate
+
+- (void)nodeSelectedStateDidChange:(ASCellNode *)node
+{
+  NSIndexPath *indexPath = [self indexPathForNode:node];
+  if (indexPath) {
+    if (node.isSelected) {
+      [self selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    } else {
+      [self deselectRowAtIndexPath:indexPath animated:NO];
+    }
+  }
+}
+
+- (void)nodeHighlightedStateDidChange:(ASCellNode *)node
+{
+  NSIndexPath *indexPath = [self indexPathForNode:node];
+  if (indexPath) {
+    [self cellForRowAtIndexPath:indexPath].highlighted = node.isHighlighted;
+  }
+}
 
 - (void)nodeDidRelayout:(ASCellNode *)node sizeChanged:(BOOL)sizeChanged
 {
@@ -1049,6 +1259,32 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   [_rangeController clearFetchedData];
 }
 
+#pragma mark - Helper Methods
+
+- (BOOL)isIndexPath:(NSIndexPath *)indexPath immediateSuccessorOfIndexPath:(NSIndexPath *)anchor
+{
+  if (!anchor || !indexPath) {
+    return NO;
+  }
+  if (indexPath.section == anchor.section) {
+    return (indexPath.row == anchor.row+1); // assumes that indexes are valid
+    
+  } else if (indexPath.section > anchor.section && indexPath.row == 0) {
+    if (anchor.row != [_dataController numberOfRowsInSection:anchor.section] -1) {
+      return NO;  // anchor is not at the end of the section
+    }
+    
+    NSInteger nextSection = anchor.section+1;
+    while([_dataController numberOfRowsInSection:nextSection] == 0) {
+      ++nextSection;
+    }
+    
+    return indexPath.section == nextSection;
+  }
+  
+  return NO;
+}
+
 #pragma mark - _ASDisplayView behavior substitutions
 // Need these to drive interfaceState so we know when we are visible, if not nested in another range-managing element.
 // Because our superclass is a true UIKit class, we cannot also subclass _ASDisplayView.
@@ -1072,7 +1308,8 @@ static NSString * const kCellReuseIdentifier = @"_ASTableViewCell";
   // Updating the visible node index paths only for not range managed nodes. Range managed nodes will get their
   // their update in the layout pass
   if (![node supportsRangeManagedInterfaceState]) {
-    [_rangeController visibleNodeIndexPathsDidChangeWithScrollDirection:self.scrollDirection];
+    [_rangeController setNeedsUpdate];
+    [_rangeController updateIfNeeded];
   }
 }
 

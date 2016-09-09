@@ -1,9 +1,13 @@
 //
-//  ASRunLoopQueue.m
+//  ASRunLoopQueue.mm
 //  AsyncDisplayKit
 //
 //  Created by Rahul Malik on 3/7/16.
-//  Copyright © 2016 Facebook. All rights reserved.
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 
 #import "ASRunLoopQueue.h"
@@ -55,13 +59,15 @@ static void runLoopSourceCallback(void *info) {
     // It is not guaranteed that the runloop will turn if it has no scheduled work, and this causes processing of
     // the queue to stop. Attaching a custom loop source to the run loop and signal it if new work needs to be done
     CFRunLoopSourceContext *runLoopSourceContext = (CFRunLoopSourceContext *)calloc(1, sizeof(CFRunLoopSourceContext));
-    runLoopSourceContext->perform = runLoopSourceCallback;
+    if (runLoopSourceContext) {
+      runLoopSourceContext->perform = runLoopSourceCallback;
 #if ASRunLoopQueueLoggingEnabled
-    runLoopSourceContext->info = (__bridge void *)self;
+      runLoopSourceContext->info = (__bridge void *)self;
 #endif
-    _runLoopSource = CFRunLoopSourceCreate(NULL, 0, runLoopSourceContext);
-    CFRunLoopAddSource(runloop, _runLoopSource, kCFRunLoopCommonModes);
-    free(runLoopSourceContext);
+      _runLoopSource = CFRunLoopSourceCreate(NULL, 0, runLoopSourceContext);
+      CFRunLoopAddSource(runloop, _runLoopSource, kCFRunLoopCommonModes);
+      free(runLoopSourceContext);
+    }
 
 #if ASRunLoopQueueLoggingEnabled
     _runloopQueueLoggingTimer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(checkRunLoop) userInfo:nil repeats:YES];

@@ -1,18 +1,19 @@
-/*
- *  Copyright (c) 2014-present, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- */
+//
+//  ASEnvironmentInternal.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
-#import "ASEnvironment.h"
+#import <AsyncDisplayKit/ASEnvironment.h>
 
 #pragma once
 
-enum class ASEnvironmentStatePropagation { DOWN, UP };
+BOOL ASEnvironmentStatePropagationEnabled();
+BOOL ASEnvironmentStateTraitCollectionPropagationEnabled();
 
 
 #pragma mark - Set and get extensible values for layout options
@@ -33,16 +34,23 @@ void ASEnvironmentPerformBlockOnObjectAndChildren(id<ASEnvironment> object, void
 void ASEnvironmentPerformBlockOnObjectAndParents(id<ASEnvironment> object, void(^block)(id<ASEnvironment> object));
 
 
+#pragma mark - 
+
+enum class ASEnvironmentStatePropagation { DOWN, UP };
+
+
 #pragma mark - Merging
 
 static const struct ASEnvironmentStateExtensions ASEnvironmentDefaultStateExtensions = {};
 
-static const struct ASEnvironmentLayoutOptionsState ASEnvironmentDefaultLayoutOptionsState = {};
+static const struct ASEnvironmentLayoutOptionsState ASEnvironmentDefaultLayoutOptionsState = ASEnvironmentLayoutOptionsStateMakeDefault();
 ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environmentState, ASEnvironmentLayoutOptionsState state, ASEnvironmentStatePropagation propagation);
 
-
-static const struct ASEnvironmentHierarchyState ASEnvironmentDefaultHierarchyState = {};
+static const struct ASEnvironmentHierarchyState ASEnvironmentDefaultHierarchyState = ASEnvironmentHierarchyStateMakeDefault();
 ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environmentState, ASEnvironmentHierarchyState state, ASEnvironmentStatePropagation propagation);
+
+static const struct ASEnvironmentTraitCollection ASEnvironmentDefaultTraitCollection = ASEnvironmentTraitCollectionMakeDefault();
+ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environmentState, ASEnvironmentTraitCollection state, ASEnvironmentStatePropagation propagation);
 
 
 #pragma mark - Propagation
@@ -50,14 +58,14 @@ ASEnvironmentState ASEnvironmentMergeObjectAndState(ASEnvironmentState environme
 template <typename ASEnvironmentStateType>
 void ASEnvironmentStatePropagateDown(id<ASEnvironment> object, ASEnvironmentStateType state) {
   ASEnvironmentPerformBlockOnObjectAndChildren(object, ^(id<ASEnvironment> node) {
-    object.environmentState = ASEnvironmentMergeObjectAndState(object.environmentState, state, ASEnvironmentStatePropagation::DOWN);
+    node.environmentState = ASEnvironmentMergeObjectAndState(node.environmentState, state, ASEnvironmentStatePropagation::DOWN);
   });
 }
 
 template <typename ASEnvironmentStateType>
 void ASEnvironmentStatePropagateUp(id<ASEnvironment> object, ASEnvironmentStateType state) {
   ASEnvironmentPerformBlockOnObjectAndParents(object, ^(id<ASEnvironment> node) {
-    object.environmentState = ASEnvironmentMergeObjectAndState(object.environmentState, state, ASEnvironmentStatePropagation::UP);
+    node.environmentState = ASEnvironmentMergeObjectAndState(node.environmentState, state, ASEnvironmentStatePropagation::UP);
   });
 }
 

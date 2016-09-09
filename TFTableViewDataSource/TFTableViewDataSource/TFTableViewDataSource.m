@@ -12,7 +12,6 @@
 #import "TFTableViewDataManager.h"
 #import "TFTableViewClassList.h"
 #import "TFTableViewItem.h"
-#import "TFTableViewItemCell.h"
 
 #import <MYTableViewManager/MYTableViewLoadingItem.h>
 #import <MYTableViewManager/MYTableViewLoadingItemCell.h>

@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  _ASAsyncTransaction.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "_ASAsyncTransaction.h"
 #import "_ASAsyncTransactionGroup.h"
@@ -16,14 +18,14 @@
 NSInteger const ASDefaultTransactionPriority = 0;
 
 @interface ASDisplayNodeAsyncTransactionOperation : NSObject
-- (id)initWithOperationCompletionBlock:(asyncdisplaykit_async_transaction_operation_completion_block_t)operationCompletionBlock;
+- (instancetype)initWithOperationCompletionBlock:(asyncdisplaykit_async_transaction_operation_completion_block_t)operationCompletionBlock;
 @property (nonatomic, copy) asyncdisplaykit_async_transaction_operation_completion_block_t operationCompletionBlock;
-@property (atomic, strong) id<NSObject> value; // set on bg queue by the operation block
+@property (nonatomic, strong) id<NSObject> value; // set on bg queue by the operation block
 @end
 
 @implementation ASDisplayNodeAsyncTransactionOperation
 
-- (id)initWithOperationCompletionBlock:(asyncdisplaykit_async_transaction_operation_completion_block_t)operationCompletionBlock
+- (instancetype)initWithOperationCompletionBlock:(asyncdisplaykit_async_transaction_operation_completion_block_t)operationCompletionBlock
 {
   if ((self = [super init])) {
     _operationCompletionBlock = [operationCompletionBlock copy];
@@ -212,11 +214,15 @@ void ASAsyncTransactionQueue::GroupImpl::schedule(NSInteger priority, dispatch_q
   
   ++_pendingOperations; // enter group
   
+#if ASDISPLAYNODE_DELAY_DISPLAY
+  NSUInteger maxThreads = 1;
+#else 
   NSUInteger maxThreads = [NSProcessInfo processInfo].activeProcessorCount * 2;
 
   // Bit questionable maybe - we can give main thread more CPU time during tracking;
   if ([[NSRunLoop mainRunLoop].currentMode isEqualToString:UITrackingRunLoopMode])
     --maxThreads;
+#endif
   
   if (entry._threadCount < maxThreads) { // we need to spawn another thread
 
@@ -315,8 +321,8 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
 #pragma mark -
 #pragma mark Lifecycle
 
-- (id)initWithCallbackQueue:(dispatch_queue_t)callbackQueue
-            completionBlock:(void(^)(_ASAsyncTransaction *, BOOL))completionBlock
+- (instancetype)initWithCallbackQueue:(dispatch_queue_t)callbackQueue
+                      completionBlock:(void(^)(_ASAsyncTransaction *, BOOL))completionBlock
 {
   if ((self = [self init])) {
     if (callbackQueue == NULL) {
@@ -325,7 +331,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
     _callbackQueue = callbackQueue;
     _completionBlock = [completionBlock copy];
 
-    _state = ASAsyncTransactionStateOpen;
+    __atomic_store_n(&_state, ASAsyncTransactionStateOpen, __ATOMIC_SEQ_CST);
   }
   return self;
 }
@@ -333,7 +339,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
 - (void)dealloc
 {
   // Uncommitted transactions break our guarantees about releasing completion blocks on callbackQueue.
-  ASDisplayNodeAssert(_state != ASAsyncTransactionStateOpen, @"Uncommitted ASAsyncTransactions are not allowed");
+  ASDisplayNodeAssert(__atomic_load_n(&_state, __ATOMIC_SEQ_CST) != ASAsyncTransactionStateOpen, @"Uncommitted ASAsyncTransactions are not allowed");
   if (_group) {
     _group->release();
   }
@@ -358,7 +364,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
                         completion:(asyncdisplaykit_async_transaction_operation_completion_block_t)completion
 {
   ASDisplayNodeAssertMainThread();
-  ASDisplayNodeAssert(_state == ASAsyncTransactionStateOpen, @"You can only add operations to open transactions");
+  ASDisplayNodeAssert(__atomic_load_n(&_state, __ATOMIC_SEQ_CST) == ASAsyncTransactionStateOpen, @"You can only add operations to open transactions");
 
   [self _ensureTransactionData];
 
@@ -366,7 +372,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
   [_operations addObject:operation];
   _group->schedule(priority, queue, ^{
     @autoreleasepool {
-      if (_state != ASAsyncTransactionStateCanceled) {
+      if (__atomic_load_n(&_state, __ATOMIC_SEQ_CST) != ASAsyncTransactionStateCanceled) {
         _group->enter();
         block(^(id<NSObject> value){
           operation.value = value;
@@ -393,7 +399,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
                    completion:(asyncdisplaykit_async_transaction_operation_completion_block_t)completion
 {
   ASDisplayNodeAssertMainThread();
-  ASDisplayNodeAssert(_state == ASAsyncTransactionStateOpen, @"You can only add operations to open transactions");
+  ASDisplayNodeAssert(__atomic_load_n(&_state, __ATOMIC_SEQ_CST) == ASAsyncTransactionStateOpen, @"You can only add operations to open transactions");
 
   [self _ensureTransactionData];
 
@@ -401,7 +407,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
   [_operations addObject:operation];
   _group->schedule(priority, queue, ^{
     @autoreleasepool {
-      if (_state != ASAsyncTransactionStateCanceled) {
+      if (__atomic_load_n(&_state, __ATOMIC_SEQ_CST) != ASAsyncTransactionStateCanceled) {
         operation.value = block();
       }
     }
@@ -420,15 +426,15 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
 - (void)cancel
 {
   ASDisplayNodeAssertMainThread();
-  ASDisplayNodeAssert(_state != ASAsyncTransactionStateOpen, @"You can only cancel a committed or already-canceled transaction");
-  _state = ASAsyncTransactionStateCanceled;
+  ASDisplayNodeAssert(__atomic_load_n(&_state, __ATOMIC_SEQ_CST) != ASAsyncTransactionStateOpen, @"You can only cancel a committed or already-canceled transaction");
+  __atomic_store_n(&_state, ASAsyncTransactionStateCanceled, __ATOMIC_SEQ_CST);
 }
 
 - (void)commit
 {
   ASDisplayNodeAssertMainThread();
-  ASDisplayNodeAssert(_state == ASAsyncTransactionStateOpen, @"You cannot double-commit a transaction");
-  _state = ASAsyncTransactionStateCommitted;
+  ASDisplayNodeAssert(__atomic_load_n(&_state, __ATOMIC_SEQ_CST) == ASAsyncTransactionStateOpen, @"You cannot double-commit a transaction");
+  __atomic_store_n(&_state, ASAsyncTransactionStateCommitted, __ATOMIC_SEQ_CST);
   
   if ([_operations count] == 0) {
     // Fast path: if a transaction was opened, but no operations were added, execute completion block synchronously.
@@ -449,8 +455,8 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
 
 - (void)completeTransaction
 {
-  if (_state != ASAsyncTransactionStateComplete) {
-    BOOL isCanceled = (_state == ASAsyncTransactionStateCanceled);
+  if (__atomic_load_n(&_state, __ATOMIC_SEQ_CST) != ASAsyncTransactionStateComplete) {
+    BOOL isCanceled = (__atomic_load_n(&_state, __ATOMIC_SEQ_CST) == ASAsyncTransactionStateCanceled);
     for (ASDisplayNodeAsyncTransactionOperation *operation in _operations) {
       [operation callAndReleaseCompletionBlock:isCanceled];
     }
@@ -458,7 +464,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
     // Always set _state to Complete, even if we were cancelled, to block any extraneous
     // calls to this method that may have been scheduled for the next runloop
     // (e.g. if we needed to force one in this runloop with -waitUntilComplete, but another was already scheduled)
-    _state = ASAsyncTransactionStateComplete;
+    __atomic_store_n(&_state, ASAsyncTransactionStateComplete, __ATOMIC_SEQ_CST);
 
     if (_completionBlock) {
       _completionBlock(self, isCanceled);
@@ -469,7 +475,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
 - (void)waitUntilComplete
 {
   ASDisplayNodeAssertMainThread();
-  if (_state != ASAsyncTransactionStateComplete) {
+  if (__atomic_load_n(&_state, __ATOMIC_SEQ_CST) != ASAsyncTransactionStateComplete) {
     if (_group) {
       ASDisplayNodeAssertTrue(_callbackQueue == dispatch_get_main_queue());
       _group->wait();
@@ -479,9 +485,9 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
       // commit ourselves via the group to avoid double-committing the transaction.
       // This is only necessary when forcing display work to complete before allowing the runloop
       // to continue, e.g. in the implementation of -[ASDisplayNode recursivelyEnsureDisplay].
-      if (_state == ASAsyncTransactionStateOpen) {
+      if (__atomic_load_n(&_state, __ATOMIC_SEQ_CST) == ASAsyncTransactionStateOpen) {
         [_ASAsyncTransactionGroup commit];
-        ASDisplayNodeAssert(_state != ASAsyncTransactionStateOpen, @"Transaction should not be open after committing group");
+        ASDisplayNodeAssert(__atomic_load_n(&_state, __ATOMIC_SEQ_CST) != ASAsyncTransactionStateOpen, @"Transaction should not be open after committing group");
       }
       // If we needed to commit the group above, -completeTransaction may have already been run.
       // It is designed to accommodate this by checking _state to ensure it is not complete.
@@ -506,7 +512,7 @@ ASAsyncTransactionQueue & ASAsyncTransactionQueue::instance()
 
 - (NSString *)description
 {
-  return [NSString stringWithFormat:@"<_ASAsyncTransaction: %p - _state = %lu, _group = %p, _operations = %@>", self, (unsigned long)_state, _group, _operations];
+  return [NSString stringWithFormat:@"<_ASAsyncTransaction: %p - _state = %lu, _group = %p, _operations = %@>", self, (unsigned long)__atomic_load_n(&_state, __ATOMIC_SEQ_CST), _group, _operations];
 }
 
 @end

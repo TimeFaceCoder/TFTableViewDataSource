@@ -11,6 +11,7 @@
 #import "TFBatchRequest.h"
 #import "TFChainRequest.h"
 
+
 FOUNDATION_EXPORT void TFNLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
 @interface TFNetworkPrivate : NSObject
@@ -25,6 +26,10 @@ FOUNDATION_EXPORT void TFNLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 + (NSString *)md5StringFromString:(NSString *)string;
 
 + (NSString *)appVersionString;
+
++ (NSString*)urlEncode:(NSString*)str;
+
++ (NSString *)urlParametersStringFromParameters:(NSDictionary *)parameters;
 
 @end
 

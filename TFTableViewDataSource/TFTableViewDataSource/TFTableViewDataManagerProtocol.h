@@ -14,11 +14,10 @@
 
 @class TFTableViewItem;
 @class MYTableViewSection;
-typedef void (^Completion)(void);
-typedef void (^CellViewClickHandler)(__kindof TFTableViewItem *item ,NSInteger actionType);
-typedef void (^DeletionHandlerWithCompletion)(__kindof TFTableViewItem *item, void (^)(void));
-typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error, NSArray <MYTableViewSection *> *sections);
 
+typedef void (^Completion)(void);
+typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error, NSArray <MYTableViewSection *> *sections);
+typedef void (^DeletionHandlerWithCompletion)(__kindof TFTableViewItem *item, Completion completion);
 
 @protocol TFTableViewDataManagerProtocol <NSObject>
 
@@ -53,7 +52,7 @@ typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *
  *
  *  @param item
  */
-- (void)deleteHanlder:(TFTableViewItem *)item completion:(void (^)(void))completion;
+- (void)deleteHanlder:(TFTableViewItem *)item completion:(Completion)completion;
 
 /**
  *  刷新指定Cell

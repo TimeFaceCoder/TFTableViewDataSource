@@ -1,16 +1,18 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASControlNode.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "ASControlNode.h"
 #import "ASControlNode+Subclasses.h"
-#import "ASThread.h"
-#import "ASDisplayNodeExtras.h"
 #import "ASImageNode.h"
+#import "AsyncDisplayKit+Debug.h"
+#import "ASInternalHelpers.h"
 
 // UIControl allows dragging some distance outside of the control itself during
 // tracking. This value depends on the device idiom (25 or 70 points), so
@@ -71,8 +73,6 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
 
 @end
 
-static BOOL _enableHitTestDebug = NO;
-
 @implementation ASControlNode
 {
   ASImageNode *_debugHighlightOverlay;
@@ -80,7 +80,7 @@ static BOOL _enableHitTestDebug = NO;
 
 #pragma mark - Lifecycle
 
-- (id)init
+- (instancetype)init
 {
   if (!(self = [super init]))
     return nil;
@@ -89,8 +89,21 @@ static BOOL _enableHitTestDebug = NO;
 
   // As we have no targets yet, we start off with user interaction off. When a target is added, it'll get turned back on.
   self.userInteractionEnabled = NO;
+  
   return self;
 }
+
+#if TARGET_OS_TV
+- (void)didLoad
+{
+  // On tvOS all controls, such as buttons, interact with the focus system even if they don't have a target set on them.
+  // Here we add our own internal tap gesture to handle this behaviour.
+  self.userInteractionEnabled = YES;
+  UITapGestureRecognizer *tapGestureRec = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pressDown)];
+  tapGestureRec.allowedPressTypes = @[@(UIPressTypeSelect)];
+  [self.view addGestureRecognizer:tapGestureRec];
+}
+#endif
 
 - (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
 {
@@ -249,15 +262,15 @@ static BOOL _enableHitTestDebug = NO;
     _controlEventDispatchTable = [[NSMutableDictionary alloc] initWithCapacity:kASControlNodeEventDispatchTableInitialCapacity]; // enough to handle common types without re-hashing the dictionary when adding entries.
     
     // only show tap-able areas for views with 1 or more addTarget:action: pairs
-    if (_enableHitTestDebug) {
-      
-      // add a highlight overlay node with area of ASControlNode + UIEdgeInsets
-      self.clipsToBounds = NO;
-      _debugHighlightOverlay = [[ASImageNode alloc] init];
-      _debugHighlightOverlay.zPosition = 1000;  // CALayer doesn't have -moveSublayerToFront, but this will ensure we're over the top of any siblings.
-      _debugHighlightOverlay.layerBacked = YES;
-      _debugHighlightOverlay.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.4];
-      [self addSubnode:_debugHighlightOverlay];
+    if ([ASControlNode enableHitTestDebug] && _debugHighlightOverlay == nil) {
+      ASPerformBlockOnMainThread(^{
+        // add a highlight overlay node with area of ASControlNode + UIEdgeInsets
+        self.clipsToBounds = NO;
+        _debugHighlightOverlay = [[ASImageNode alloc] init];
+        _debugHighlightOverlay.zPosition = 1000;  // ensure we're over the top of any siblings
+        _debugHighlightOverlay.layerBacked = YES;
+        [self addSubnode:_debugHighlightOverlay];
+      });
     }
   }
 
@@ -273,7 +286,9 @@ static BOOL _enableHitTestDebug = NO;
       {
         // Create the dispatch table for this event.
         eventDispatchTable = [NSMapTable weakToStrongObjectsMapTable];
-        _controlEventDispatchTable[eventKey] = eventDispatchTable;
+        if (eventKey) {
+          [_controlEventDispatchTable setObject:eventDispatchTable forKey:eventKey];
+        }
       }
 
       // Have we seen this target before for this event?
@@ -317,7 +332,7 @@ static BOOL _enableHitTestDebug = NO;
   NSMutableSet *targets = [[NSMutableSet alloc] init];
 
   // Look at each event...
-  for (NSMapTable *eventDispatchTable in [_controlEventDispatchTable allValues])
+  for (NSMapTable *eventDispatchTable in [_controlEventDispatchTable objectEnumerator])
   {
     // and each event's targets...
     for (id target in eventDispatchTable)
@@ -429,9 +444,11 @@ id<NSCopying> _ASControlNodeEventKeyForControlEvent(ASControlNodeEvent controlEv
 
 void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, void (^block)(ASControlNodeEvent anEvent))
 {
+  if (block == nil) {
+    return;
+  }
   // Start with our first event (touch down) and work our way up to the last event (touch cancel)
-  for (ASControlNodeEvent thisEvent = ASControlNodeEventTouchDown; thisEvent <= ASControlNodeEventTouchCancel; thisEvent <<= 1)
-  {
+  for (ASControlNodeEvent thisEvent = ASControlNodeEventTouchDown; thisEvent <= ASControlNodeEventTouchCancel; thisEvent <<= 1){
     // If it's included in the mask, invoke the block.
     if ((mask & thisEvent) == thisEvent)
       block(thisEvent);
@@ -458,47 +475,9 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
 }
 
 #pragma mark - Debug
-// Layout method required when _enableHitTestDebug is enabled.
-- (void)layout
+- (ASImageNode *)debugHighlightOverlay
 {
-  [super layout];
-  
-  if (_debugHighlightOverlay) {
-    
-    // Even if our parents don't have clipsToBounds set and would allow us to display the debug overlay, UIKit event delivery (hitTest:)
-    // will not search sub-hierarchies if one of our parents does not return YES for pointInside:.  In such a scenario, hitTestSlop
-    // may not be able to expand the tap target as much as desired without also setting some hitTestSlop on the limiting parents.
-    CGRect intersectRect = UIEdgeInsetsInsetRect(self.bounds, [self hitTestSlop]);
-    CALayer *layer = self.layer;
-    CALayer *intersectLayer = layer;
-    CALayer *intersectSuperlayer = layer.superlayer;
-    
-    // Stop climbing if we encounter a UIScrollView, as its offset bounds origin may make it seem like our events will be clipped when
-    // scrolling will actually reveal them (because this process will not re-run due to scrolling)
-    while (intersectSuperlayer && ![intersectSuperlayer.delegate respondsToSelector:@selector(contentOffset)]) {
-      // Get our parent's tappable bounds.  If the parent has an associated node, consider hitTestSlop, as it will extend its pointInside:.
-      CGRect parentHitRect = intersectSuperlayer.bounds;
-      ASDisplayNode *parentNode = ASLayerToDisplayNode(intersectSuperlayer);
-      if (parentNode) {
-        parentHitRect = UIEdgeInsetsInsetRect(parentHitRect, [parentNode hitTestSlop]);
-      }
-      
-      // Convert our current rectangle to parent coordinates, and intersect with the parent's hit rect.
-      CGRect intersectRectInParentCoordinates = [intersectSuperlayer convertRect:intersectRect fromLayer:intersectLayer];
-      intersectRect = CGRectIntersection(parentHitRect, intersectRectInParentCoordinates);
-
-      // Advance up the tree.
-      intersectLayer = intersectSuperlayer;
-      intersectSuperlayer = intersectLayer.superlayer;
-    }
-    
-    _debugHighlightOverlay.frame = [intersectLayer convertRect:intersectRect toLayer:layer];
-  }
-}
-
-+ (void)setEnableHitTestDebug:(BOOL)enable
-{
-  _enableHitTestDebug = enable;
+  return _debugHighlightOverlay;
 }
 
 @end

@@ -1,19 +1,19 @@
-/*
- *  Copyright (c) 2014-present, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- */
+//
+//  ASStackUnpositionedLayout.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "ASStackUnpositionedLayout.h"
 
+#import <tgmath.h>
 #import <numeric>
 
 #import "ASLayoutSpecUtilities.h"
-#import "ASStackLayoutSpecUtilities.h"
 
 /**
  Sizes the child given the parameters specified, and returns the computed layout.
@@ -29,7 +29,9 @@ static ASLayout *crossChildLayout(const id<ASLayoutable> child,
   // stretched children will have a cross dimension of at least crossMin
   const CGFloat childCrossMin = alignItems == ASStackLayoutAlignItemsStretch ? crossMin : 0;
   const ASSizeRange childSizeRange = directionSizeRange(style.direction, stackMin, stackMax, childCrossMin, crossMax);
-  return [child measureWithSizeRange:childSizeRange];
+  ASLayout *layout = [child measureWithSizeRange:childSizeRange];
+  ASDisplayNodeCAssertNotNil(layout, @"ASLayout returned from measureWithSizeRange: must not be nil: %@", child);
+  return layout ? : [ASLayout layoutWithLayoutableObject:child constrainedSizeRange:childSizeRange size:CGSizeZero];
 }
 
 /**
@@ -86,7 +88,7 @@ static void stretchChildrenAlongCrossDimension(std::vector<ASStackUnpositionedIt
     // restretch all stretchable children along the cross axis using the new min. set their max size to childCrossMax,
     // not crossMax, so that if any of them would choose a larger size just because the min size increased (weird!)
     // they are forced to choose the same width as all the other children.
-    if (alignItems == ASStackLayoutAlignItemsStretch && fabs(cross - childCrossMax) > 0.01) {
+    if (alignItems == ASStackLayoutAlignItemsStretch && std::fabs(cross - childCrossMax) > 0.01) {
       l.layout = crossChildLayout(child, style, stack, stack, childCrossMax, childCrossMax);
     }
   }
@@ -181,7 +183,7 @@ static const CGFloat kViolationEpsilon = 0.01;
  */
 static std::function<BOOL(const ASStackUnpositionedItem &)> isFlexibleInViolationDirection(const CGFloat violation)
 {
-  if (fabs(violation) < kViolationEpsilon) {
+  if (std::fabs(violation) < kViolationEpsilon) {
     return [](const ASStackUnpositionedItem &l) { return NO; };
   } else if (violation > 0) {
     return [](const ASStackUnpositionedItem &l) { return l.child.flexGrow; };
@@ -262,7 +264,7 @@ static void flexChildrenAlongStackDimension(std::vector<ASStackUnpositionedItem>
   }
 
   // Each flexible child along the direction of the violation is expanded or contracted equally
-  const CGFloat violationPerFlexChild = floorf(violation / flexibleChildren);
+  const CGFloat violationPerFlexChild = std::floor(violation / flexibleChildren);
   // If the floor operation above left a remainder we may have a remainder after deducting the adjustments from all the
   // contributions of the flexible children.
   const CGFloat violationRemainder = violation - (violationPerFlexChild * flexibleChildren);
@@ -303,7 +305,7 @@ static std::vector<ASStackUnpositionedItem> layoutChildrenAlongUnconstrainedStac
     const CGFloat exactStackDimension = ASRelativeDimensionResolve(flexBasis, stackDimension(style.direction, size));
 
     if (useOptimizedFlexing && isFlexibleInBothDirections(child)) {
-      return { child, [ASLayout layoutWithLayoutableObject:child size:{0, 0}] };
+      return { child, [ASLayout layoutWithLayoutableObject:child constrainedSizeRange:sizeRange size:{0, 0}] };
     } else {
       return {
         child,

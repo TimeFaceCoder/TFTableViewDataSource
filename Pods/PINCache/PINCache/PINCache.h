@@ -14,14 +14,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  A callback block which provides only the cache as an argument
  */
-
 typedef void (^PINCacheBlock)(PINCache *cache);
 
 /**
  A callback block which provides the cache, key and object as arguments
  */
-
 typedef void (^PINCacheObjectBlock)(PINCache *cache, NSString *key, id __nullable object);
+
+/**
+ A callback block which provides a BOOL value as argument
+ */
+typedef void (^PINCacheObjectContainmentBlock)(BOOL containsObject);
+
 
 /**
  `PINCache` is a thread safe key/value store designed for persisting temporary objects that are expensive to
@@ -40,7 +44,7 @@ typedef void (^PINCacheObjectBlock)(PINCache *cache, NSString *key, id __nullabl
  @warning when using in extension or watch extension, define PIN_APP_EXTENSIONS=1
  */
 
-@interface PINCache : NSObject
+@interface PINCache : NSObject <PINCacheObjectSubscripting>
 
 #pragma mark -
 /// @name Core
@@ -90,7 +94,18 @@ typedef void (^PINCacheObjectBlock)(PINCache *cache, NSString *key, id __nullabl
  @param name The name of the cache.
  @result A new cache with the specified name.
  */
-- (instancetype)initWithName:(NSString *)name;
+- (instancetype)initWithName:(nonnull NSString *)name;
+
+/**
+ Multiple instances with the same name are allowed and can safely access
+ the same data on disk thanks to the magic of seriality. Also used to create the <diskCache>.
+ 
+ @see name
+ @param name The name of the cache.
+ @param fileExtension The file extension for files on disk.
+ @result A new cache with the specified name.
+ */
+- (instancetype)initWithName:(nonnull NSString *)name fileExtension:(nullable NSString *)fileExtension;
 
 /**
  Multiple instances with the same name are allowed and can safely access
@@ -99,12 +114,41 @@ typedef void (^PINCacheObjectBlock)(PINCache *cache, NSString *key, id __nullabl
  @see name
  @param name The name of the cache.
  @param rootPath The path of the cache on disk.
+ @param fileExtension The file extension for files on disk.
  @result A new cache with the specified name.
  */
-- (instancetype)initWithName:(NSString *)name rootPath:(NSString *)rootPath NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithName:(nonnull NSString *)name rootPath:(nonnull NSString *)rootPath fileExtension:(nullable NSString *)fileExtension;
+
+/**
+ Multiple instances with the same name are allowed and can safely access
+ the same data on disk thanks to the magic of seriality. Also used to create the <diskCache>.
+ Initializer allows you to override default NSKeyedArchiver/NSKeyedUnarchiver serialization for <diskCache>.
+ You must provide both serializer and deserializer, or opt-out to default implementation providing nil values.
+ 
+ @see name
+ @param name The name of the cache.
+ @param rootPath The path of the cache on disk.
+ @param serializer   A block used to serialize object before writing to disk. If nil provided, default NSKeyedArchiver serialized will be used.
+ @param deserializer A block used to deserialize object read from disk. If nil provided, default NSKeyedUnarchiver serialized will be used.
+ @param fileExtension The file extension for files on disk.
+ @result A new cache with the specified name.
+ */
+- (instancetype)initWithName:(nonnull NSString *)name rootPath:(nonnull NSString *)rootPath serializer:(nullable PINDiskCacheSerializerBlock)serializer deserializer:(nullable PINDiskCacheDeserializerBlock)deserializer fileExtension:(nullable NSString *)fileExtension NS_DESIGNATED_INITIALIZER;
+
 
 #pragma mark -
 /// @name Asynchronous Methods
+
+/**
+ This method determines whether an object is present for the given key in the cache. This method returns immediately
+ and executes the passed block after the object is available, potentially in parallel with other blocks on the
+ <concurrentQueue>.
+ 
+ @see containsObjectForKey:
+ @param key The key associated with the object.
+ @param block A block to be executed concurrently after the containment check happened
+ */
+- (void)containsObjectForKey:(NSString *)key block:(PINCacheObjectContainmentBlock)block;
 
 /**
  Retrieves the object for the specified key. This method returns immediately and executes the passed
@@ -153,6 +197,15 @@ typedef void (^PINCacheObjectBlock)(PINCache *cache, NSString *key, id __nullabl
 
 #pragma mark -
 /// @name Synchronous Methods
+
+/**
+ This method determines whether an object is present for the given key in the cache.
+ 
+ @see containsObjectForKey:block:
+ @param key The key associated with the object.
+ @result YES if an object is present for the given key in the cache, otherwise NO.
+ */
+- (BOOL)containsObjectForKey:(NSString *)key;
 
 /**
  Retrieves the object for the specified key. This method blocks the calling thread until the object is available.

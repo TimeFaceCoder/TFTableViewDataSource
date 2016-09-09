@@ -72,16 +72,32 @@
     TFRequestMethod method = [request requestMethod];
     NSString *url = [self buildRequestUrl:request];
     id param = request.requestArgument;
+    //参数添加编码
+    if ([param isKindOfClass:[NSString class]]) {
+        param = [TFNetworkPrivate urlEncode:param];
+    }
+    else if ([param isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary *tempParamDic = [NSMutableDictionary dictionaryWithDictionary:param];
+        for (NSString *key in param) {
+            if ([param[key] isKindOfClass:[NSString class]]) {
+                NSString *value = param[key];
+                value = [TFNetworkPrivate urlEncode:value];
+                [tempParamDic setObject:value forKey:key];
+            };
+           
+        }
+        param = [NSDictionary dictionaryWithDictionary:tempParamDic];
+    }
     AFConstructingBlock constructingBlock = [request constructingBodyBlock];
     
     if (request.requestSerializerType == TFRequestSerializerTypeHTTP) {
         _manager.requestSerializer = [AFHTTPRequestSerializer serializer];
         _manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     } else if (request.requestSerializerType == TFRequestSerializerTypeJSON) {
-        _manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        _manager.requestSerializer = [AFHTTPRequestSerializer serializer];
         _manager.responseSerializer = [AFJSONResponseSerializer serializer];
     } else if (request.requestSerializerType == TFRequestSerializerTypeMsgPack) {
-        
+        _manager.requestSerializer = [AFHTTPRequestSerializer serializer];
     }
     
     _manager.requestSerializer.timeoutInterval = [request requestTimeoutInterval];
@@ -106,6 +122,7 @@
         }
     }
     
+    TFNLog(@"header - %@\n url - %@\n param - %@", headerFieldValueDictionary, url, param);
     // request.requestOperation 部分功能缺失
     if (method == TFRequestMethodGet) {
         request.sessionDataTask = [_manager GET:url

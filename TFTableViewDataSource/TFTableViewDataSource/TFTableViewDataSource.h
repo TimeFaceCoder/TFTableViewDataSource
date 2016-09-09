@@ -7,10 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MYTableViewManager/MYTableViewManager.h>
+#import <TFTableViewManager.h>
 
-
-@class MYTableViewManager;
 @class TFTableViewItem;
 @class ASTableView;
 
@@ -60,7 +58,7 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
     TFTableViewScrollDirectionRight = 4,
 };
 
-@protocol TFTableViewDataSourceDelegate <NSObject>
+@protocol TFTableViewDataSourceDelegate <TFTableViewManagerDelegate>
 
 @required
 /**
@@ -98,25 +96,12 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath;
-
-- (void)tableView:(ASTableView *)tableView willDisplayNodeForRowAtIndexPath:(NSIndexPath *)indexPath;
-
-- (void)tableView:(ASTableView *)tableView didEndDisplayingNode:(ASCellNode *)node forRowAtIndexPath:(NSIndexPath *)indexPath;
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
-forRowAtIndexPath:(NSIndexPath *)indexPath;
-
-- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath;
-
 @end
 
 @interface TFTableViewDataSource : NSObject <UITableViewDelegate>
 
 @property (nonatomic ,weak) id<TFTableViewDataSourceDelegate> delegate;
-@property (nonatomic ,strong ,readonly ,getter = manager) MYTableViewManager *manager;
+@property (nonatomic ,strong ,readonly ,getter = manager) TFTableViewManager *manager;
 @property (nonatomic ,weak) ASTableView *tableView;
 @property (nonatomic ,assign) TFDataSourceState dataSourceState;
 /**

@@ -10,12 +10,8 @@
 #import <TFTableViewDataSource/TFTableViewDataSource.h>
 #import <TFTableViewDataSource/TFTableViewDataSourceConfig.h>
 #import <TFTableViewDataSource/TFTableViewDataManager.h>
-#import <TFTableViewDataSource/TFTableViewItem.h>
-#import <TFTableViewDataSource/TFTableViewItemCell.h>
 #else
 #import "TFTableViewDataSource.h"
 #import "TFTableViewDataSourceConfig.h"
 #import "TFTableViewDataManager.h"
-#import "TFTableViewItem.h"
-#import "TFTableViewItemCell.h"
 #endif

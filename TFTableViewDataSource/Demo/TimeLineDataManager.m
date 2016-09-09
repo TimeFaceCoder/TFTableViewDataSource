@@ -16,11 +16,10 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
             NSArray *dataList = [result objectForKey:@"dataList"];
-            MYTableViewSection *section = [MYTableViewSection section];
+            TFTableViewSection *section = [TFTableViewSection section];
             
             for (NSDictionary *entry in dataList) {
-                TimeLineTableViewItem *item = [TimeLineTableViewItem itemWithModel:entry
-                                                                      clickHandler:weakSelf.cellViewClickHandler];
+                TimeLineTableViewItem *item = [TimeLineTableViewItem itemWithModel:entry cellClickHandler:weakSelf.cellClickHandler];
                 item.editingStyle = UITableViewCellEditingStyleDelete;
                 [section addItem:item];
             }

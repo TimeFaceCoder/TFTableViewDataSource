@@ -6,10 +6,10 @@
 //  Copyright © 2016 TimeFace. All rights reserved.
 //
 
-#import "TFTableViewItemCell.h"
+#import <TFASTableViewItemCell.h>
 #import "TimeLineTableViewItem.h"
 
-@interface TimeLineTableViewItemCell : TFTableViewItemCell
+@interface TimeLineTableViewItemCell : TFASTableViewItemCell
 
 @property (nonatomic ,readwrite ,strong) TimeLineTableViewItem *tableViewItem;
 

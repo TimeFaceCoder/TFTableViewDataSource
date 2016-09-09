@@ -1,16 +1,21 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASTextKitFontSizeAdjuster.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
+
+
+#import "ASTextKitFontSizeAdjuster.h"
+
+#import <tgmath.h>
+#import <mutex>
 
 #import "ASTextKitContext.h"
-#import "ASTextKitFontSizeAdjuster.h"
 #import "ASLayoutManager.h"
-
-#import <mutex>
 
 //#define LOG(...) NSLog(__VA_ARGS__)
 #define LOG(...)
@@ -46,7 +51,7 @@
   [attrString enumerateAttributesInRange:NSMakeRange(0, attrString.length) options:0 usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
     if (attrs[NSFontAttributeName] != nil) {
       UIFont *font = attrs[NSFontAttributeName];
-      font = [font fontWithSize:roundf(font.pointSize * scaleFactor)];
+      font = [font fontWithSize:std::round(font.pointSize * scaleFactor)];
       [attrString removeAttribute:NSFontAttributeName range:range];
       [attrString addAttribute:NSFontAttributeName value:font range:range];
     }
@@ -85,9 +90,9 @@
     static std::mutex __static_mutex;
     std::lock_guard<std::mutex> l(__static_mutex);
     
-    NSTextStorage *textStorage = _attributes.textStorageCreationBlock ? _attributes.textStorageCreationBlock(attributedString) : [[NSTextStorage alloc] initWithAttributedString:attributedString];
+    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:attributedString];
     if (_sizingLayoutManager == nil) {
-        _sizingLayoutManager = _attributes.layoutManagerCreationBlock ? _attributes.layoutManagerCreationBlock() : [[ASLayoutManager alloc] init];
+        _sizingLayoutManager = [[ASLayoutManager alloc] init]; 
         _sizingLayoutManager.usesFontLeading = NO;
     }
     [textStorage addLayoutManager:_sizingLayoutManager];
@@ -164,7 +169,7 @@
           // adjust here so we start at the proper place in our scale array if we have too many lines
           scaleIndex++;
           
-          if (ceilf(longestWordSize.width * [scaleFactor floatValue])  <= _constrainedSize.width) {
+          if (std::ceil(longestWordSize.width * [scaleFactor floatValue])  <= _constrainedSize.width) {
             // we fit! we are done
             break;
           }

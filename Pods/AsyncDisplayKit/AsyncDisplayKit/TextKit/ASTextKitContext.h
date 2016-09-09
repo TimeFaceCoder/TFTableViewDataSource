@@ -1,12 +1,12 @@
-/*
- *  Copyright (c) 2014-present, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- */
+//
+//  ASTextKitContext.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <UIKit/UIKit.h>
 
@@ -27,12 +27,7 @@
                            lineBreakMode:(NSLineBreakMode)lineBreakMode
                     maximumNumberOfLines:(NSUInteger)maximumNumberOfLines
                           exclusionPaths:(NSArray *)exclusionPaths
-                         constrainedSize:(CGSize)constrainedSize
-              layoutManagerCreationBlock:(NSLayoutManager * (^)(void))layoutCreationBlock
-                   layoutManagerDelegate:(id<NSLayoutManagerDelegate>)layoutManagerDelegate
-                textStorageCreationBlock:(NSTextStorage * (^)(NSAttributedString *attributedString))textStorageCreationBlock;
-
-@property (nonatomic, assign, readwrite) CGSize constrainedSize;
+                         constrainedSize:(CGSize)constrainedSize;
 
 /**
  All operations on TextKit values MUST occur within this locked context.  Simultaneous access (even non-mutative) to

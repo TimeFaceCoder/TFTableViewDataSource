@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASAssert.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #pragma once
 
@@ -46,8 +48,8 @@
 #define ASDisplayNodeAssertFalse(condition) ASDisplayNodeAssertWithSignal(!(condition), nil, nil)
 #define ASDisplayNodeCAssertFalse(condition) ASDisplayNodeCAssertWithSignal(!(condition), nil, nil)
 
-#define ASDisplayNodeFailAssert(description, ...) ASDisplayNodeAssertWithSignal(NO, nil, (description), ##__VA_ARGS__)
-#define ASDisplayNodeCFailAssert(description, ...) ASDisplayNodeCAssertWithSignal(NO, nil, (description), ##__VA_ARGS__)
+#define ASDisplayNodeFailAssert(description, ...) ASDisplayNodeAssertWithSignal(NO, (description), ##__VA_ARGS__)
+#define ASDisplayNodeCFailAssert(description, ...) ASDisplayNodeCAssertWithSignal(NO, (description), ##__VA_ARGS__)
 
 #define ASDisplayNodeConditionalAssert(shouldTestCondition, condition, description, ...) ASDisplayNodeAssert((!(shouldTestCondition) || (condition)), nil, (description), ##__VA_ARGS__)
 #define ASDisplayNodeConditionalCAssert(shouldTestCondition, condition, description, ...) ASDisplayNodeCAssert((!(shouldTestCondition) || (condition)), nil, (description), ##__VA_ARGS__)

@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASCellNode.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <AsyncDisplayKit/ASDisplayNode.h>
 
@@ -30,10 +32,22 @@ typedef NS_ENUM(NSUInteger, ASCellNodeVisibilityEvent) {
    * Indicates a cell is no longer visible
    */
   ASCellNodeVisibilityEventInvisible,
+  /**
+   * Indicates user has started dragging the visible cell
+   */
+  ASCellNodeVisibilityEventWillBeginDragging,
+  /**
+   * Indicates user has ended dragging the visible cell
+   */
+  ASCellNodeVisibilityEventDidEndDragging,
 };
 
 /**
  * Generic cell node.  Subclass this instead of `ASDisplayNode` to use with `ASTableView` and `ASCollectionView`.
+ 
+ * @note When a cell node is contained inside a collection view (or table view),
+ * calling `-setNeedsLayout` will also notify the collection on the main thread
+ * so that the collection can update its item layout if the cell's size changed.
  */
 @interface ASCellNode : ASDisplayNode
 
@@ -63,18 +77,26 @@ typedef NS_ENUM(NSUInteger, ASCellNodeVisibilityEvent) {
 /*
  * ASTableView uses these properties when configuring UITableViewCells that host ASCellNodes.
  */
-//@property (atomic, retain) UIColor *backgroundColor;
+//@property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic) UITableViewCellSelectionStyle selectionStyle;
 
+@property (nonatomic,assign) UITableViewCellAccessoryType accessoryType;
+
+@property (nonatomic, strong, nullable) UIView       *accessoryView;// if set, use custom view. ignore accessoryType. tracks if enabled can calls accessory action
+
+//the separator line is sunk, default is YES.
+@property (nonatomic, assign) BOOL separatorSunk;
 /**
- * A Boolean value that indicates whether the node is selected.
+ * A Boolean value that is synchronized with the underlying collection or tableView cell property.
+ * Setting this value is equivalent to calling selectItem / deselectItem on the collection or table.
  */
-@property (nonatomic, assign) BOOL selected;
+@property (nonatomic, assign, getter=isSelected) BOOL selected;
 
 /**
- * A Boolean value that indicates whether the node is highlighted.
+ * A Boolean value that is synchronized with the underlying collection or tableView cell property.
+ * Setting this value is equivalent to calling highlightItem / unHighlightItem on the collection or table.
  */
-@property (nonatomic, assign) BOOL highlighted;
+@property (nonatomic, assign, getter=isHighlighted) BOOL highlighted;
 
 /*
  * ASCellNode must forward touch events in order for UITableView and UICollectionView tap handling to work. Overriding
@@ -85,16 +107,12 @@ typedef NS_ENUM(NSUInteger, ASCellNodeVisibilityEvent) {
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
 - (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
 
-/**
- * Marks the node as needing layout. Convenience for use whether the view / layer is loaded or not.
- *
- * If this node was measured, calling this method triggers an internal relayout: the calculated layout is invalidated,
- * and the supernode is notified or (if this node is the root one) a full measurement pass is executed using the old constrained size.
- * The delegate will then be notified on main thread.
- *
- * This method can be called inside of an animation block (to animate all of the layout changes).
- */
-- (void)setNeedsLayout;
+/** 
+ * Called by the system when ASCellNode is used with an ASCollectionNode.  It will not be called by ASTableNode.
+ * When the UICollectionViewLayout object returns a new UICollectionViewLayoutAttributes object, the corresponding ASCellNode will be updated.
+ * See UICollectionViewCell's applyLayoutAttributes: for a full description.
+*/
+- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes;
 
 /**
  * @abstract Initializes a cell with a given view controller block.
@@ -108,7 +126,17 @@ typedef NS_ENUM(NSUInteger, ASCellNodeVisibilityEvent) {
  */
 - (instancetype)initWithViewControllerBlock:(ASDisplayNodeViewControllerBlock)viewControllerBlock didLoadBlock:(nullable ASDisplayNodeDidLoadBlock)didLoadBlock;
 
-- (void)cellNodeVisibilityEvent:(ASCellNodeVisibilityEvent)event inScrollView:(UIScrollView *)scrollView withCellFrame:(CGRect)cellFrame;
+- (void)cellNodeVisibilityEvent:(ASCellNodeVisibilityEvent)event inScrollView:(nullable UIScrollView *)scrollView withCellFrame:(CGRect)cellFrame;
+
+@end
+
+@interface ASCellNode (Unavailable)
+
+- (instancetype)initWithLayerBlock:(ASDisplayNodeLayerBlock)viewBlock didLoadBlock:(nullable ASDisplayNodeDidLoadBlock)didLoadBlock __unavailable;
+
+- (instancetype)initWithViewBlock:(ASDisplayNodeViewBlock)viewBlock didLoadBlock:(nullable ASDisplayNodeDidLoadBlock)didLoadBlock __unavailable;
+
+- (void)setLayerBacked:(BOOL)layerBacked AS_UNAVAILABLE("ASCellNode does not support layer-backing");
 
 @end
 

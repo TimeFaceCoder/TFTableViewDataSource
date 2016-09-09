@@ -1,12 +1,12 @@
-/*
- *  Copyright (c) 2014-present, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- */
+//
+//  ASStaticLayoutable.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <AsyncDisplayKit/ASRelativeSize.h>
 
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ASStaticLayoutable
 
 /**
- If specified, the child's size is restricted according to this size. Percentages are resolved relative to the static layout spec.
+ If specified, the child's size is restricted according to this size. Fractions are resolved relative to the static layout spec.
  */
 @property (nonatomic, assign) ASRelativeSizeRange sizeRange;
 

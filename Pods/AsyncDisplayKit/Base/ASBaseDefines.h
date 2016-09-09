@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASBaseDefines.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #pragma once
 
@@ -139,5 +141,13 @@
 #define ASDISPLAYNODE_REQUIRES_SUPER __attribute__((objc_requires_super))
 #else
 #define ASDISPLAYNODE_REQUIRES_SUPER
+#endif
+#endif
+
+#ifndef AS_UNAVAILABLE
+#if __has_attribute(unavailable)
+#define AS_UNAVAILABLE(message) __attribute__((unavailable(message)))
+#else
+#define AS_UNAVAILABLE(message)
 #endif
 #endif

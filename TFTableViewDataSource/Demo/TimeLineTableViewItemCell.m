@@ -28,9 +28,8 @@
 
 @implementation TimeLineTableViewItemCell
 @dynamic tableViewItem;
-- (void)initCell {
-    [super initCell];
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
+- (void)cellLoadSubNodes {
+    [super cellLoadSubNodes];
     _backgroundNode = [[ASDisplayNode alloc] init];
     _backgroundNode.backgroundColor = [UIColor whiteColor];
     _backgroundNode.cornerRadius = 4.0;
@@ -40,7 +39,7 @@
     _nickNameNode = [[ASTextNode alloc] init];
 
     NSString *nickName = [[(NSDictionary *)self.tableViewItem.model objectForKey:@"author"] objectForKey:@"nickName"];
-    _nickNameNode.attributedString = [[NSAttributedString alloc] initWithString:nickName ? nickName: @""
+    _nickNameNode.attributedText = [[NSAttributedString alloc] initWithString:nickName ? nickName: @""
                                                                      attributes:[TimeLineTextStyle nickNameStyle]];
     [_nickNameNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
     _nickNameNode.maximumNumberOfLines = 1;
@@ -50,7 +49,7 @@
 
     NSTimeInterval date = [[(NSDictionary *)self.tableViewItem.model objectForKey:@"date"] doubleValue];
     [_timeNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
-    _timeNode.attributedString = [[NSAttributedString alloc] initWithString:[self formattedDateWithDate:[NSDate dateWithTimeIntervalSince1970:date] format:@"yyyy-MM-dd HH:mm"]                                                                 attributes:[TimeLineTextStyle subTextStyle]];
+    _timeNode.attributedText = [[NSAttributedString alloc] initWithString:[self formattedDateWithDate:[NSDate dateWithTimeIntervalSince1970:date] format:@"yyyy-MM-dd HH:mm"]                                                                 attributes:[TimeLineTextStyle subTextStyle]];
     
     
     _timeNode.flexShrink = YES;
@@ -62,7 +61,7 @@
     _fromNode = [[ASTextNode alloc] init];
     [_fromNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
 
-    _fromNode.attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"来自%@",[(NSDictionary *)self.tableViewItem.model objectForKey:@"client"]]
+    _fromNode.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"来自%@",[(NSDictionary *)self.tableViewItem.model objectForKey:@"client"]]
                                                                  attributes:[TimeLineTextStyle subTextStyle]];
     _fromNode.flexShrink = YES;
     _fromNode.truncationMode = NSLineBreakByTruncatingTail;
@@ -95,7 +94,7 @@
     _titleNode = [[ASTextNode alloc] init];
     [_titleNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
 
-    _titleNode.attributedString = [[NSAttributedString alloc] initWithString:[(NSDictionary *)self.tableViewItem.model objectForKey:@"timeTitle"]
+    _titleNode.attributedText = [[NSAttributedString alloc] initWithString:[(NSDictionary *)self.tableViewItem.model objectForKey:@"timeTitle"]
                                                                   attributes:[TimeLineTextStyle titleStyle]];
     _titleNode.flexShrink = YES;
     _titleNode.truncationMode = NSLineBreakByTruncatingTail;
@@ -125,7 +124,7 @@
             // configure node to support tappable links
             _contentNode.userInteractionEnabled = YES;
             _contentNode.linkAttributeNames = @[ kLinkAttributeName ];
-            _contentNode.attributedString = attrString;
+            _contentNode.attributedText = attrString;
             //_contentNode.backgroundColor = [UIColor redColor];
             
         }

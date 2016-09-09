@@ -1,16 +1,28 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASMapNode.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <AsyncDisplayKit/ASImageNode.h>
 #if TARGET_OS_IOS
 #import <MapKit/MapKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+typedef NS_OPTIONS(NSUInteger, ASMapNodeShowAnnotationsOptions)
+{
+  /** The annotations' positions are ignored, use the region or options specified instead. */
+  ASMapNodeShowAnnotationsOptionsIgnored  = 0,
+  /** The annotations' positions are used to calculate the region to show in the map, equivalent to showAnnotations:animated. */
+  ASMapNodeShowAnnotationsOptionsZoomed   = 1 << 0,
+  /** This will only have an effect if combined with the Zoomed state with liveMap turned on.*/
+  ASMapNodeShowAnnotationsOptionsAnimated = 1 << 1
+};
 
 @interface ASMapNode : ASImageNode
 
@@ -51,6 +63,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @abstract The annotations to display on the map.
  */
 @property (nonatomic, copy) NSArray<id<MKAnnotation>> *annotations;
+
+/**
+ * @abstract This property specifies how to show the annotations.
+ * @default Default value is ASMapNodeShowAnnotationsIgnored
+ */
+@property (nonatomic, assign) ASMapNodeShowAnnotationsOptions showAnnotationsOptions;
+
+/**
+ * @abstract The block which should return annotation image for static map based on provided annotation.
+ * @discussion This block is executed on an arbitrary serial queue. If this block is nil, standard pin is used.
+ */
+@property (nonatomic, copy, nullable) UIImage * _Nullable (^imageForStaticMapAnnotationBlock)(id<MKAnnotation> annotation, CGPoint *centerOffset);
 
 @end
 

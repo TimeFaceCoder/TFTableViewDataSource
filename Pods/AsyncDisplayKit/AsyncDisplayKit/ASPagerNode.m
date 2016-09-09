@@ -3,28 +3,38 @@
 //  AsyncDisplayKit
 //
 //  Created by Levi McCallum on 12/7/15.
-//  Copyright © 2015 Facebook. All rights reserved.
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 
 #import "ASPagerNode.h"
 #import "ASDelegateProxy.h"
 #import "ASDisplayNode+Subclasses.h"
 #import "ASPagerFlowLayout.h"
-#import "UICollectionViewLayout+ASConvenience.h"
 
-@interface ASPagerNode () <ASCollectionDataSource, ASCollectionViewDelegateFlowLayout, ASDelegateProxyInterceptor>
+@interface ASPagerNode () <ASCollectionDataSource, ASCollectionDelegate, ASCollectionViewDelegateFlowLayout, ASDelegateProxyInterceptor>
 {
   ASPagerFlowLayout *_flowLayout;
-  ASPagerNodeProxy *_proxy;
-  __weak id <ASPagerNodeDataSource> _pagerDataSource;
+
+  __weak id <ASPagerDataSource> _pagerDataSource;
+  ASPagerNodeProxy *_proxyDataSource;
   BOOL _pagerDataSourceImplementsNodeBlockAtIndex;
-  BOOL _pagerDataSourceImplementsConstrainedSizeForNode;
+
+  __weak id <ASPagerDelegate> _pagerDelegate;
+  ASPagerNodeProxy *_proxyDelegate;
+  BOOL _pagerDelegateImplementsConstrainedSizeForNode;
 }
 
 @end
 
 @implementation ASPagerNode
+
 @dynamic view, delegate, dataSource;
+
+#pragma mark - Lifecycle
 
 - (instancetype)init
 {
@@ -46,11 +56,15 @@
   return self;
 }
 
+#pragma mark - ASDisplayNode
+
 - (void)didLoad
 {
   [super didLoad];
   
   ASCollectionView *cv = self.view;
+  cv.asyncDataSource = (id<ASCollectionViewDataSource>)_proxyDataSource ?: self;
+  cv.asyncDelegate = (id<ASCollectionViewDelegate>)_proxyDelegate ?: self;
 #if TARGET_OS_IOS
   cv.pagingEnabled = YES;
   cv.scrollsToTop = NO;
@@ -67,12 +81,19 @@
   ASRangeTuningParameters minimumRenderParams = { .leadingBufferScreenfuls = 0.0, .trailingBufferScreenfuls = 0.0 };
   ASRangeTuningParameters minimumPreloadParams = { .leadingBufferScreenfuls = 1.0, .trailingBufferScreenfuls = 1.0 };
   [self setTuningParameters:minimumRenderParams forRangeMode:ASLayoutRangeModeMinimum rangeType:ASLayoutRangeTypeDisplay];
-  [self setTuningParameters:minimumPreloadParams forRangeMode:ASLayoutRangeModeMinimum rangeType:ASLayoutRangeTypeFetchData];
+  [self setTuningParameters:minimumPreloadParams forRangeMode:ASLayoutRangeModeMinimum rangeType:ASLayoutRangeTypePreload];
   
   ASRangeTuningParameters fullRenderParams = { .leadingBufferScreenfuls = 1.0, .trailingBufferScreenfuls = 1.0 };
   ASRangeTuningParameters fullPreloadParams = { .leadingBufferScreenfuls = 2.0, .trailingBufferScreenfuls = 2.0 };
   [self setTuningParameters:fullRenderParams forRangeMode:ASLayoutRangeModeFull rangeType:ASLayoutRangeTypeDisplay];
-  [self setTuningParameters:fullPreloadParams forRangeMode:ASLayoutRangeModeFull rangeType:ASLayoutRangeTypeFetchData];
+  [self setTuningParameters:fullPreloadParams forRangeMode:ASLayoutRangeModeFull rangeType:ASLayoutRangeTypePreload];
+}
+
+#pragma mark - Getters / Setters
+
+- (NSInteger)currentPageIndex
+{
+  return (self.view.contentOffset.x / CGRectGetWidth(self.view.bounds));
 }
 
 #pragma mark - Helpers
@@ -81,6 +102,11 @@
 {
   NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
   [self.view scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionLeft animated:animated];
+}
+
+- (ASCellNode *)nodeForPageAtIndex:(NSInteger)index
+{
+  return [self.view nodeForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
 }
 
 #pragma mark - ASCollectionViewDataSource
@@ -103,39 +129,52 @@
 
 - (ASSizeRange)collectionView:(ASCollectionView *)collectionView constrainedSizeForNodeAtIndexPath:(NSIndexPath *)indexPath
 {
-  if (_pagerDataSourceImplementsConstrainedSizeForNode) {
-    return [_pagerDataSource pagerNode:self constrainedSizeForNodeAtIndexPath:indexPath];
+  if (_pagerDelegateImplementsConstrainedSizeForNode) {
+    return [_pagerDelegate pagerNode:self constrainedSizeForNodeAtIndex:indexPath.item];
   }
+
   return ASSizeRangeMake(CGSizeZero, self.view.bounds.size);
 }
 
 #pragma mark - Data Source Proxy
 
-- (id <ASPagerNodeDataSource>)dataSource
+- (id <ASPagerDataSource>)dataSource
 {
   return _pagerDataSource;
 }
 
-- (void)setDataSource:(id <ASPagerNodeDataSource>)pagerDataSource
+- (void)setDataSource:(id <ASPagerDataSource>)dataSource
 {
-  if (pagerDataSource != _pagerDataSource) {
-    _pagerDataSource = pagerDataSource;
+  if (dataSource != _pagerDataSource) {
+    _pagerDataSource = dataSource;
     
     _pagerDataSourceImplementsNodeBlockAtIndex = [_pagerDataSource respondsToSelector:@selector(pagerNode:nodeBlockAtIndex:)];
     // Data source must implement pagerNode:nodeBlockAtIndex: or pagerNode:nodeAtIndex:
     ASDisplayNodeAssertTrue(_pagerDataSourceImplementsNodeBlockAtIndex || [_pagerDataSource respondsToSelector:@selector(pagerNode:nodeAtIndex:)]);
     
-    _pagerDataSourceImplementsConstrainedSizeForNode = [_pagerDataSource respondsToSelector:@selector(pagerNode:constrainedSizeForNodeAtIndexPath:)];
+    _proxyDataSource = dataSource ? [[ASPagerNodeProxy alloc] initWithTarget:dataSource interceptor:self] : nil;
     
-    _proxy = pagerDataSource ? [[ASPagerNodeProxy alloc] initWithTarget:pagerDataSource interceptor:self] : nil;
+    super.dataSource = (id <ASCollectionDataSource>)_proxyDataSource;
+  }
+}
+
+- (void)setDelegate:(id<ASPagerDelegate>)delegate
+{
+  if (delegate != _pagerDelegate) {
+    _pagerDelegate = delegate;
     
-    super.dataSource = (id <ASCollectionDataSource>)_proxy;
+    _pagerDelegateImplementsConstrainedSizeForNode = [_pagerDelegate respondsToSelector:@selector(pagerNode:constrainedSizeForNodeAtIndex:)];
+    
+    _proxyDelegate = delegate ? [[ASPagerNodeProxy alloc] initWithTarget:delegate interceptor:self] : nil;
+    
+    super.delegate = (id <ASCollectionDelegate>)_proxyDelegate;
   }
 }
 
 - (void)proxyTargetHasDeallocated:(ASDelegateProxy *)proxy
 {
   [self setDataSource:nil];
+  [self setDelegate:nil];
 }
 
 @end

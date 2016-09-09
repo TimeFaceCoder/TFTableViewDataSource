@@ -1,16 +1,22 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  _ASAsyncTransactionContainer.m
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "_ASAsyncTransactionContainer+Private.h"
 
 #import "_ASAsyncTransaction.h"
 #import "_ASAsyncTransactionGroup.h"
 #import <objc/runtime.h>
+
+#ifndef ASASYNCTRANSACTIONCONTAINER_FORWARD_STATE_CHANGE
+#define ASASYNCTRANSACTIONCONTAINER_FORWARD_STATE_CHANGE 1
+#endif
 
 static const char *ASDisplayNodeAssociatedTransactionsKey = "ASAssociatedTransactions";
 static const char *ASDisplayNodeAssociatedCurrentTransactionKey = "ASAssociatedCurrentTransaction";
@@ -79,10 +85,12 @@ static const char *ASAsyncTransactionIsContainerKey = "ASTransactionIsContainer"
 
 - (void)asyncdisplaykit_asyncTransactionContainerStateDidChange
 {
+#if ASASYNCTRANSACTIONCONTAINER_FORWARD_STATE_CHANGE
   id delegate = self.delegate;
   if ([delegate respondsToSelector:@selector(asyncdisplaykit_asyncTransactionContainerStateDidChange)]) {
     [delegate asyncdisplaykit_asyncTransactionContainerStateDidChange];
   }
+#endif
 }
 
 - (_ASAsyncTransaction *)asyncdisplaykit_asyncTransaction
