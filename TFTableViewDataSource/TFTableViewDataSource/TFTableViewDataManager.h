@@ -36,7 +36,7 @@
 /**
  *  @brief 删除某个列表
  */
-@property (nonatomic ,copy) DeletionHandlerWithCompletion deletionHandler;
+@property (nonatomic ,copy) DeletionHandler deletionHandler;
 
 /**
  *  @brief 清空完成block

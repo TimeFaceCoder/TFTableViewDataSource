@@ -35,9 +35,9 @@
         }
         [strongSelf cellViewClickHandler:item actionType:actionType];
     };
-    _deletionHandler = ^(TFTableViewItem *item ,Completion completion) {
+    _deletionHandler = ^(TFTableViewItem *item ,NSIndexPath *indexPath) {
         __typeof(&*weakSelf) strongSelf = weakSelf;
-        [strongSelf deleteHanlder:item completion:completion];
+        [strongSelf deleteHanlder:item];
     };
     
     return self;
@@ -66,7 +66,7 @@
  *
  *  @param item
  */
-- (void)deleteHanlder:(TFTableViewItem *)item completion:(void (^)(void))completion {
+- (void)deleteHanlder:(TFTableViewItem *)item{
     self.currentIndexPath = item.indexPath;
 }
 
