@@ -17,9 +17,6 @@
   "source_files": "TFTableViewManager/TFTableViewManager/**/*.{h,m,c}",
   "requires_arc": true,
   "dependencies": {
-    "pop": [
-
-    ],
     "AsyncDisplayKit": [
 
     ]

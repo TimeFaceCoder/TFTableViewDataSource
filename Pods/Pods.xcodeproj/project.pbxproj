@@ -10,6 +10,7 @@
 		007B9FB9D0721EDA5F0866C22B0A1770 /* ASImageContainerProtocolCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = EB381A89F2B4DDB38FA9845F2528A07F /* ASImageContainerProtocolCategories.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		00B97C1D2BE188AE361D8CB06C139075 /* ASTableView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8996FC3E310EB2A6BFC67C917A4437CE /* ASTableView.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		00EA67770CA9A25A4527F379EC112C4A /* GHODictionary-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6297F230FE31D50AED934AB4B539E692 /* GHODictionary-dummy.m */; };
+		00FF2ED58BFBC13B5F413CDB926B947C /* POP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7E0DD4F737FDB181410E179985EFB9 /* POP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		011812E4B368EC0245E69435688882E0 /* ASTextKitRenderer+Positioning.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3629F613DC14C987DD2D0D4394B26D7F /* ASTextKitRenderer+Positioning.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		013AB5ED01F83E711543621A72DAA84A /* ASPagerFlowLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = C4C7DEE3BE6E839C8CB3CB9D1FBFEEC4 /* ASPagerFlowLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		01AB2A660F9CA6986443A6C7561BC08D /* ASTraitCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = C006A4FFD746E3DDDC186D4EC4C6A6D3 /* ASTraitCollection.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -30,8 +31,9 @@
 		06E2D42C6C8E5F8F27AC934DA8ED4ED3 /* ASImageNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = D7159F36EBD415DB2B05A62F60D2FC7C /* ASImageNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		07080ED5AC01528C1C7EB67E03EE9E14 /* ASPhotosFrameworkImageRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 913A93D424109B4E17C55337A6BFCDD5 /* ASPhotosFrameworkImageRequest.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		072768BE7D76736131975192DD8B9EE5 /* ASPagerFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C9E627355AA60AC89FE401677977F67 /* ASPagerFlowLayout.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		076E77D965FD98C6C460D23AFFD9B2B2 /* POPPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF9DB908402EDBD60FD66F92ED50F44 /* POPPropertyAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0794A4E45E3EB65090C9543C6A7B04C7 /* Pods-TFTableViewDataSource-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D7C04BDF8038AF20A6BF02772F47B4F /* Pods-TFTableViewDataSource-dummy.m */; };
-		07B059B039BD6BCAB1C8C87F6B6FC2C6 /* POPAnimationRuntime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 67FFE1E5F79DE9E69D8F3A43FA92644F /* POPAnimationRuntime.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		07BB6BA303A5E1939A331E214C074917 /* POPAnimationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE32D71DB0E263C42446E06E555D10E /* POPAnimationPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		090FF75C1933E3A17E39B1FB104D5241 /* UIImage+ASConvenience.h in Headers */ = {isa = PBXBuildFile; fileRef = 66CBD6D99EDAE731836EC10CE4EAC232 /* UIImage+ASConvenience.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		094487CE7CF1709661AC095F1B103488 /* JSONHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E3C10B6C2DBA2FEFDF566BED12CBFF /* JSONHTTPClient.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		09C2582223893D009730A4C600F1FAE1 /* ASRangeControllerUpdateRangeProtocol+Beta.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E86B5A6BA123ACF30EF76FA82A6C9A5 /* ASRangeControllerUpdateRangeProtocol+Beta.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -39,13 +41,13 @@
 		0A07C03EBC73FB5AEABB10F5274242B8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
 		0A08FC71C4E3B8E0F8734BCDA7CCA7CB /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C9D0DA734309F0A364247DFE455A4D0 /* AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0B2A97FA5F2EFF5D202A68E4E901EBDF /* NSIndexSet+ASHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = BCEBF5DB255786EA5250EB4A9989414C /* NSIndexSet+ASHelpers.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		0B99179F9EDD9989892C903B77C7DFF5 /* POPPropertyAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43B0F17E088A82496E0F01DD11A33958 /* POPPropertyAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		0BC82D8C499A16ED0C138139D053BB7F /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 118562C4DE1BB9FA0B0827AE8CB629CA /* AFSecurityPolicy.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		0CECF014CF2A42498F7D493D75C7D96C /* ASImageNode+tvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE9D116B543F54FCBE2FA0008DE1F53 /* ASImageNode+tvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0DD8160B4CE1A15F31890CA9B17C10D7 /* ASDimension.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9185E59A774263EFB234A10EE787A /* ASDimension.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		0F02FC859FE594E64A78082C42675FF6 /* POPCGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC8CE2D46D29752F994AE845D631716 /* POPCGUtils.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0F85E34ADEAD83A7909487660A75EF0E /* ASViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 961B52EF7EACAAE63A2DD2A48CB09DAF /* ASViewController.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		0F94D93AFE5334A61F913E867A990376 /* ASImageNode.h in Headers */ = {isa = PBXBuildFile; fileRef = DF9D9E6E2D6165D8E57DE5F9490FFF8A /* ASImageNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0F95648C4EA76041DE50C56BE0EA1858 /* POPSpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BFE81803F312DC219F1C45CC1F80C72 /* POPSpringSolver.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		1029E022704E584341F2BF98860FF4D7 /* POPSpringAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = DA69A4E9F12907AE48E513A7A421A07F /* POPSpringAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		10639B9D4053C747B3A9D8B319F4EA37 /* ASNetworkImageNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 476EDA24AC03A397F022CB95C20CA0CC /* ASNetworkImageNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		108F24728004DA3EEDE507D62A6A14AB /* PINRemoteImageTask.m in Sources */ = {isa = PBXBuildFile; fileRef = F13805B5331AD3F9C74A53EB984566EE /* PINRemoteImageTask.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		10AD579182D6E5312E5FAC975FB54935 /* ASTabBarController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CD0A151AE15243F3F4FFB31D0298C29 /* ASTabBarController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -64,11 +66,11 @@
 		190857DBAF1B22086C9D9CC8F14AD6F4 /* UIScrollView+UzysAnimatedGifPullToRefresh.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CD07FB832AE54D42D42F6145BCA5665 /* UIScrollView+UzysAnimatedGifPullToRefresh.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		197291001898333C235F0E4E172DC370 /* ASEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 61409DFB51C110DD6D6EB9670F59D1C1 /* ASEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1998A0B32EF436099E60F509D8BE9E54 /* ASBasicImageDownloader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 11E9C1DF241C9BC1650BE09852D558E0 /* ASBasicImageDownloader.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		199A6E7DBC0C7EE8D89AFD4631007B35 /* POPSpringAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FDEFA7710F02FE74DAA7393524BBBFB /* POPSpringAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		19C46278134445E6A61F5934ADA4193C /* AnimatedGIFImageSerialization-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C5F6E2F2B70D25F66F0F32B581A807BE /* AnimatedGIFImageSerialization-dummy.m */; };
 		19E6319F6ECED7539AABBD9A211F7AEC /* AFAutoPurgingImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = D3F86F79586D09AD0AACD5C81135518F /* AFAutoPurgingImageCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A3167C53D404B535240175E5EB27B05 /* ASStaticLayoutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 522A3FB406809B5CA18BB9C61CDB3617 /* ASStaticLayoutable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A363337CFBAEA3DD696C9E8B70EE673 /* PINMemoryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2D2C68B894DDFBEDFEB8568173467F /* PINMemoryCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9301469C1181BEA6F10FD53E8BED03 /* POPDecayAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 795EFCD6CDAA4FE3362576F25FCEE8D5 /* POPDecayAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE358DD2D491A7A7FA8A1AB6E906BBB /* ASCellNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = BDC9B60A9EE8965929B59042BDB00782 /* ASCellNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1B3D08EC3C15E97D5B541E4ED582BBE7 /* ASDisplayNode+DebugTiming.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3EE9006BEF227F0FB874E945113AD263 /* ASDisplayNode+DebugTiming.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1BAB3DF60F01108B2C16381E65EB4A83 /* ASStackPositionedLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = B8BA3319946909E23F5629A731BB56CD /* ASStackPositionedLayout.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -78,7 +80,6 @@
 		1CB6794FB14F4FB2B11636A1E8520215 /* ASWeakProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A651037FA25909C0541B4482C6E43BEA /* ASWeakProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1D069B7477D2BF33F181E311B03FCEC7 /* JSONModelClassProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = A5527CC908CB335654AEFB2975CD3E39 /* JSONModelClassProperty.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1D18897CDBF38B3100DD23189864FDA4 /* ASLayoutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EA9BD2629057FC933B2D16F3640D53D /* ASLayoutable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1DA76216A3788A96940996923FC53783 /* POPGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C74D13A1E2ED35F389D07518EA35AE /* POPGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1DE9E032D848A5E05BE208A6D62933FD /* _ASTransitionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 58ECD4496EBCADA0880D231A358AD81A /* _ASTransitionContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EAA7086F34B6318286116C9F490030B /* ASCollectionViewLayoutFacilitatorProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 291FF31B1454D79A67FC41F14703BB17 /* ASCollectionViewLayoutFacilitatorProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EBEFB5E6D7DC300C503592C80CC8E16 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 372FE1AB3C7C6A565411FBBA2245A9DE /* AFURLResponseSerialization.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -90,20 +91,18 @@
 		2107BB9A34D4AB36B4BABEB19C3533F7 /* ASEqualityHashHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4087826D924183347D759B74A4585EDB /* ASEqualityHashHelpers.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		210AC3B483CAC2D3B6A0B8DA396DF1B2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
 		21386D0E1C39E1E9335A28069958491C /* ASPagerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = CA9D9EDB80FF927CBE3952A89A289255 /* ASPagerNode.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		21556E512ED8F6B1CC6A469BED1ACCEB /* POPMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4B0344ECF55A05C490D8BDE8289836 /* POPMath.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		216097D8E40B800F7D5BCD2F9E3C211B /* ASEditableTextNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 521D0C185F1484EA28C1E716549FD277 /* ASEditableTextNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2197F2572D52E7579E7D8454F45C069F /* ASContextTransitioning.h in Headers */ = {isa = PBXBuildFile; fileRef = 81B0439DC04F6948E8DFD8FD6ADE3D47 /* ASContextTransitioning.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		221A0C9BDFE7DB8DE9614BB8AFA7AA7E /* POPAction.h in Headers */ = {isa = PBXBuildFile; fileRef = AB272D897315351160F28EA92F376DE3 /* POPAction.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		2201FC1D4ACB579DF67295BEC4F8ED89 /* POPCustomAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6DF54EF45680959875DE1CE2DB8780D /* POPCustomAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		2240E72B98134B1D87B24B0B773752D2 /* POPAnimatableProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = C396E0EEE32A4655AA63232B32768BA4 /* POPAnimatableProperty.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		22465C188B116CD8C327B427CC6EDD3E /* POPAnimationEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 127C658FB463BB598D9384F0047E62AC /* POPAnimationEvent.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		225ECC585D69965FF0DFF48598303253 /* ASBatchContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 47CF937298AA3885213192A1D7059201 /* ASBatchContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		22814EAF95963447C6CF53739D9FC5CF /* ASScrollDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2247CE3D2B5994673251A8892FBCEE /* ASScrollDirection.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		22EFBA91316E32931B0E89EB8EE1FCFB /* ASDisplayNode+UIViewBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4C558E9E937DB9BA1DEC5F54DC27F6E /* ASDisplayNode+UIViewBridge.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		2359387620C5E815BF0594BC40311734 /* AFURLRequestSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA73A9DAE904D78057899A16CC58BE1 /* AFURLRequestSerialization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2382F25CEC694F44877D4769015D5B32 /* ASAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 47FE908A2279179918F34A0AEEF652F7 /* ASAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		25511D3868489F167A711E018A2D5AEA /* ASPendingStateController.h in Headers */ = {isa = PBXBuildFile; fileRef = 82EABC74B2CFE186D570A7951C0007DA /* ASPendingStateController.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		25E15A697D9EA65BCBEF2B8784B5CDA8 /* POPBasicAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = C6D023C975770E4790E29E856E14A8CB /* POPBasicAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		26B9406C9EED1379271512499E89B652 /* ASMutableAttributedStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 940ED808EF90D0A3CB60DA830F674E9E /* ASMutableAttributedStringBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		26FB50810DD3675F727A726CBC2543D7 /* POPCGUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC8CE2D46D29752F994AE845D631716 /* POPCGUtils.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		27BFBA3C14B3F5FE23137B3F8FB92382 /* POPAnimationExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 76A80081F6A2CC5B1D6AC56B5785D071 /* POPAnimationExtras.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		287BE8ACB8EAE441ED9C109741072664 /* AnimatedGIFImageSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CED65A0CE51493F99BED707727057BD /* AnimatedGIFImageSerialization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		290931DC1EE8D0B72C83555DA72253DD /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 31D6011F15942DBFF18A2D2BBCF20F03 /* AFHTTPSessionManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		295A1A805BE4151F266897313EF4AC62 /* TFTableViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 26870E8BB7F77BF7D71095AFBA1923B3 /* TFTableViewManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -113,7 +112,6 @@
 		2B69F5D14BE8BCD553807221EB21FD48 /* NSData+TFNGZIP.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D5EA5B0FE0EC89A5B70BFE1861DBFAD /* NSData+TFNGZIP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2CDA1380006B420F20274ACC6B56DCA5 /* UIActivityIndicatorView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = D87AD60970709BFCDCB5C08DECBCC6BE /* UIActivityIndicatorView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		2CF3B4BC0CE211E6DD14A8CD6057ED2C /* _ASDisplayLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C01DBF7BF32BE8AD53BE3F7EBCE6BC /* _ASDisplayLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2D4097583D645E86E711BF70EEAE2BA7 /* POPGeometry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C0F3B6E0912E8BC19DDCF943886DF53 /* POPGeometry.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		2D6D05B4D9CDB85E4973B23438FF1790 /* ASVisibilityProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = 51124EC65D67B085F39E4464B462EA1C /* ASVisibilityProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D9C24398E2661F735E9AFB864BDD65C /* _ASAsyncTransactionContainer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF7793BCDF4CC2D09DEA4194CA70A51 /* _ASAsyncTransactionContainer+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D9C8BD9C35AA08FC70E2BB178F3765F /* ASCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAFB2249A925A431E47D489E54A8D7B5 /* ASCollectionView.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -127,9 +125,12 @@
 		2FFA2C473585B47AAAAA0AD2FC201043 /* ASCollectionNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 994F38DC0C0C5ACF095E0DF3CB4CD565 /* ASCollectionNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		3077729F3D282DA907C13F3E0898909A /* AsyncDisplayKit+Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = 7890AD6AF5AF2BAC90777572141F3A53 /* AsyncDisplayKit+Debug.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		30DA0B928C8F28E3C3F279C3833458A0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
+		32038A9AEE2FAC465639235205882A50 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 44CA386E65064B762B407A01C7CED1C8 /* FloatConversion.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		322948CCF042B5FF0AB0C100C26258CE /* ASEqualityHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2408A854C32530BDC46E281F8EE9039E /* ASEqualityHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		326A543AD4E39A2DAECA1CD385E3AEA2 /* AFImageDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 87817DE8907E4FB5116A646F461BE7EC /* AFImageDownloader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3302D503DB9A91A83C6AE5D5AC7BE800 /* PINProgressiveImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 96339D4AB9749968735E1BFC51C371E4 /* PINProgressiveImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		33A98AB7C4FBCB560F3DEB7F336EC41B /* POPMath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75F0B02D324E45EC5C132B878BFA10AB /* POPMath.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		349D2E12AE807877A46AC523D3111B5A /* POPAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 27A72983A65B48DD0E847ADC1405CB72 /* POPAnimator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3511AE7ADBB71D05565854F0E70B7D08 /* AFURLSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D294E82999066493DE45E98084D52933 /* AFURLSessionManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		35FB81269466F4FCD48AC09C01E014EA /* PINImage+WebP.h in Headers */ = {isa = PBXBuildFile; fileRef = 92C58A19E0D349378BC4EAC99DB64C05 /* PINImage+WebP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36270810575A6B2FFF8D7B3311E317BB /* ASRelativeSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5478BE756C8EB67D2F100FA0EAB0CD40 /* ASRelativeSize.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -142,7 +143,7 @@
 		38D636B2B9F103E2B6CE0C83F9483B78 /* ASRelativeSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 594B073E100E5924774F3073BCB6E2CF /* ASRelativeSize.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3939531EB270B4145C7ADFBAB2E5695F /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = B9C8AE1EA9352D700BA4741463CB7476 /* AFNetworkActivityIndicatorManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		396BD2C90C85EA02E4E71F8F12FB3DB3 /* TFDefaultTableViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E30A857D0DA731B3D4E8FC3BF05CBC5C /* TFDefaultTableViewItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A3558775B4109B2BAC5F558BF0895F3 /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B40A6D0748A5E1F724381650CFE5E79B /* TransformationMatrix.cpp */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		398183896A323B3471CB93DDBE8A5BA9 /* POPLayerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = B0169EF9EE69B9AC6047BB9344FDBE90 /* POPLayerExtras.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		3A4A4507F58EF68948CDB678263EE2D0 /* PINRemoteImageDownloadTask.m in Sources */ = {isa = PBXBuildFile; fileRef = E9113B5727F6A8FB88777A3D412F1174 /* PINRemoteImageDownloadTask.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		3A6F33D1279E3CEA124F5B5982201F38 /* ASRatioLayoutSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = FFA2203C49E72F75EEA629DF524E5034 /* ASRatioLayoutSpec.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		3A6F5EE0FC308FF2B47733AF3B63499A /* ASBatchFetching.m in Sources */ = {isa = PBXBuildFile; fileRef = 252A7C2CE684F9015E2194AF1660BA14 /* ASBatchFetching.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -152,20 +153,20 @@
 		3CC0DF965782EEDD0683477F6DA2DF4B /* ASBackgroundLayoutSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 68DF775805B0FA737291CE62A37BD412 /* ASBackgroundLayoutSpec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3DF31F4F1FA8403C004C57956A051D50 /* ASCellNode+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4209D7F30873E212AC021D563E5C5B38 /* ASCellNode+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E488BD71CD99AE0A5E868F3F7F6AE2A /* ASInternalHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0BC4CF5AB34EE7A0A631F4C7D1AF3B /* ASInternalHelpers.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3EBF073903C89EFBAB7D57C5E7A2C8C5 /* POPAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 25D1F61FD50630095E22AED32F036211 /* POPAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		3EF9FFD1D47771118F39E2D87A792FD5 /* ASChangeSetDataController.mm in Sources */ = {isa = PBXBuildFile; fileRef = C3B3EE0FA0279A67A8E3BB7DF392679D /* ASChangeSetDataController.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		3F09CCF98E33B707D0FBC78D376DE3DB /* ASOverlayLayoutSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143D2A20D261B304BA7F419E868CA09D /* ASOverlayLayoutSpec.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		3F939707715828B9772510A0DC755D1F /* JSONModel-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 699FF23415A9CAEBC690508C93FF8117 /* JSONModel-dummy.m */; };
 		3FBA7CE9F35EC5039EA655D712A354AD /* PINRemoteLock.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2F7D00D82CC47E466F7F2E36521484 /* PINRemoteLock.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		402792FD3DA1188DFEC44CBA04829321 /* POPAnimationRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 21951CE551AC3C0A55439A688B18BA7E /* POPAnimationRuntime.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		41865D42986177E1EFA59D4B8729DB7E /* ASLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 831F2A2CF6D3E38620EFCDDA71785F36 /* ASLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4194437279528861570B65D9EFCB9CC9 /* ASTextKitShadower.mm in Sources */ = {isa = PBXBuildFile; fileRef = 47F5A3CD3BCACC54E96C0B152F5BDC64 /* ASTextKitShadower.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		420C8D3E38421FF950C9A9FB85685901 /* PINCache-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3516EC4D09CE5BA7E173224723A1B3BD /* PINCache-dummy.m */; };
 		4213FB8C51E1D37ACA841BE01F91BA30 /* ASCollectionNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2160EB633E6B917435208FD74CF7B85A /* ASCollectionNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4245D8F42F39FCFFD83A54C6FF0C28B5 /* ASTextKitEntityAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = F403648C0E6DF1BC4715E4AA292A1032 /* ASTextKitEntityAttribute.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		424DBC66FEA78E0A6DDC9B6FA95C9BA9 /* POPAnimationEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 127C658FB463BB598D9384F0047E62AC /* POPAnimationEvent.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		424E125E948CE9AE0C9108A7196F0E7F /* cmp.h in Headers */ = {isa = PBXBuildFile; fileRef = D11FD8C7D7EBFD0D23C2AAACCA0D5F52 /* cmp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		437BE35C52CCEC3EC5C86D3D48DC09CB /* ASChangeSetDataController.h in Headers */ = {isa = PBXBuildFile; fileRef = AF39D3C3AEEE7E1D2ED1F58E3AEFEBF6 /* ASChangeSetDataController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4398F9DD268D9C4DB33D9FD50125098B /* UIView+ASConvenience.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C30BC367C9EBF02797F96C6EDE003BF /* UIView+ASConvenience.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4463FFC5C20B4C0B470FD80D8867FFAD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
 		45476ABF4B4FF775BC728D5CD2BD34D8 /* PINAnimatedImageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E28B827C884500BEFAA2FC5E2214159A /* PINAnimatedImageManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		45CD90B3369F30D736A50D8D3486F83E /* ASCellNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 69C8B7D24D943490050A49AEA0D498B8 /* ASCellNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		461FF601A4DC5C26CB14DCD5DDFB63FB /* PINRemoteImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 82A4A28DDB587389835F012176AB47D7 /* PINRemoteImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -174,13 +175,15 @@
 		4793B8049982FE70ECCA2B3700CE270B /* UICollectionViewLayout+ASConvenience.m in Sources */ = {isa = PBXBuildFile; fileRef = D607FDE92EA2B3CA008CF491E7EE714C /* UICollectionViewLayout+ASConvenience.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		483F3D65A07CF82AA82A0AA148326A15 /* ASButtonNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 18B35F293C65941F12F5A85F0AA3E846 /* ASButtonNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		48618D9364396C3CC78A1CB99859E9AA /* YYDispatchQueuePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B463A0A1C146698DA5799638C99296 /* YYDispatchQueuePool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		48F5BA700D01DA4D0183532641A5F990 /* POPDecayAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60DDBA5B495863E6B768C713D13FA3BC /* POPDecayAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		49E557BCBDF52F9C67DBB0A75FEE182C /* PINRemoteImageCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 741FF88443451A4D0C42482EA67CF003 /* PINRemoteImageCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4A45380AF6B6EE24EF6E6F8A957B8BFE /* ASStackLayoutSpecUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = C95087D0DC9BACD0F63FDACEE6202095 /* ASStackLayoutSpecUtilities.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4A8C882AA8B06D5B746E7EEC232EAAA3 /* ASDefaultPlayButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C354C6FC7E8C1F763F6D525B17E76BF0 /* ASDefaultPlayButton.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		4AD05186D478C09D0999A7DC884D4DDF /* POPAnimatableProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = C396E0EEE32A4655AA63232B32768BA4 /* POPAnimatableProperty.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B6135F3C8E2884224744BB076CFA8F2 /* UIImage+ASConvenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B840D6FEF6B4F374AA1C62DD5B6935 /* UIImage+ASConvenience.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		4C4C7C48327D2064FB0E8497A8327DF3 /* JSONModelError.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A5ED1D10B83710623D67502451AD075 /* JSONModelError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D1E7260AEA1C662EB31A58444F57A73 /* MPDispatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DFF802CD02B552D6AF35F8D0181AC6B /* MPDispatchRequest.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		4D65ADCECDD1132DD49FFDAA35EBAE1B /* POPCustomAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = FD636C424583D934DE0C28AC89C5A222 /* POPCustomAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4D93D8615148A55BD7F5DBA7CCA534F0 /* POPAnimatableProperty.mm in Sources */ = {isa = PBXBuildFile; fileRef = A220A48DC987AE9E6F8EE12645D3044D /* POPAnimatableProperty.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		4DF585895E8CD3C010BF93D6DF48B54F /* AFImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA9B03501734ADB88129A45449E8096 /* AFImageDownloader.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		4EB2297A89C13A19F9CBC44E3C23E8D2 /* TFDefaultTableViewItemCellNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 42D6BA4B5297243540301199D5CBB8C0 /* TFDefaultTableViewItemCellNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5055FB911E068DAD817F41EF03FD48E8 /* ASImageProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = 485A8F6948D4E6DABB785BE380171F5A /* ASImageProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -190,13 +193,13 @@
 		51BC195C62D0FCDD90968665F1392FFB /* UzysAnimatedGifActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 31388C777C51DC3EE54F6592450D2046 /* UzysAnimatedGifActivityIndicator.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		51C5E5AED7A3F359DE17F43EB0A53471 /* PINRemoteImageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = B03BC3CC6D04463B61BFD2D97731FA69 /* PINRemoteImageManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5230AC1567DD775241307903D0E89EFE /* PINRemoteImage-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F7FAC6B288039F4EC49C957654CE23F7 /* PINRemoteImage-dummy.m */; };
+		52C556F415A252021D7789378BCED158 /* POPAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4048B198A4B3B0105AA325D5589EB94C /* POPAnimationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54DD948B4142A97FB74544EDEFBC5488 /* ASLayoutableExtensibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 952925B6F95F2D2DC0B7878D7DBFFEC3 /* ASLayoutableExtensibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5547CB5FAB703BC21D33973FCEEC8DF4 /* ASAbstractLayoutController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8657974FAD695EC93EB6E054700D4C78 /* ASAbstractLayoutController.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		563BB0484A433F7E1311B5FD60E3457B /* ASLayoutable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C0BB4591C3DBE747C77FD8522006FC7 /* ASLayoutable.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		56A4E589B0612056EF9865835D6BCFC6 /* ASStackUnpositionedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 128050D1531B1AE20E3989B100CFA5DF /* ASStackUnpositionedLayout.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5717BB2C8AF42652D341861814D4E4FA /* ASInternalHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D92BE6A87A0544C1D8765467B505E3 /* ASInternalHelpers.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		572E5D1E04196106C338B9C056D6B11F /* ASInsetLayoutSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E5F51282D33A02A93D51642455ED1BF /* ASInsetLayoutSpec.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		57345573F26045C198307A621EFA6A0F /* POPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B7F57305E297FDE148145A3A2CD93F /* POPDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		574D639204BECFC4C8B2F81E9A891DD7 /* ASThread.h in Headers */ = {isa = PBXBuildFile; fileRef = BEE0D1ED670EF92FC03127A1B0B0A94C /* ASThread.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		58BBD2F2D9CF6252A6F4BE5308425C16 /* JSONModel+networking.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C767F520086C33188BEFFEB1C4F0BA /* JSONModel+networking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59893E48F7A6A61563210F79DB50A8DA /* ASVideoPlayerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 95787A6DF83F3303C96B8CDB0D6B6C31 /* ASVideoPlayerNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -206,10 +209,10 @@
 		5BC3B5FBFCFED61B9AB505C44209EFE6 /* ASBackgroundLayoutSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = C8816BDA2FAD63806B169D724313B792 /* ASBackgroundLayoutSpec.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		5C4C2DE3109025472E0CCCE98E1F2E25 /* ASTableViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8BE412EED752149FC937EBF9E7A89 /* ASTableViewInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C7006DE135DF3D660289F33EBB443AF /* MPMessagePackServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6D7440C6DD6E4481A3F3D1294C690B /* MPMessagePackServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5CACD2DCDF58E8DCB4E44302A0AA7235 /* POPAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = C03198A66A1E81B1678CA2EADF0BA862 /* POPAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5CBAB401886540ADCCFDFE4F9FE2B8C7 /* YYDispatchQueuePool-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E91F7000189ADBE30F895D9DEA4532F /* YYDispatchQueuePool-dummy.m */; };
 		5D52DB6DF2E6C24CECB0015A9177A2E1 /* UIProgressView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 433E8C33975512EBC45290D39C346565 /* UIProgressView+AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D60DC3717D2DDF29295F4AA33F91726 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
-		5DC569476B1EEAB4BB789F7D55410F84 /* POPLayerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CABE4C74B9BB0E4967A26081F24888CC /* POPLayerExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5E5B6F3908B58F0935DFC4C79BA1C056 /* TFTableViewSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C4DF635718C5E5BA50072D2C396FF5C /* TFTableViewSection.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		5ED6D171D7378F27CD886B71B90B75B5 /* PINButton+PINRemoteImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E9383B1CE246F15BC340B54939C7036 /* PINButton+PINRemoteImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FBF4499A09376751BE11924A311A5F1 /* ASPINRemoteImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 420ED6CB3284433EC9511979D4445EA0 /* ASPINRemoteImageDownloader.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -230,22 +233,23 @@
 		65171ECA4B03FC4AB918B1C00B0B5CBE /* ASDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 98838203D2822DAFF1A42F52F6D18A27 /* ASDelegateProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		657179BC1C72CA73E7F0034C97290D05 /* ASLayoutValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = D6DD9A62A77AD1B5DA26BE1FA19CB669 /* ASLayoutValidation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6595D421B3D9295524772DCB24A821FA /* AnimatedGIFImageSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 15B7F7B8634E875706987EBD188558A1 /* AnimatedGIFImageSerialization.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		65F342E1622F62982856B2DEAE6497E6 /* POPBasicAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = D1EF91A0A9F8CF02F275344947741D06 /* POPBasicAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		668487CD0495F8541642BF3EEDBEBAFD /* ASMapNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A993C7929A3230D79C5FD9B5FC19D1C9 /* ASMapNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		66CA2E259FE38AC381EA375A36BC1AFC /* POPAnimationTracerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = EE982DEB9FC2A77E57932B9BEF598E8A /* POPAnimationTracerInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		66FA8A6730072D5F2A70C0F28108C395 /* POPCustomAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = FD636C424583D934DE0C28AC89C5A222 /* POPCustomAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		67A43AE54AC54646D4B7044996490195 /* ASTextKitTruncating.h in Headers */ = {isa = PBXBuildFile; fileRef = B89D833A19F993CCDB611240D07E9BF2 /* ASTextKitTruncating.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		6893293858E3EC8C7CC3D6BF29D93EA5 /* POPAnimationTracer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 581CAAB15DEDCA2FA269436A27A40992 /* POPAnimationTracer.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		68BE7BA300FF84AA004F1550BAD8541D /* PINDataTaskOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FCA194BC9E58C85F7947A7AC457AFC6 /* PINDataTaskOperation.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		69B41D8C93A27C110939A036AAE5405E /* POPMath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75F0B02D324E45EC5C132B878BFA10AB /* POPMath.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		69F2600EFBE2D40D893D535AB1798CF6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 35716263E4D0954AF834F62B89DE6AC4 /* CoreGraphics.framework */; };
 		6A0B9D2E4570517B8DAC4148E7A543C9 /* _ASAsyncTransactionContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEEF6C7D20B01E7710783B2445D09E4 /* _ASAsyncTransactionContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A3CAADCCC6AE039DB3BD4662748D48D /* UzysAnimatedGifPullToRefreshConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = B525F5418E3D358A66A9476E6CEA4610 /* UzysAnimatedGifPullToRefreshConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A629E3556818A34DACD68F9F0D89195 /* ASScrollNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 60EE1F7762FD67207C9E10D0C52E3AE6 /* ASScrollNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6A7032D07FDA4CEEF0781DA78F8DE490 /* POPSpringAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 40694E7E3CC92283C9758EBE5CAED00A /* POPSpringAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		6AFACC561C49ECB64914A20DC5EBB0C8 /* MPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = B035AA6986CFA124A267F724D9BAF404 /* MPRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6B1B04591F93A7856A36ED674DBAF930 /* POPPropertyAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CBE629D6FC206F6CC06E30F7D50D0F96 /* POPPropertyAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6BAC8B58CF5935CDF1374414A1153F1A /* ASAsciiArtBoxCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B893D1EAD110144FCE6BA9576AF5B84 /* ASAsciiArtBoxCreator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6BB4EFCCBAD168152B00499A92340756 /* UICollectionViewLayout+ASConvenience.h in Headers */ = {isa = PBXBuildFile; fileRef = F72ADD1DE582CFFC50EEB8312BD73228 /* UICollectionViewLayout+ASConvenience.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6C0A0B847D97D87516A823A790ACB910 /* POPAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C8D39C25C38440B78C0A7DE37360E47 /* POPAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		6C11BC8786C5756DECA48D6F52711EDE /* POPGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C74D13A1E2ED35F389D07518EA35AE /* POPGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6C93642632C9AC70A4CC9D6E4DF1D5BE /* ASLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 40FAE2925F191A1194552B586E9F4B25 /* ASLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6C9715AB8F6B5528D276A46B7279B236 /* POPAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = C03198A66A1E81B1678CA2EADF0BA862 /* POPAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6CDB7929FF6586107F8C208A56FC80DC /* POPPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF9DB908402EDBD60FD66F92ED50F44 /* POPPropertyAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D9E609EEEACDDC49006F4D6807AFCDA /* ASTextKitShadower.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE930F2D0BAB1194023BFD337CA357E /* ASTextKitShadower.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6DEE8EEBAB6B9B2A9588E98FDF2C09CE /* ASDisplayNode+FrameworkPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EDE9974B3B64288A17C9EECBF7320B8 /* ASDisplayNode+FrameworkPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6EC97BDB3FC508526F9E388095A7DDCC /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 78E1D98CCDD0BC562DC11146E4DE1333 /* UIImageView+AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -253,12 +257,11 @@
 		6FAC810220286B6F15D1F8A68408D410 /* ASTextKitTailTruncater.mm in Sources */ = {isa = PBXBuildFile; fileRef = CBACF6E8B7D91851DAC5031958DC192C /* ASTextKitTailTruncater.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		6FC76F8B490AEC730EF76D909899708D /* TFNetworkAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = B68DD3281FB5DB0584155AE91F5D531B /* TFNetworkAgent.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		700FFC85E9219EB075BD5D3119A3468B /* ASRunLoopQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 15CE349C9A8E30BE7ECDF7C58BCF6E3B /* ASRunLoopQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7095A5659413578DE2DAD3DB8B431045 /* pop-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 41344E0C4ED89F4B01E37A6106992F5E /* pop-dummy.m */; };
 		7108960163961D53A74C13C528C7678E /* ASWeakMap.m in Sources */ = {isa = PBXBuildFile; fileRef = AA45076A76DD3412435ACFABA76C63B4 /* ASWeakMap.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7128EFD0DCB80E459F834F570CA4DAA4 /* ASDispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DB902FA73F2432436AAE3263C86527E /* ASDispatch.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		714E7D56F119D4760B44565D552B91B3 /* ASTextKitRenderer+TextChecking.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E5AC9A7EFB7A11C34434358B64E46E6 /* ASTextKitRenderer+TextChecking.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		71A7BAAEEE0577D3EFB9243DB063583D /* ASTextNodeWordKerner.m in Sources */ = {isa = PBXBuildFile; fileRef = F60E844E5884C07020D0EED066774D3A /* ASTextNodeWordKerner.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		72D05E66BFCAE6D70F716417E80D7C2D /* POPLayerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = B0169EF9EE69B9AC6047BB9344FDBE90 /* POPLayerExtras.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		730C73134B57B326DC197539A7BE5DE2 /* POPVector.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F6557DB1CCF097AA90EB54C61475CE /* POPVector.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		73B0A107985E68E381047F012071CFE8 /* ASEqualityHashHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C3CB7BD8796F223C34E667F0F3958F1 /* ASEqualityHashHelpers.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		73B44E422CAC91430AF0DE283F82C492 /* PINRemoteImageDownloadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 56979E98493583E4FDA4E9084CDC923E /* PINRemoteImageDownloadTask.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		749ABA3CE54415EF924511BD4A516AB3 /* ASPINRemoteImageDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7939B8AF00B0FCFF11119118A9C8787A /* ASPINRemoteImageDownloader.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -274,17 +277,19 @@
 		793E89212A32B52241281259014DAB63 /* TFDefaultTableViewItemCellNode.m in Sources */ = {isa = PBXBuildFile; fileRef = DB4B949B0AF40FAFEDE70F3953A2F355 /* TFDefaultTableViewItemCellNode.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7A334271ED9F4E3D3977B7D7C6CF1D70 /* NSIndexSet+ASHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E0843A0D072C995DBCA8A1B628502189 /* NSIndexSet+ASHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7A88AFA547DDB37E278AE4C4FF74B3E3 /* _ASHierarchyChangeSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 200CD4B38224AC1889010FB20E64B6E3 /* _ASHierarchyChangeSet.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		7B42E339F44496F98C05179362D2C32B /* POPSpringAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FDEFA7710F02FE74DAA7393524BBBFB /* POPSpringAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7B513D70F0B8B30B0D90E6CA3024D40D /* ASLayoutManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AE17A84971BDDC409D9B893DB8C8A99 /* ASLayoutManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7B58E532C554026EEE2252197C351507 /* _ASTransitionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 66AA82A818DC73E05EFE6C697239D98F /* _ASTransitionContext.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		7B8EEE78ACDB21F44FF75B784E86602E /* POPDecayAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DE0B9A13917CAF3B31B2A2012715A2 /* POPDecayAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7B9BB6DF07D509BF8C4D7AB1966EA785 /* PINAnimatedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C9715591308425C0CBE0E5C409F867F /* PINAnimatedImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7C113C3E7AB75809287A5FDAC89E64AB /* ASTextKitRenderer+Positioning.h in Headers */ = {isa = PBXBuildFile; fileRef = F3431052A94A8CCA5DB20E242450FCF3 /* ASTextKitRenderer+Positioning.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7C22CB32650F07953F943AA65A7D9DD2 /* GHODict.h in Headers */ = {isa = PBXBuildFile; fileRef = E5B38518A7BB995F98A7C9BCF4BB0AAE /* GHODict.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7C426A1F4DA1B4B4D2638280ECAE4548 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BFB48DF7CDB033B4245A4515D0AB797 /* ImageIO.framework */; };
 		7CCC1286EE949D0FB240C13C8A928B52 /* ASImageNode+AnimatedImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9761193D46979AD95FD3B4D0F0E594B8 /* ASImageNode+AnimatedImage.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7CEEC86B78D29B6BFFB802259C019273 /* _ASScopeTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = F288FAB54BB880CD3C58EEB607C2726E /* _ASScopeTimer.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		7D94CB4D1AADAF45E8CD547C713CA776 /* POPAnimatableProperty.mm in Sources */ = {isa = PBXBuildFile; fileRef = A220A48DC987AE9E6F8EE12645D3044D /* POPAnimatableProperty.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7DD0A2D2A320624BA76EDA4B0B2C1CE0 /* ASTextKitRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2696704FE527593A987369A51598155C /* ASTextKitRenderer.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7E6C7DA3A9BA1B47B9B7D4C949F00F2E /* TFTableViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AE3C096BE7B74A76282CF45A7AABD182 /* TFTableViewItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7F3BD8244332BADC543B4ED437F1F882 /* POPSpringAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = DA69A4E9F12907AE48E513A7A421A07F /* POPSpringAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8074CCAF19A7565CB8A4029216443622 /* cmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AC319141B1678AFE97205A6D7177F5C /* cmp.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		81866883027AE0D69BB18EA1333D8B2C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
 		8186A858FD73D96ADA439493E696AE61 /* ASTextKitComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 81315F6C51A728D9ABB5A1622F3CEC4F /* ASTextKitComponents.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -293,6 +298,7 @@
 		83A197C09B695E5EC4584611E590BA8B /* MPMessagePackReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B373A732DE565D50FD426E442BB6DF /* MPMessagePackReader.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		84929673E2FF42D2E0339CF58E43E258 /* ASHighlightOverlayLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6531C58CAE4D08965C6F7BF197B4E5BF /* ASHighlightOverlayLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		85047276E92901BF0C140E13D3E22DF8 /* _ASAsyncTransactionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 511A14410AFDDF671BA7CEE0F099859F /* _ASAsyncTransactionGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8558452D1EAE5D6C0058C28383B36646 /* POPVector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BE9B551D137BAFDC2CE9D4084F6C975 /* POPVector.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		85764374184EC2477AACD1ECF9A5A390 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDE8E253A69C65845EE8C272FE96BE /* AFURLSessionManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		85FAB6F1D2FE0598BF2E61D7BB084B8D /* UIKit+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 21CD0B74E2610598DF6DF914EE7A2E2A /* UIKit+AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		865B366780855CF212BCD304042B4E36 /* PINRemoteImageManagerResult.h in Headers */ = {isa = PBXBuildFile; fileRef = CA408BAE576C47795854D09706C27686 /* PINRemoteImageManagerResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -315,7 +321,6 @@
 		8E2B0331BBAFE0950F4AD8E28F27B201 /* ASRelativeLayoutSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = D9E85D806AA353A62CCE3CABDAE9FE33 /* ASRelativeLayoutSpec.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		8E52EC1C86118170F1C1F47F067C3E70 /* ASImageContainerProtocolCategories.h in Headers */ = {isa = PBXBuildFile; fileRef = D292DA1765AF7CE1F789104839AAEF28 /* ASImageContainerProtocolCategories.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E9DC68E0D8EED528F5CE843A97EDC0A /* ASCollectionDataController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3BCBDC303FF3A6E4ADCB05E0967760F /* ASCollectionDataController.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		911FE720B6DFB76165680BC01463BBFA /* POPSpringAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 40694E7E3CC92283C9758EBE5CAED00A /* POPSpringAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		912E4B5B428ED01C1F9296DF6F8A018F /* _ASCoreAnimationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = C4943DA6099D62DC556FB8E072079E11 /* _ASCoreAnimationExtras.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9177FA86BC19AB14D506D2D634CD1063 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 7303CC1A20DF3872B56A45C93E3DC26C /* UIRefreshControl+AFNetworking.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		91C28EDA9821CE7CDA5E71C8FB423A23 /* ASCollectionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E722019F5C6B9ED68FDC336EDD3D05DB /* ASCollectionInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -324,7 +329,6 @@
 		9222626F479E02F3FFE7874DB5997E86 /* _ASAsyncTransaction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 10141C6AFE644C700266A089203619DF /* _ASAsyncTransaction.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		9232164724FFDF5DA98A3E1CC05B54C6 /* NSArray+MPMessagePack.m in Sources */ = {isa = PBXBuildFile; fileRef = 564F7B9D81E1CBAB40B92DEB23B67C7E /* NSArray+MPMessagePack.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		925850A4E702F8DAF1B3AB981B5BF8CC /* PINCacheObjectSubscripting.h in Headers */ = {isa = PBXBuildFile; fileRef = DE540017EA8367601DBC467E3ECF2F5D /* PINCacheObjectSubscripting.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		954C3C06FEAE0C1356D047D0BA457F87 /* POPVector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BE9B551D137BAFDC2CE9D4084F6C975 /* POPVector.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		954FE7D604D809A9538E7656141D7B83 /* NSMutableAttributedString+TextKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A68AC7ECCB886E066A37AC5C278FCA4 /* NSMutableAttributedString+TextKitAdditions.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		959DC5A160BFD4F00843681989AEFE37 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 35191DAF6B0FF167B6547DF0B4A1DAFD /* MobileCoreServices.framework */; };
 		95CDC1AFE6C94403BF10D5FBAA7FAED2 /* ASWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 65F4C53F27AA75213D77A3603582AD64 /* ASWeakProxy.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -333,39 +337,36 @@
 		994C2EEA5118EF88AFF4CE1AB9E060C2 /* ASStackLayoutSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = A1116A5821DD29481C96AA1738E5604D /* ASStackLayoutSpec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9A0D670D80FE9FE0B4499FC3212F055C /* AFNetworking-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D206F497F4E6E6584CA32D9218D707A4 /* AFNetworking-dummy.m */; };
 		9AA5E2F3B5F0286A4B6B4611F624FC6C /* PINImageView+PINRemoteImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B502DD25E99AE603F0AA2646161C33 /* PINImageView+PINRemoteImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9AC8DC1AEC1C0406A198BDC82970D1B3 /* POPAnimationExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 76A80081F6A2CC5B1D6AC56B5785D071 /* POPAnimationExtras.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		9B06296AB81B87E5F0337713336684F9 /* PINDataTaskOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BA929A1DA10AB9F7141A06DF7BA110DC /* PINDataTaskOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9B2D3D9B01618EFD1768ED6849D4EAA3 /* ASTextKitAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = C9DFF88E2C89DD1FA68018DC1C527572 /* ASTextKitAttributes.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		9BAF7B5CA836C5A1B3EC4A8D92074C02 /* pop-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 41344E0C4ED89F4B01E37A6106992F5E /* pop-dummy.m */; };
 		9BEDEC0DB7BE4B80C25DA2FD44D7E949 /* TFTableViewItemCell.h in Headers */ = {isa = PBXBuildFile; fileRef = C6FDF3E0F11C540BB00D0A473F1C0142 /* TFTableViewItemCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9C354C4C5289FCC5C477154A2D2EFBF0 /* ASStackBaselinePositionedLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6AA4BA11A1EC2B000357C12B61D397EA /* ASStackBaselinePositionedLayout.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		9C4BFE53EAA242965095E021F78BB487 /* ASIndexedNodeContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = D43945B21434C2E94D3350EDE1523425 /* ASIndexedNodeContext.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		9C9177AD4DA0E7ED92DED328E66575FD /* ASSentinel.m in Sources */ = {isa = PBXBuildFile; fileRef = F54AD0A3D748A0697660DDC372F4B3E1 /* ASSentinel.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		9D6A7AF152DA73DB3A38C5287A1435E5 /* POPAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 25D1F61FD50630095E22AED32F036211 /* POPAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9D7E0A44DCA3E696714FD1739EA782D1 /* _ASDisplayLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6C3D9C7DF1A37040CF44A1428D9FC3CC /* _ASDisplayLayer.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		9E0E7FDCF4DE12C2CE7B088BF3BC365B /* POPAction.h in Headers */ = {isa = PBXBuildFile; fileRef = AB272D897315351160F28EA92F376DE3 /* POPAction.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9E80CFF46E4267A43D81A7A787A12E5D /* _ASPendingState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C9901EB5C4D66677F93AFACF4D97A /* _ASPendingState.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		9EB7E31F8C9753334302BEA97A5F39E5 /* ASDataController+Subclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = 1588F289DCA15999612E619FAFC6EAB4 /* ASDataController+Subclasses.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9EF8EF9DD077F5A49FE467E1947D1ACF /* ASCollectionViewFlowLayoutInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = A9D4F22153DB1A60CCE4DAD0D9E63C8E /* ASCollectionViewFlowLayoutInspector.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		9F14EE547AFF4CCBB8357805AA7FDADF /* AsyncDisplayKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3891FD86A8B571BF6C2A0028DA9AB3F3 /* AsyncDisplayKit-dummy.m */; };
-		A0B00318D88201F1E2E0D7EA11A129E3 /* POPAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4048B198A4B3B0105AA325D5589EB94C /* POPAnimationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0C64206DF5029826B735860B82B3D75 /* ASDefaultPlaybackButton.h in Headers */ = {isa = PBXBuildFile; fileRef = C5882148A9A54C6A8612C4E9A304D9CA /* ASDefaultPlaybackButton.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A0E4199F6C931CAA7F5862BAE06F14D3 /* ASOverlayLayoutSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 206FAA857CDDB3D51CE7315FBED97495 /* ASOverlayLayoutSpec.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A150545FDDF98E97126D0456D5FF8F91 /* POPAnimationTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = 19FDEB249B2DEABA4C1EDB71B416546C /* POPAnimationTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A2259D1195A65DF63DDAFFBE7889B14A /* POPAnimationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A0422A236C564ACF7036EDD6BDA9B3FB /* POPAnimationExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A41CC2935831E7EA2ED7473B96740E60 /* ASPagerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = C6B78322C4D517AA9A7CD9F3E06AC93A /* ASPagerNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A462EE78AD0F028FBB226BFC9DB4B8AC /* ASImageNode+AnimatedImagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = B357C66D82685DBB6EA258CE4F94550F /* ASImageNode+AnimatedImagePrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A538B121F5B58D7C64E79788DA390784 /* _ASDisplayViewAccessiblity.h in Headers */ = {isa = PBXBuildFile; fileRef = 04C6AED957B72EE3720AE2BDCA381C88 /* _ASDisplayViewAccessiblity.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A710B32837EB9C06955227E961581133 /* POPCGUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1856CA65FD79E54850F1F07D341AA2FA /* POPCGUtils.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		A7452ACD7AD0F00A6D4705473042FD0F /* ASSentinel.h in Headers */ = {isa = PBXBuildFile; fileRef = AF289E412FD1DBA1B419E691F1E6F1D1 /* ASSentinel.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A7BAA3106DBCC7E9025AA8FA45FC4D0A /* ASIndexPath.h in Headers */ = {isa = PBXBuildFile; fileRef = BD0E6914E42D400EDCF1CD6C92032487 /* ASIndexPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A7BBB6144059604025D96061737D22CD /* TransformationMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 76BC57DF7492C93D72B4C227163B5A9C /* TransformationMatrix.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A89468D66FB2A7C68B8144F4EF682D18 /* ASVideoNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 89514BAF616C0F801F5A27EBA460EB83 /* ASVideoNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		A9176D26FE282983AA616CDF3BE0442B /* JSONKeyMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AE557D5E01D2ABEF003D0B89118B706 /* JSONKeyMapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB5FB0C9A71D88B35664167551120294 /* TFRequestProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 7502EDEB2146589AE4AC27909BF23885 /* TFRequestProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ABED6E245F11631B7D39AC721D821B13 /* PINImage+DecodedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = AF20E3A9A07A2826EA1D3B8714F44C65 /* PINImage+DecodedImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		ABF82A3DAED867C6F06EF3F74B0B15D1 /* POPAnimationTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = 19FDEB249B2DEABA4C1EDB71B416546C /* POPAnimationTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AC3E4D147F53DB88B80F6EE8ACEAE094 /* TFDefaultTableViewItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C8B43340ACB451CBB5912E35A8B7438 /* TFDefaultTableViewItemCell.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		ACDF101639E68CD1DAD63170E08827C1 /* POPAnimationEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 24C43E26EF7920FBC50CDF4FC7213092 /* POPAnimationEventInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		ACE9C1A6E8D5121C6C5F907C7A9CFCC9 /* UIRefreshControl+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = FC0D414C90DA777B2F71419291E6CCAB /* UIRefreshControl+AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		ADB9FB798B0C3EFB8FF0939539E7EF12 /* POPDecayAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60DDBA5B495863E6B768C713D13FA3BC /* POPDecayAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		ADF8CA85EC92AD011393EE2171C286B8 /* TFChainRequestAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4840751ECDFC1DB898D06DCAEB39F675 /* TFChainRequestAgent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AE2BD77572DCE1A34854BA46DAE054EF /* POPGeometry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C0F3B6E0912E8BC19DDCF943886DF53 /* POPGeometry.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		AE37AC4DCEE19D44B9EE9127B691B960 /* ASRatioLayoutSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = C33FA32B305DBF13BCACCED07555FEDA /* ASRatioLayoutSpec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AF1213B3142FA8124B5BFDA9E2477DEF /* ASStackLayoutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D57F95EBBBD325EA04C655BF21B2DBE /* ASStackLayoutable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B05DEC65A49CB7B404DB5C9371B14ADD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05648430F36AC082C9BE1FD51B04EC5D /* UIKit.framework */; };
@@ -389,9 +390,8 @@
 		B8BB20C695C015D5593BF0F95CA1D0EE /* ASDisplayNode+DebugTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC53553B6784766E10C24616F9A5267 /* ASDisplayNode+DebugTiming.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B905B76A8677C2BA5A1794ED18E9D5FE /* PINAnimatedImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C44F196C5AB1308A86826E706D58C1C0 /* PINAnimatedImageManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		B9D42D89161ABF143DA05C0265A4E158 /* ASButtonNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 086301A3AE1FA1DCF6590B6F1CE76088 /* ASButtonNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		BA5C5AA02EB5525B3D7DAA5E79399C64 /* POP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7E0DD4F737FDB181410E179985EFB9 /* POP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BAF3A19194429CB78469C632D1504FE5 /* ASTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4767925A95A27ED0ABECEB733D2DE416 /* ASTabBarController.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		BC3DE80B0FF420A5B33676D9150ECA63 /* POPAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C8D39C25C38440B78C0A7DE37360E47 /* POPAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		BB33A948C1BE128EE00536452CA4DB6F /* POPSpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BFE81803F312DC219F1C45CC1F80C72 /* POPSpringSolver.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BC6D607FD839B89944CDFFA49F2F727E /* ASLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 953BB1B33C96B68CAAF521BA0206FEEC /* ASLayout.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		BD128F4DAE238F64FA6F88DE2235DC9F /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = F76D4A056A48D6175BDEB342A1AA3A69 /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		BD19A9BC2CC58780B83C9E6C420D4F5E /* _ASAsyncTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E70F6CE8BFBC3FC9C4F4B9496D2EF44 /* _ASAsyncTransaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -402,21 +402,19 @@
 		BFD15347A1F9BEC1DBDAFEB8DA5E971E /* PINRemoteImageManagerResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A7E9892B6E08BB412F4D35260719DF6 /* PINRemoteImageManagerResult.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		BFF6BE110580E1EC9C034A90A81C70A5 /* ASControlNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1BF3164632922A2A2BEBEE86B8059E8D /* ASControlNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C056A1FC2D1EB2F14D3F8AA1DEFD02E3 /* ASViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 74A7D7272C13958A0112D9550CB77690 /* ASViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C07985B92676970129ACA124CEAFAA34 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 44CA386E65064B762B407A01C7CED1C8 /* FloatConversion.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C0DD921D7ED035E8F6FBA30794525E8B /* MPDispatchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F8447F2F4B119F864850681244348BB /* MPDispatchRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C146CC9F27A4C1BFAAFE8875856B39F3 /* TFDefaultTableViewItemCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CB7F1244238BA3FACF2466DE5DB03AE /* TFDefaultTableViewItemCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C1B65C3D849FEE4FB5298A8135A765DA /* UIImage+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D622FDF8665D6DB4CA83C647A3BBB59 /* UIImage+AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C242F88F0D78A03136F2853ACC5027ED /* POPCustomAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6DF54EF45680959875DE1CE2DB8780D /* POPCustomAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C3959F2E30EE350A7FE894F4948D535D /* TFNetworkPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BBA3268010F224A37120249A3382285 /* TFNetworkPrivate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3988C8155CAF76C8649D569AB705829 /* ASStaticLayoutSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = BD066697EC21967273B453E8ECD9D303 /* ASStaticLayoutSpec.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C4B9C8CBB350F3C2E8160FA34EAE5512 /* TFRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = FD47333AD42FC6F76BF18D6E4E16D1E0 /* TFRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C4D93659217748FE99DD39D173935516 /* JSONKeyMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3280718DECE2DBDAE3E95577C8BF036C /* JSONKeyMapper.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C513262AF62AF6CE823C35AEA48FA4C3 /* ASMapNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 03235A0636FE41B8FF0EC3B6329C62F4 /* ASMapNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C529B02D36B84D7AC25579ADC155A333 /* ASTextKitRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E3A7856A2563E8A50416806542E19A /* ASTextKitRenderer.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		C59AFFDDA15F66AA95D3B7D8960DE7AF /* POPBasicAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A0BFB36D5B5DF218D6C3C9D5FADD6EAD /* POPBasicAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C532714647C42131EC3E3132EFB85083 /* POPCGUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1856CA65FD79E54850F1F07D341AA2FA /* POPCGUtils.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C5CB85EE6C8A32CA8825D68F12BE0DF9 /* NSData+MPMessagePack.h in Headers */ = {isa = PBXBuildFile; fileRef = AA645540BA078A87F5FC42846F2FB15A /* NSData+MPMessagePack.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5CC3C2E4056C6ED34001EFD226DD942 /* _AS-objc-internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2326407871B55ECC70D0AC8C3E201198 /* _AS-objc-internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C617FC6D6403945F78730F877E0E6EEB /* POPDecayAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DE0B9A13917CAF3B31B2A2012715A2 /* POPDecayAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C7277C01E112ADEE2B613B598F68CD69 /* TransformationMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 76BC57DF7492C93D72B4C227163B5A9C /* TransformationMatrix.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C747252C4316C3151172DED3AC81AE42 /* ASTableNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3448F218D665BE35D8EB87AE97F7CB91 /* ASTableNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C7DBB0055352F02006BCCCDC726DF9EE /* ASCollectionInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = C690B2ABD8DF3A0BB808BB263B5C26CB /* ASCollectionInternal.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C7F44054F1C63D7F13CBFD451FF5B645 /* ASTextNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = D1FAF23C06662425C8763D313B75AB90 /* ASTextNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -427,9 +425,7 @@
 		C970A6AA8EB3258888994074F44653E0 /* ASTableViewProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = 7785ECC2033727F41B60DEE440CDBCDD /* ASTableViewProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA69CFB660F8661B9444B580ED982B49 /* TFChainRequestAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D7FA134A1D9963B069207278ED22D2 /* TFChainRequestAgent.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		CACCEC8C102C2F544A28C2639176BEFB /* TFNetworkConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = F16171F0AB7AF3640F95833CA6097438 /* TFNetworkConfig.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		CB446AC6CDA55C2867FAA2F02A47AD1A /* POPBasicAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = D1EF91A0A9F8CF02F275344947741D06 /* POPBasicAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CBCF5928565563F53AB6D1F574473AA0 /* TFChainRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 27834693D394B23CFD00492D9CB74886 /* TFChainRequest.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		CBE341FDB133A68E60D3CD065005949E /* POPAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 27A72983A65B48DD0E847ADC1405CB72 /* POPAnimator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CBFF514118DFEF8D46101B8362D7FCD4 /* _ASDisplayViewAccessiblity.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1BBCE682D3AEC492296A537C11D10BBA /* _ASDisplayViewAccessiblity.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		CC3191B1938B20063D9854D717E680B6 /* PINURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC526263BECEE996212F0ACFD26F94 /* PINURLSessionManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		CCE866B885DF2C81514BD21FC247BF2E /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 304CF5CD746A6E5F16D5DFA5550753D4 /* UIWebView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -439,6 +435,9 @@
 		CFA3A8251F4F66AB31D8166BFC0CEB66 /* ASControlNode+tvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C64F5C577ED68CFEDFBB76F8D899507B /* ASControlNode+tvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFC2B8ADA4455EAA2587150B48452C7C /* ASCollectionDataController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60BB14F73703EF99A8DF1D4D117D7612 /* ASCollectionDataController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFCAAE0908EAE9BA466B0610EE972F3A /* ASTextNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E5A43452796325B8A7C7ADA56594CC74 /* ASTextNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CFD5A377F1F669200E9310BC94A6BC8C /* POPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B7F57305E297FDE148145A3A2CD93F /* POPDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CFF42EFCF64373EB1AEB6E85621244A6 /* POPLayerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CABE4C74B9BB0E4967A26081F24888CC /* POPLayerExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D006B4B997DECB95C9DD58CDEE19AA2A /* POPBasicAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A0BFB36D5B5DF218D6C3C9D5FADD6EAD /* POPBasicAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		D0683FA21A0E03D17360E0F5D14052E1 /* TFBaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D5ABCAB68B9CA8159D5805465571D8E /* TFBaseRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0B8D129B6AC0C90CA6D932F9D5A8934 /* TFDefaultTableViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D34BC95A1C726E9E29CF34A2C606673 /* TFDefaultTableViewItem.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		D0BAE8049028A4F9004F654A1A1C473A /* CGRect+ASConvenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 24B68C5E6F9F1D5EBD35A0C8AD8D0FB6 /* CGRect+ASConvenience.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -451,10 +450,11 @@
 		D39187C58ADEC194C70F7193049BA795 /* ASLayoutTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 784D2E8B5EBC41162A8B4C61BC7E3D76 /* ASLayoutTransition.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		D39C9720A18F95503D0FF6485AE3853B /* _ASPendingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D0497C40E8B9CF56679AA9739D467E5 /* _ASPendingState.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		D3C3A7BC8D6530FA7B11014CD2789BB9 /* ASStackUnpositionedLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94FC7ABB841CCD7EC5B3D5F861BCE13B /* ASStackUnpositionedLayout.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		D44F631AB07171FB032ED53D6223041B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
 		D45EAFD4BA57915DD0EF7882F174DFF9 /* PINMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = E81A3FD550FC7D97A40BDA1FA4EA5A3E /* PINMemoryCache.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		D46BC0CBE896CF524CC8CB19B0411B86 /* NSDictionary+MPMessagePack.h in Headers */ = {isa = PBXBuildFile; fileRef = 43EFE4BDBF67BF801BC8E2E5688AD50F /* NSDictionary+MPMessagePack.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D4C09115377C15F01406A18257551CC7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
+		D52BC1F717C3E7EFAA2A0D04CF1DDBAF /* POPAnimationTracerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = EE982DEB9FC2A77E57932B9BEF598E8A /* POPAnimationTracerInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D57BED15FE1C3055AE5851B4AC907EEC /* POPBasicAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = C6D023C975770E4790E29E856E14A8CB /* POPBasicAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		D5A95250481F358083CF4106C86AE903 /* ASWeakSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FA2CD10A382204A24C90322E4C6BBFD /* ASWeakSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D6D833B35810D7E723208902CC6DB6C4 /* ASVideoPlayerNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 76ECB9FBD19728B6EA7BB09744B083FD /* ASVideoPlayerNode.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		D6E382AED741A26CDE5E224E6D0015BA /* ASPhotosFrameworkImageRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E79D0B4F9030CB2B69362BAA34F2F7 /* ASPhotosFrameworkImageRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -470,11 +470,10 @@
 		DB50DB93D8D6D0D87E69120C20656D1D /* ASTextKitCoreTextAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 795E56D290B314DB54AF7F1A51966E2F /* ASTextKitCoreTextAdditions.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		DBBFCD8159EADC33ED2A2740FCBDDC7D /* ASBatchFetching.h in Headers */ = {isa = PBXBuildFile; fileRef = EF71FBFB76E20F4EDD8C2863C7F936CE /* ASBatchFetching.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		DC6E09C57B569684C985C051B551683A /* JSONModel+networking.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE92815F864A7EBFE0F1C12E30D3EB0 /* JSONModel+networking.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		DD4F4EB61A5461FAACFAC626296E90CA /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = B10069DC01AB9A41C6A28D54799F1D48 /* UnitBezier.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		DC7D52E988ED36F7E7A3EB12C74FE32A /* POPAnimationRuntime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 67FFE1E5F79DE9E69D8F3A43FA92644F /* POPAnimationRuntime.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		DE282A329291B220CC315A235CFBB7AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
 		DE6E106EEFB40CE8935D32B275FE67CE /* ASEnvironment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1293CB1178D8744EB433DD3D78FF79C5 /* ASEnvironment.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		DF352FE063E8E7E6B0EA922718F95256 /* JSONModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E6AE4946F41A11222141BAEA78F49E /* JSONModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DF6CADBB2C5C75273CFC4297E33F9046 /* POPVector.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F6557DB1CCF097AA90EB54C61475CE /* POPVector.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		DFAE6413E25C223E9FD2650F19B1FAF3 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BA6B27EE4C46A5F9527B46F3FE00404 /* UIProgressView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		DFDAC8245626953C4BCE5A2DA6BE2A5B /* AFSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = ED19F03D95808D56495657542C1E331A /* AFSecurityPolicy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DFF437C031F6FF0C5294F70F41A0EF29 /* JSONModelLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F68D2175BDCE11B19181B55815B530 /* JSONModelLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -490,37 +489,40 @@
 		E3B89CEBE01C078615701954E8459F9F /* ASControlNode+Subclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD5F39A8076505588BB5DCD4D3B1BA8 /* ASControlNode+Subclasses.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E45ACC288A0A3111DDF531DBC8CB9FCB /* TFNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = DE61B19B08B79A4EEE49AEE2FE40BD81 /* TFNetwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E4C708E5016F63079FA1B8A0FD870B21 /* ASTableNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 06298A80B7F6391737C27A37B03594A9 /* ASTableNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E4FA5927A40892073D283659F0782941 /* POPAnimationTracer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 581CAAB15DEDCA2FA269436A27A40992 /* POPAnimationTracer.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		E5266EF40E150AE16215ACC4E795BA44 /* ASLayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8410B420D129EC3C683FA93FB35AEF /* ASLayoutManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		E5C75ACFC01C4B67AE00D2D801D0DC2E /* PINDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B2CE0215201B8FE94217AA9FB3910E /* PINDiskCache.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		E65D9895E3B4EA5AB3032280FF72914F /* ASTextKitContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9EF80EE6D32360E8870178F3225C72D1 /* ASTextKitContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E690C5C2F8D77410A016D4A2514ABD27 /* ASImageNode+CGExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E415AFDCF8E32099391420E3F44846F /* ASImageNode+CGExtras.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E770949D6B2B219FC776359408B9063B /* JSONHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B93B2C73E7B53C743E83F2CA4B77F26B /* JSONHTTPClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E79CAB3655C6E33582B9CB14C051E024 /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = B10069DC01AB9A41C6A28D54799F1D48 /* UnitBezier.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E7B95260E5B76EA8925C6EA86E6C674A /* MPMessagePackReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D2B2B36A0B5D939CBB417A498C997C7 /* MPMessagePackReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E8DB38C97E27B00C1EBE1074DC5747FA /* ASMultiplexImageNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C792958C10474662FEC90A652B614E /* ASMultiplexImageNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E957CAFAA7F3F2A5E7A92339B891E630 /* ASScrollDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 195DB24A97CD5173419CC91D468EC7AA /* ASScrollDirection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9F03999FACF429FFE2A89B2523E479E /* PINRemoteImageCategoryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7276E73973A5DC3B53F060F319F21474 /* PINRemoteImageCategoryManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EAFEF9CD33D5D49050A4294CA7AD6D83 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05648430F36AC082C9BE1FD51B04EC5D /* UIKit.framework */; };
 		EB938EF1C93CE37BB63FAAD84C01AAB7 /* ASDisplayNode+Subclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = E706801371A8B60422B57FC4302D93A3 /* ASDisplayNode+Subclasses.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EC6E915B2E8765252EBEFB01E507F0E1 /* POPAnimationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE32D71DB0E263C42446E06E555D10E /* POPAnimationPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		ED4B2717955C6D1A3A8F76B8D8332125 /* _ASCoreAnimationExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7835FCCB7DCC713FB4CFD392682B6C02 /* _ASCoreAnimationExtras.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		ED69D9B5A342FE9BD3F170D5CDDEC948 /* AFNetworkReachabilityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF3E9D9B186F826E13CA38C8A7D9C97 /* AFNetworkReachabilityManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EDA788D8EB4A8B6F061D045AC718CEC6 /* ASStackPositionedLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F76B3CF975EB1F89CCA5CBC75F23B8 /* ASStackPositionedLayout.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		EE116A5ECD4B45144565DDE2C5C3F4B5 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973996F26B7AF5CFD367EA1F4C5B60CA /* AssetsLibrary.framework */; };
-		EEA839AE9956ECD8133E7587276BF8DD /* POPPropertyAnimationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CBE629D6FC206F6CC06E30F7D50D0F96 /* POPPropertyAnimationInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		EF3E49A5FF9495124997121A9688576D /* ASDealloc2MainObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AF6F880F2A4F9D99477C1988BDBF6D /* ASDealloc2MainObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EF9AB1B547DAE4A108620F9B7801DE77 /* ASHighlightOverlayLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C31343408A8A2B8ADF0CC364C92E713 /* ASHighlightOverlayLayer.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		F010EE8BF8543F04795F009025B6626C /* ASTextNode+Beta.h in Headers */ = {isa = PBXBuildFile; fileRef = A64F78D5F2183F496978240537AE8A86 /* ASTextNode+Beta.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C339A1FD0E1FA60F1AAF31452F5ADA /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B40A6D0748A5E1F724381650CFE5E79B /* TransformationMatrix.cpp */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		F1A45DF1DF2C56C62644510CAA33114D /* POPAnimatorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FF059C2BCA85DA698DF9D1AFF097B28 /* POPAnimatorPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		F1DB34D22D7C308C900492B1AB91A461 /* POPAnimator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 260B7B68BA82AAF64DCC708B027B29BF /* POPAnimator.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		F1E58084CDA3ED1B1905FE3B74FAF01D /* ASEnvironmentInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = EE5F0EFF3A4275F39B2FFF75FDCAD02D /* ASEnvironmentInternal.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		F23569DF388C8302CCD66437B480250D /* POPAnimationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A0422A236C564ACF7036EDD6BDA9B3FB /* POPAnimationExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F265AC7F907DBA422FC8349E8A0FB590 /* PINRemoteImageMemoryContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = BDE76CA1AEABE9DFE41652AE321C1F15 /* PINRemoteImageMemoryContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F316EAD9D676A62E3953251FF0E2BBB6 /* POPAnimationEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 24C43E26EF7920FBC50CDF4FC7213092 /* POPAnimationEventInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F3774B1449FCE5B3CA3E1B336E11D284 /* AFHTTPSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CE662F393C72437EB9DC9353F493E9C0 /* AFHTTPSessionManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3C74064853FBB4FEF35D7DB301CD36F /* ASRangeController.h in Headers */ = {isa = PBXBuildFile; fileRef = C26FECA2B601A7281F6C543E91BCA40F /* ASRangeController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3F97BB727B654309A1F9EEC8F1B1730 /* TFTableViewItemCellNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D41FE985A1EA57D7995034CF057C8F3 /* TFTableViewItemCellNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F40F57BCC32C7FA995EE78AC9A15755E /* MPRPCProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CE5D0D0281447729E7194C1A2F5F7BD /* MPRPCProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F43A6FD628D2E36E101C2900C61B58AB /* ASWeakMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B8ECE56C53C63A7947D973C9C8F7526 /* ASWeakMap.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		F4495AC37EA79A5C3E3A92CF0220F063 /* POPAnimatorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FF059C2BCA85DA698DF9D1AFF097B28 /* POPAnimatorPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F56D0C64298AD96989D1D8847F61E43F /* MPMessagePackClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F508E7E417337F1EC9AC47F739E1D /* MPMessagePackClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F5EDD5C7937F362CC2035445E5EB200B /* ASAbstractLayoutController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B459C020F6E9968167D8EA276558DEA /* ASAbstractLayoutController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F643D70AD2185DA252A2ECC1FA4EC288 /* POPMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4B0344ECF55A05C490D8BDE8289836 /* POPMath.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F668A03A6B096FB92D534F9ACFAFBFCF /* TFBatchRequestAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11B83AB33EB28079EDEF2687301375 /* TFBatchRequestAgent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F684AA1A260FBC881F8895F416FE3364 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C08A790E88C2DDF8C3E9E9939670BD6 /* Foundation.framework */; };
 		F6F3DCC1C7CC572B6F0B53FB1B7FA5F1 /* ASDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E65A3108D5CEC0C185894A3E015336 /* ASDelegateProxy.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -538,12 +540,10 @@
 		FABD5A17EA755A0102E2BDFF71A0413C /* ASFlowLayoutController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B7A95E63541EB1209092C144BE992114 /* ASFlowLayoutController.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FACBEAA08BC9A24504B46C2E059148FD /* AsyncDisplayKit+Debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C41481B8FE087BA384972507DBB8C6B /* AsyncDisplayKit+Debug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FB0085164564EDCE69DA065D9C96853B /* NSData+MPMessagePack.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA65B1D1FAC11D8252A732538099AD6 /* NSData+MPMessagePack.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		FB1BEE7FCBBD33AE3B8A44439CE870CA /* POPAnimationRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 21951CE551AC3C0A55439A688B18BA7E /* POPAnimationRuntime.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FCE414BA97D211633164D13CEAACC392 /* ASMultidimensionalArrayUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 254EF2B465DA052F94CA9CB10EFB6054 /* ASMultidimensionalArrayUtils.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FD2DB6882C6B0426EA94E412D7C07676 /* MPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = A2FB836E650A58BE9E7B899AB799CE36 /* MPDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FDE076C304B9317434D4C0A579B2C3E4 /* POPPropertyAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43B0F17E088A82496E0F01DD11A33958 /* POPPropertyAnimation.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		FE428F493A5332EC2961984F376B7D3F /* POPDecayAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 795EFCD6CDAA4FE3362576F25FCEE8D5 /* POPDecayAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FE791E5EC9038E2E81D1692618E15095 /* ASControlNode+tvOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EE4CB89B4E600F43282034FD691808C /* ASControlNode+tvOS.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		FE7B4CBB276E6A20ED96698F02486ADA /* POPAnimator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 260B7B68BA82AAF64DCC708B027B29BF /* POPAnimator.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FF044DAF2A451D6993B1FCD0FB782AB1 /* ASPendingStateController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 40E0D028E49B64F3E50CED6F9329AD08 /* ASPendingStateController.mm */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FFE34B17D9C413A11A2B1DD124CC29A5 /* ASDisplayNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 35A4357A9C6433B6BF1B0DB15F5BE234 /* ASDisplayNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -597,13 +597,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 565038AF2068983C14F1DA708F0D5419;
 			remoteInfo = GHODictionary;
-		};
-		348018BEF28C3C791BF4D8E50DE0F42F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0F411848D43B322D97B2B94112E7C481;
-			remoteInfo = pop;
 		};
 		449F3273B6E55325618054520A3BD945 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -679,7 +672,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0F411848D43B322D97B2B94112E7C481;
+			remoteGlobalIDString = 7598AA0A79B1659D1F11252C50CAF52D;
 			remoteInfo = pop;
 		};
 		B46ACF7BADC3D78C816182BBBF9EB2CF /* PBXContainerItemProxy */ = {
@@ -1304,14 +1297,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		207F62B585EBEE2EF06614921D7020BA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D44F631AB07171FB032ED53D6223041B /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3609741CB431E971BBCE1201A81F9C64 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1363,6 +1348,14 @@
 			files = (
 				5D60DC3717D2DDF29295F4AA33F91726 /* Foundation.framework in Frameworks */,
 				B05DEC65A49CB7B404DB5C9371B14ADD /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FD7F8056FFB1E5A4340D7E4847140D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4463FFC5C20B4C0B470FD80D8867FFAD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2631,6 +2624,46 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE216EA387EC4B182065631DFC8CD368 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32038A9AEE2FAC465639235205882A50 /* FloatConversion.h in Headers */,
+				00FF2ED58BFBC13B5F413CDB926B947C /* POP.h in Headers */,
+				9E0E7FDCF4DE12C2CE7B088BF3BC365B /* POPAction.h in Headers */,
+				2240E72B98134B1D87B24B0B773752D2 /* POPAnimatableProperty.h in Headers */,
+				5CACD2DCDF58E8DCB4E44302A0AA7235 /* POPAnimation.h in Headers */,
+				52C556F415A252021D7789378BCED158 /* POPAnimationEvent.h in Headers */,
+				F316EAD9D676A62E3953251FF0E2BBB6 /* POPAnimationEventInternal.h in Headers */,
+				F23569DF388C8302CCD66437B480250D /* POPAnimationExtras.h in Headers */,
+				3EBF073903C89EFBAB7D57C5E7A2C8C5 /* POPAnimationInternal.h in Headers */,
+				07BB6BA303A5E1939A331E214C074917 /* POPAnimationPrivate.h in Headers */,
+				FB1BEE7FCBBD33AE3B8A44439CE870CA /* POPAnimationRuntime.h in Headers */,
+				ABF82A3DAED867C6F06EF3F74B0B15D1 /* POPAnimationTracer.h in Headers */,
+				D52BC1F717C3E7EFAA2A0D04CF1DDBAF /* POPAnimationTracerInternal.h in Headers */,
+				349D2E12AE807877A46AC523D3111B5A /* POPAnimator.h in Headers */,
+				F1A45DF1DF2C56C62644510CAA33114D /* POPAnimatorPrivate.h in Headers */,
+				65F342E1622F62982856B2DEAE6497E6 /* POPBasicAnimation.h in Headers */,
+				D006B4B997DECB95C9DD58CDEE19AA2A /* POPBasicAnimationInternal.h in Headers */,
+				0F02FC859FE594E64A78082C42675FF6 /* POPCGUtils.h in Headers */,
+				4D65ADCECDD1132DD49FFDAA35EBAE1B /* POPCustomAnimation.h in Headers */,
+				1A9301469C1181BEA6F10FD53E8BED03 /* POPDecayAnimation.h in Headers */,
+				7B8EEE78ACDB21F44FF75B784E86602E /* POPDecayAnimationInternal.h in Headers */,
+				CFD5A377F1F669200E9310BC94A6BC8C /* POPDefines.h in Headers */,
+				6C11BC8786C5756DECA48D6F52711EDE /* POPGeometry.h in Headers */,
+				CFF42EFCF64373EB1AEB6E85621244A6 /* POPLayerExtras.h in Headers */,
+				F643D70AD2185DA252A2ECC1FA4EC288 /* POPMath.h in Headers */,
+				076E77D965FD98C6C460D23AFFD9B2B2 /* POPPropertyAnimation.h in Headers */,
+				6B1B04591F93A7856A36ED674DBAF930 /* POPPropertyAnimationInternal.h in Headers */,
+				7F3BD8244332BADC543B4ED437F1F882 /* POPSpringAnimation.h in Headers */,
+				7B42E339F44496F98C05179362D2C32B /* POPSpringAnimationInternal.h in Headers */,
+				BB33A948C1BE128EE00536452CA4DB6F /* POPSpringSolver.h in Headers */,
+				730C73134B57B326DC197539A7BE5DE2 /* POPVector.h in Headers */,
+				C7277C01E112ADEE2B613B598F68CD69 /* TransformationMatrix.h in Headers */,
+				E79CAB3655C6E33582B9CB14C051E024 /* UnitBezier.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE7B17A6234A371311C5634AA2C19C37 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2659,66 +2692,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F9BA21F1415E99D6EDF99B0EC222B121 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C07985B92676970129ACA124CEAFAA34 /* FloatConversion.h in Headers */,
-				BA5C5AA02EB5525B3D7DAA5E79399C64 /* POP.h in Headers */,
-				221A0C9BDFE7DB8DE9614BB8AFA7AA7E /* POPAction.h in Headers */,
-				4AD05186D478C09D0999A7DC884D4DDF /* POPAnimatableProperty.h in Headers */,
-				6C9715AB8F6B5528D276A46B7279B236 /* POPAnimation.h in Headers */,
-				A0B00318D88201F1E2E0D7EA11A129E3 /* POPAnimationEvent.h in Headers */,
-				ACDF101639E68CD1DAD63170E08827C1 /* POPAnimationEventInternal.h in Headers */,
-				A2259D1195A65DF63DDAFFBE7889B14A /* POPAnimationExtras.h in Headers */,
-				9D6A7AF152DA73DB3A38C5287A1435E5 /* POPAnimationInternal.h in Headers */,
-				EC6E915B2E8765252EBEFB01E507F0E1 /* POPAnimationPrivate.h in Headers */,
-				402792FD3DA1188DFEC44CBA04829321 /* POPAnimationRuntime.h in Headers */,
-				A150545FDDF98E97126D0456D5FF8F91 /* POPAnimationTracer.h in Headers */,
-				66CA2E259FE38AC381EA375A36BC1AFC /* POPAnimationTracerInternal.h in Headers */,
-				CBE341FDB133A68E60D3CD065005949E /* POPAnimator.h in Headers */,
-				F4495AC37EA79A5C3E3A92CF0220F063 /* POPAnimatorPrivate.h in Headers */,
-				CB446AC6CDA55C2867FAA2F02A47AD1A /* POPBasicAnimation.h in Headers */,
-				C59AFFDDA15F66AA95D3B7D8960DE7AF /* POPBasicAnimationInternal.h in Headers */,
-				26FB50810DD3675F727A726CBC2543D7 /* POPCGUtils.h in Headers */,
-				66FA8A6730072D5F2A70C0F28108C395 /* POPCustomAnimation.h in Headers */,
-				FE428F493A5332EC2961984F376B7D3F /* POPDecayAnimation.h in Headers */,
-				C617FC6D6403945F78730F877E0E6EEB /* POPDecayAnimationInternal.h in Headers */,
-				57345573F26045C198307A621EFA6A0F /* POPDefines.h in Headers */,
-				1DA76216A3788A96940996923FC53783 /* POPGeometry.h in Headers */,
-				5DC569476B1EEAB4BB789F7D55410F84 /* POPLayerExtras.h in Headers */,
-				21556E512ED8F6B1CC6A469BED1ACCEB /* POPMath.h in Headers */,
-				6CDB7929FF6586107F8C208A56FC80DC /* POPPropertyAnimation.h in Headers */,
-				EEA839AE9956ECD8133E7587276BF8DD /* POPPropertyAnimationInternal.h in Headers */,
-				1029E022704E584341F2BF98860FF4D7 /* POPSpringAnimation.h in Headers */,
-				199A6E7DBC0C7EE8D89AFD4631007B35 /* POPSpringAnimationInternal.h in Headers */,
-				0F95648C4EA76041DE50C56BE0EA1858 /* POPSpringSolver.h in Headers */,
-				DF6CADBB2C5C75273CFC4297E33F9046 /* POPVector.h in Headers */,
-				A7BBB6144059604025D96061737D22CD /* TransformationMatrix.h in Headers */,
-				DD4F4EB61A5461FAACFAC626296E90CA /* UnitBezier.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0F411848D43B322D97B2B94112E7C481 /* pop */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 03E120FA67EC605475D65FF0EF8D9FD9 /* Build configuration list for PBXNativeTarget "pop" */;
-			buildPhases = (
-				9343553D005ACC063FA34333197D3C79 /* Sources */,
-				207F62B585EBEE2EF06614921D7020BA /* Frameworks */,
-				F9BA21F1415E99D6EDF99B0EC222B121 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = pop;
-			productName = pop;
-			productReference = 5A49F78468A9620F1A058833571BAC6B /* libpop.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		19818FCB56BBCC8FF628639195FE3318 /* PINCache */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EE793ACD2F4DD50EAC07C7D72889C13F /* Build configuration list for PBXNativeTarget "PINCache" */;
@@ -2748,7 +2724,6 @@
 			);
 			dependencies = (
 				888AC5BEE356C9AA88B18C5775B8CCA5 /* PBXTargetDependency */,
-				5F0C88E9E8D607C8B37FED003845A616 /* PBXTargetDependency */,
 			);
 			name = TFTableViewManager;
 			productName = TFTableViewManager;
@@ -2840,6 +2815,23 @@
 			name = MPMessagePack;
 			productName = MPMessagePack;
 			productReference = 6990F4BB23129B34AC7E5BBA589064EE /* libMPMessagePack.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		7598AA0A79B1659D1F11252C50CAF52D /* pop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 06A9A9DC7B25A08874EBD8A35F670319 /* Build configuration list for PBXNativeTarget "pop" */;
+			buildPhases = (
+				1FA75896594CD52E8646B8452EA2D052 /* Sources */,
+				7FD7F8056FFB1E5A4340D7E4847140D0 /* Frameworks */,
+				BE216EA387EC4B182065631DFC8CD368 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pop;
+			productName = pop;
+			productReference = 5A49F78468A9620F1A058833571BAC6B /* libpop.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		784F3A38336FFE471906029593D44D23 /* AsyncDisplayKit */ = {
@@ -2992,7 +2984,7 @@
 				19818FCB56BBCC8FF628639195FE3318 /* PINCache */,
 				D4219858AFA179F042257AF52C1DFDA0 /* PINRemoteImage */,
 				7E9567ED365446415FA4E7CD5C2B0C44 /* Pods-TFTableViewDataSource */,
-				0F411848D43B322D97B2B94112E7C481 /* pop */,
+				7598AA0A79B1659D1F11252C50CAF52D /* pop */,
 				E00552EA0EB5C4795AC701D5697CB6BF /* TFNetwork */,
 				33271263A7D424D8F3F8CDFDBC097EC2 /* TFTableViewManager */,
 				51B4ED1DA08448CB172DE451CF87A5AC /* UzysAnimatedGifPullToRefresh */,
@@ -3008,6 +3000,32 @@
 			files = (
 				19C46278134445E6A61F5934ADA4193C /* AnimatedGIFImageSerialization-dummy.m in Sources */,
 				6595D421B3D9295524772DCB24A821FA /* AnimatedGIFImageSerialization.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1FA75896594CD52E8646B8452EA2D052 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BAF7B5CA836C5A1B3EC4A8D92074C02 /* pop-dummy.m in Sources */,
+				4D93D8615148A55BD7F5DBA7CCA534F0 /* POPAnimatableProperty.mm in Sources */,
+				6C0A0B847D97D87516A823A790ACB910 /* POPAnimation.mm in Sources */,
+				22465C188B116CD8C327B427CC6EDD3E /* POPAnimationEvent.mm in Sources */,
+				9AC8DC1AEC1C0406A198BDC82970D1B3 /* POPAnimationExtras.mm in Sources */,
+				DC7D52E988ED36F7E7A3EB12C74FE32A /* POPAnimationRuntime.mm in Sources */,
+				6893293858E3EC8C7CC3D6BF29D93EA5 /* POPAnimationTracer.mm in Sources */,
+				F1DB34D22D7C308C900492B1AB91A461 /* POPAnimator.mm in Sources */,
+				D57BED15FE1C3055AE5851B4AC907EEC /* POPBasicAnimation.mm in Sources */,
+				C532714647C42131EC3E3132EFB85083 /* POPCGUtils.mm in Sources */,
+				2201FC1D4ACB579DF67295BEC4F8ED89 /* POPCustomAnimation.mm in Sources */,
+				48F5BA700D01DA4D0183532641A5F990 /* POPDecayAnimation.mm in Sources */,
+				AE2BD77572DCE1A34854BA46DAE054EF /* POPGeometry.mm in Sources */,
+				398183896A323B3471CB93DDBE8A5BA9 /* POPLayerExtras.mm in Sources */,
+				33A98AB7C4FBCB560F3DEB7F336EC41B /* POPMath.mm in Sources */,
+				0B99179F9EDD9989892C903B77C7DFF5 /* POPPropertyAnimation.mm in Sources */,
+				6A7032D07FDA4CEEF0781DA78F8DE490 /* POPSpringAnimation.mm in Sources */,
+				8558452D1EAE5D6C0058C28383B36646 /* POPVector.mm in Sources */,
+				F0C339A1FD0E1FA60F1AAF31452F5ADA /* TransformationMatrix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3091,32 +3109,6 @@
 				B8AE3A800116AD097160F98D07B1D915 /* TFTableViewManager-dummy.m in Sources */,
 				295A1A805BE4151F266897313EF4AC62 /* TFTableViewManager.m in Sources */,
 				5E5B6F3908B58F0935DFC4C79BA1C056 /* TFTableViewSection.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9343553D005ACC063FA34333197D3C79 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7095A5659413578DE2DAD3DB8B431045 /* pop-dummy.m in Sources */,
-				7D94CB4D1AADAF45E8CD547C713CA776 /* POPAnimatableProperty.mm in Sources */,
-				BC3DE80B0FF420A5B33676D9150ECA63 /* POPAnimation.mm in Sources */,
-				424DBC66FEA78E0A6DDC9B6FA95C9BA9 /* POPAnimationEvent.mm in Sources */,
-				27BFBA3C14B3F5FE23137B3F8FB92382 /* POPAnimationExtras.mm in Sources */,
-				07B059B039BD6BCAB1C8C87F6B6FC2C6 /* POPAnimationRuntime.mm in Sources */,
-				E4FA5927A40892073D283659F0782941 /* POPAnimationTracer.mm in Sources */,
-				FE7B4CBB276E6A20ED96698F02486ADA /* POPAnimator.mm in Sources */,
-				25E15A697D9EA65BCBEF2B8784B5CDA8 /* POPBasicAnimation.mm in Sources */,
-				A710B32837EB9C06955227E961581133 /* POPCGUtils.mm in Sources */,
-				C242F88F0D78A03136F2853ACC5027ED /* POPCustomAnimation.mm in Sources */,
-				ADB9FB798B0C3EFB8FF0939539E7EF12 /* POPDecayAnimation.mm in Sources */,
-				2D4097583D645E86E711BF70EEAE2BA7 /* POPGeometry.mm in Sources */,
-				72D05E66BFCAE6D70F716417E80D7C2D /* POPLayerExtras.mm in Sources */,
-				69B41D8C93A27C110939A036AAE5405E /* POPMath.mm in Sources */,
-				FDE076C304B9317434D4C0A579B2C3E4 /* POPPropertyAnimation.mm in Sources */,
-				911FE720B6DFB76165680BC01463BBFA /* POPSpringAnimation.mm in Sources */,
-				954C3C06FEAE0C1356D047D0BA457F87 /* POPVector.mm in Sources */,
-				3A3558775B4109B2BAC5F558BF0895F3 /* TransformationMatrix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3386,12 +3378,6 @@
 			target = 19818FCB56BBCC8FF628639195FE3318 /* PINCache */;
 			targetProxy = E66A1D18997308D565149CF51AFAE89E /* PBXContainerItemProxy */;
 		};
-		5F0C88E9E8D607C8B37FED003845A616 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = pop;
-			target = 0F411848D43B322D97B2B94112E7C481 /* pop */;
-			targetProxy = 348018BEF28C3C791BF4D8E50DE0F42F /* PBXContainerItemProxy */;
-		};
 		6AFBD45BB94048E9926B5818C71DA9E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = GHODictionary;
@@ -3443,7 +3429,7 @@
 		E7B1AE2907F7869866FD63C36B493392 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = pop;
-			target = 0F411848D43B322D97B2B94112E7C481 /* pop */;
+			target = 7598AA0A79B1659D1F11252C50CAF52D /* pop */;
 			targetProxy = B22D6C8F6288A1C0AC81BDE6996FD16F /* PBXContainerItemProxy */;
 		};
 		F07235FFAEF06DCC6DA8EFDBE45350F5 /* PBXTargetDependency */ = {
@@ -3493,27 +3479,6 @@
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
-		};
-		278718577D75DCEC4E9ACC4CFC107D8E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07A8E15F1CB6482B0C806D05532B89B0 /* pop.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/pop/pop-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
 		};
 		3374214823F4A55186E74649D70ACCF6 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -3703,6 +3668,27 @@
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
+		};
+		5D9957C2901EE2E319704FE7FA1F95C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 07A8E15F1CB6482B0C806D05532B89B0 /* pop.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/pop/pop-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
 		};
 		5E431DFA01B74B9BBDB4FC47259D8D4C /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -4036,27 +4022,6 @@
 			};
 			name = Release;
 		};
-		D47A3ABB61C9C98BBAB6BC36099E6AD7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07A8E15F1CB6482B0C806D05532B89B0 /* pop.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/pop/pop-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
 		D9C97EB576CE94D4E00FD675005D2868 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 68CDE7F0ABF44A32D75EFB28BAFCE463 /* AFNetworking.xcconfig */;
@@ -4067,6 +4032,27 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/AFNetworking/AFNetworking-prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		F1CA43A30FF9403EEB17D177328B9C05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 07A8E15F1CB6482B0C806D05532B89B0 /* pop.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/pop/pop-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
@@ -4144,11 +4130,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		03E120FA67EC605475D65FF0EF8D9FD9 /* Build configuration list for PBXNativeTarget "pop" */ = {
+		06A9A9DC7B25A08874EBD8A35F670319 /* Build configuration list for PBXNativeTarget "pop" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				278718577D75DCEC4E9ACC4CFC107D8E /* Debug */,
-				D47A3ABB61C9C98BBAB6BC36099E6AD7 /* Release */,
+				F1CA43A30FF9403EEB17D177328B9C05 /* Debug */,
+				5D9957C2901EE2E319704FE7FA1F95C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

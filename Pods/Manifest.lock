@@ -38,7 +38,6 @@ PODS:
     - MPMessagePack
   - TFTableViewManager (1.0.0):
     - AsyncDisplayKit
-    - pop
   - UzysAnimatedGifPullToRefresh (0.9.8):
     - AnimatedGIFImageSerialization (~> 0.2.0)
   - YYDispatchQueuePool (1.0)
@@ -46,6 +45,7 @@ PODS:
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/TimeFaceCoder/AsyncDisplayKit.git`)
   - JSONModel
+  - pop (~> 1.0.9)
   - TFNetwork (from `https://github.com/TimeFaceCoder/TFNetwork.git`)
   - TFTableViewManager (from `https://github.com/TimeFaceCoder/TFTableViewManager.git`)
   - UzysAnimatedGifPullToRefresh
@@ -67,7 +67,7 @@ CHECKOUT OPTIONS:
     :commit: 90337a76ac8a17c03a168a4ebf8af5ab23ae1ae9
     :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
-    :commit: 7d6060f4d45debbcd386352dbe79f49a5ce4b0a7
+    :commit: c9eeb0d2db3fde0d934597d4c9dce7b339b875c8
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
 SPEC CHECKSUMS:
@@ -81,10 +81,10 @@ SPEC CHECKSUMS:
   PINRemoteImage: 308731aa6534500e58fc211b9cc2bb7252df25ba
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   TFNetwork: 2c70cbf58bb7be5293fd10b837224280b15bf223
-  TFTableViewManager: 3da44a48c0b1bfe0b02fe4dabd0d59c6f5e36e74
+  TFTableViewManager: f206be524ad73c10498b1402025d6b04e6efb12a
   UzysAnimatedGifPullToRefresh: ca441a89a0cbf704c0c9dd2f1320fb91ffc7f86b
   YYDispatchQueuePool: 3dfb2274bcc74207688dde8ac6f7bdd46871dd7b
 
-PODFILE CHECKSUM: 6f6164a8e2561adb1679970d0cf62f8f21e89a29
+PODFILE CHECKSUM: 1d4925b3d218f34635f6f42861089930b262c6d9
 
 COCOAPODS: 1.0.1

@@ -19,7 +19,7 @@
 @implementation TFTableViewSection
 
 #pragma mark - Properties.
-- (NSArray *)items {
+- (NSArray<TFTableViewItem*> *)items {
     return self.mutableItems;
 }
 
@@ -100,7 +100,7 @@
     [self.mutableItems addObject:item];
 }
 
-- (void)addItemsFromArray:(NSArray *)array {
+- (void)addItemsFromArray:(NSArray<TFTableViewItem*> *)array {
     for (TFTableViewItem *item in array) {
         [self addItem:item];
     }
@@ -111,7 +111,7 @@
     [self.mutableItems insertObject:item atIndex:index];
 }
 
-- (void)insertItems:(NSArray *)items atIndexes:(NSIndexSet *)indexes {
+- (void)insertItems:(NSArray<TFTableViewItem *> *)items atIndexes:(NSIndexSet *)indexes {
     for (TFTableViewItem *item in items) {
         ((TFTableViewItem *)item).section = self;
     }
@@ -136,7 +136,7 @@
     [self.mutableItems removeObjectsAtIndexes:indexes];
 }
 
-- (void)removeItemsInArray:(NSArray *)array {
+- (void)removeItemsInArray:(NSArray<TFTableViewItem *> *)array {
     [self.mutableItems removeObjectsInArray:array];
 }
 
@@ -158,19 +158,19 @@
     [self.mutableItems replaceObjectAtIndex:index withObject:item];
 }
 
-- (void)replaceItemsWithItemsFromArray:(NSArray *)array {
+- (void)replaceItemsWithItemsFromArray:(NSArray<TFTableViewItem*> *)array {
     [self removeAllItems];
     [self addItemsFromArray:array];
 }
 
-- (void)replaceItemsAtIndexes:(NSIndexSet *)indexes withItems:(NSArray *)items {
+- (void)replaceItemsAtIndexes:(NSIndexSet *)indexes withItems:(NSArray<TFTableViewItem*> *)items {
     for (TFTableViewItem *item in items) {
         ((TFTableViewItem *)item).section = self;
     }
     [self.mutableItems replaceObjectsAtIndexes:indexes withObjects:items];
 }
 
-- (void)replaceItemsInRange:(NSRange)range withItemsFromArray:(NSArray *)array {
+- (void)replaceItemsInRange:(NSRange)range withItemsFromArray:(NSArray<TFTableViewItem*> *)array {
     for (TFTableViewItem *item in array) {
         ((TFTableViewItem *)item).section = self;
     }
@@ -218,10 +218,26 @@
     [self.tableViewManager.tableView endUpdates];
 }
 
+- (void)addRows:(NSArray<TFTableViewItem *> *)rows withRowAnimation:(UITableViewRowAnimation)animation {
+    NSIndexSet* indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.items.count, rows.count)];
+    [self insertRows:rows atIndexes:indexSet withRowAnimation:animation];
+}
+
 - (void)deleteRowsAtIndexes:(NSIndexSet *)indexSet withAnimation:(UITableViewRowAnimation)animation {
     [self removeItemsAtIndexes:indexSet];
     [self.tableViewManager.tableView beginUpdates];
     [self.tableViewManager.tableView deleteRowsAtIndexPaths:[self indexPathsWithIndexSet:indexSet] withRowAnimation:animation];
+    [self.tableViewManager.tableView endUpdates];
+}
+
+- (void)deleteRows:(NSArray<TFTableViewItem *> *)items withAnimation:(UITableViewRowAnimation)animation {
+    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:items.count];
+    for (TFTableViewItem *item in items) {
+        [indexPaths addObject:item.indexPath];
+    }
+    [self.tableViewManager.tableView beginUpdates];
+    [self removeItemsInArray:items];
+    [self.tableViewManager.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:animation];
     [self.tableViewManager.tableView endUpdates];
 }
 

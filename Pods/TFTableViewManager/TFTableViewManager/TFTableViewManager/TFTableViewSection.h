@@ -10,8 +10,12 @@
 #import <UIKit/UIKit.h>
 
 @class TFTableViewManager;
+@class ASDisplayNode;
 @class TFTableViewItem;
 
+/**
+ *  the table view section handler.
+ */
 @interface TFTableViewSection : NSObject
 
 ///-----------------------------
@@ -49,6 +53,11 @@
 @property (strong, nonatomic) UIView *headerView;
 
 /**
+ *  @brief A node object to display in the header of the specified section of the table view.
+ */
+@property (strong, nonatomic) ASDisplayNode *headerNode;
+
+/**
  *  @brief The reuse identifier when you use UITableViewHeaderFooterView to create a headerView.
  */
 @property (strong, nonatomic) NSString *headerReuseIdentifier;
@@ -58,7 +67,10 @@
  */
 @property (strong, nonatomic) UIView *footerView;
 
-
+/**
+ *  @brief A node object to display in the footer of the specified section of the table view.
+ */
+@property (strong, nonatomic) ASDisplayNode *footerNode;
 /**
  *  @brief The reuse identifier when you use UITableViewHeaderFooterView to create a footerView.
  */
@@ -355,6 +367,8 @@
  */
 - (void)insertRows:(NSArray<TFTableViewItem *> *)rows atIndexes:(NSIndexSet *)indexSet withRowAnimation:(UITableViewRowAnimation)animation;
 
+
+- (void)addRows:(NSArray<TFTableViewItem *> *)rows withRowAnimation:(UITableViewRowAnimation)animation;
 /**
  *  Delete rows with the indexes of rows and a given animation effect.
  *
@@ -362,5 +376,13 @@
  *  @param animation A constant that indicates how the delete is to be animated.
  */
 - (void)deleteRowsAtIndexes:(NSIndexSet *)indexSet withAnimation:(UITableViewRowAnimation)animation;
+
+/**
+ *  Delete rows with items of rows and a given animation effect.
+ *
+ *  @param indexSet  the index set.
+ *  @param animation A constant that indicates how the delete is to be animated.
+ */
+- (void)deleteRows:(NSArray<TFTableViewItem *> *)items withAnimation:(UITableViewRowAnimation)animation;
 
 @end

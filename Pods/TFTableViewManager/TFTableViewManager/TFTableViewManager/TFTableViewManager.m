@@ -25,7 +25,7 @@
 
 #pragma mark - Properties.
 
-- (NSArray *)sections
+- (NSArray<TFTableViewSection *> *)sections
 {
     return self.mutableSections;
 }
@@ -112,7 +112,7 @@
     [self.mutableSections addObject:section];
 }
 
-- (void)addSectionsFromArray:(NSArray *)array {
+- (void)addSectionsFromArray:(NSArray<TFTableViewSection *> *)array {
     for (TFTableViewSection *section in array) {
         [self addSection:section];
     }
@@ -123,7 +123,7 @@
     [self.mutableSections insertObject:section atIndex:index];
 }
 
-- (void)insertSections:(NSArray *)sections atIndexes:(NSIndexSet *)indexes {
+- (void)insertSections:(NSArray<TFTableViewSection *> *)sections atIndexes:(NSIndexSet *)indexes {
     for (TFTableViewSection *section in sections) {
         section.tableViewManager = self;
     }
@@ -148,7 +148,7 @@
     [self.mutableSections removeAllObjects];
 }
 
-- (void)removeSectionsInArray:(NSArray *)array {
+- (void)removeSectionsInArray:(NSArray<TFTableViewSection *> *)array {
     [self.mutableSections removeObjectsInArray:array];
 }
 
@@ -171,19 +171,19 @@
     [self.mutableSections replaceObjectAtIndex:index withObject:section];
 }
 
-- (void)replaceSectionsWithSectionsFromArray:(NSArray *)array {
+- (void)replaceSectionsWithSectionsFromArray:(NSArray<TFTableViewSection *> *)array {
     [self removeAllSections];
     [self addSectionsFromArray:array];
 }
 
-- (void)replaceSectionsAtIndexes:(NSIndexSet *)indexes withSections:(NSArray *)sections {
+- (void)replaceSectionsAtIndexes:(NSIndexSet *)indexes withSections:(NSArray<TFTableViewSection *> *)sections {
     for (TFTableViewSection *section in sections) {
         section.tableViewManager = self;
     }
     [self.mutableSections replaceObjectsAtIndexes:indexes withObjects:sections];
 }
 
-- (void)replaceSectionsInRange:(NSRange)range withSectionsFromArray:(NSArray *)array {
+- (void)replaceSectionsInRange:(NSRange)range withSectionsFromArray:(NSArray<TFTableViewSection *> *)array {
     for (TFTableViewSection *section in array) {
         section.tableViewManager = self;
     }
@@ -215,17 +215,43 @@
     [self.tableView endUpdates];
 }
 
-- (void)deleteSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+- (void)addSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+    NSIndexSet* indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.sections.count, sections.count)];
+    [self insertSections:sections atIndexes:indexSet withRowAnimation:animation];
+}
+
+- (void)deleteSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
     [self removeSectionsAtIndexes:sections];
     [self.tableView beginUpdates];
     [self.tableView deleteSections:sections withRowAnimation:animation];
     [self.tableView endUpdates];
 }
 
-- (void)reloadSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+- (void)deleteSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+    [self deleteSectionsAtIndexSet:[self indexSetWithSections:sections] withRowAnimation:animation];
+}
+
+- (NSIndexSet*)indexSetWithSections:(NSArray<TFTableViewSection *> *)sections {
+    NSMutableIndexSet* indexSet = [NSMutableIndexSet indexSet];
+    for (TFTableViewSection* section in sections) {
+        [indexSet addIndex:section.index];
+    }
+    return [indexSet copy];
+}
+
+- (void)reloadSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
     [self.tableView beginUpdates];
     [self.tableView reloadSections:sections withRowAnimation:animation];
     [self.tableView endUpdates];
+}
+
+- (void)reloadSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+    [self reloadSectionsAtIndexSet:[self indexSetWithSections:sections] withRowAnimation:animation];
+    
+}
+
+- (void)reloadAllSectionsWithRowAnimation:(UITableViewRowAnimation)animation {
+    [self reloadSections:self.sections withRowAnimation:animation];
 }
 
 - (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection {
@@ -300,7 +326,7 @@
     
     if (!cell) {
         cell = [[cellClass alloc] initWithTableViewItem:item reuseIdentifier:identifier];
-        // TFUITableViewManagerDelegate
+        // TFTableViewManagerDelegate
         if ([self.delegate respondsToSelector:@selector(tableView:didLoadCellSubViews:forRowAtIndexPath:)]) {
             [self.delegate tableView:tableView didLoadCellSubViews:cell forRowAtIndexPath:indexPath];
         }
@@ -356,7 +382,7 @@
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    return item.moveHandler != nil;
+    return (item.moveHandler != nil);
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
@@ -462,10 +488,12 @@
 }
 
 - (ASSizeRange)tableView:(ASTableView *)tableView constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableView:constrainedSizeForRowAtIndexPath:)]) {
+        return [self.delegate tableView:tableView constrainedSizeForRowAtIndexPath:indexPath];
+    }
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    if ([item isKindOfClass:[TFDefaultTableViewItem class]]) {
-        CGFloat cellHeight = ((TFDefaultTableViewItem *)item).cellHeight ? :44.0;
-        return ASSizeRangeMake(CGSizeMake(_nodeMinSize.width, cellHeight), CGSizeMake(_nodeMaxSize.width, cellHeight));
+    if (item.cellHeight) {
+        return ASSizeRangeMake(CGSizeMake(_nodeMinSize.width, item.cellHeight), CGSizeMake(_nodeMaxSize.width, item.cellHeight));
     }
     return ASSizeRangeMake(_nodeMinSize, _nodeMaxSize);
 }
@@ -512,6 +540,13 @@
     if (tableViewSection.headerHeight!=0.0) {
         return tableViewSection.headerHeight;
     }
+    if (tableViewSection.headerNode) {
+        if (CGSizeEqualToSize(tableViewSection.headerNode.calculatedSize, CGSizeZero) ) {
+            [tableViewSection.headerNode measureWithSizeRange:ASSizeRangeMake(CGSizeMake(tableView.bounds.size.width, 0), CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX))];
+            tableViewSection.headerNode.frame = CGRectMake(0, 0, tableViewSection.headerNode.calculatedSize.width, tableViewSection.headerNode.calculatedSize.height);
+        }
+        return CGRectGetHeight(tableViewSection.headerNode.frame);
+    }
     if (tableViewSection.headerView) {
         return CGRectGetHeight(tableViewSection.headerView.frame);
     }
@@ -542,6 +577,13 @@
     if (tableViewSection.footerHeight!=0.0) {
         return tableViewSection.footerHeight;
     }
+    if (tableViewSection.footerNode) {
+        if (CGSizeEqualToSize(tableViewSection.footerNode.calculatedSize, CGSizeZero) ) {
+            [tableViewSection.footerNode measureWithSizeRange:ASSizeRangeMake(CGSizeMake(tableView.bounds.size.width, 0), CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX))];
+            tableViewSection.footerNode.frame = CGRectMake(0, 0, tableViewSection.footerNode.calculatedSize.width, tableViewSection.footerNode.calculatedSize.height);
+        }
+        return CGRectGetHeight(tableViewSection.footerNode.frame);
+    }
     if (tableViewSection.footerView) {
         return CGRectGetHeight(tableViewSection.footerView.frame);
     }
@@ -569,7 +611,17 @@
     }
     TFTableViewSection *tableViewSection = self.mutableSections[section];
     if (!tableViewSection.headerReuseIdentifier.length) {
-        return tableViewSection.headerView;
+        if (tableViewSection.headerNode) {
+            if (CGSizeEqualToSize(tableViewSection.headerNode.calculatedSize, CGSizeZero) ) {
+                [tableViewSection.headerNode measureWithSizeRange:ASSizeRangeMake(CGSizeMake(tableView.bounds.size.width, 0), CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX))];
+                tableViewSection.headerNode.frame = CGRectMake(0, 0, tableViewSection.headerNode.calculatedSize.width, tableViewSection.headerNode.calculatedSize.height);
+            }
+            return tableViewSection.headerNode.view;
+        }
+        else {
+            return tableViewSection.headerView;
+        }
+        
     }
     else {
         UITableViewHeaderFooterView *headerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:tableViewSection.headerReuseIdentifier];
@@ -592,7 +644,17 @@
     }
     TFTableViewSection *tableViewSection = self.mutableSections[section];
     if (!tableViewSection.footerReuseIdentifier.length) {
-        return tableViewSection.footerView;
+        if (tableViewSection.footerNode) {
+            if (CGSizeEqualToSize(tableViewSection.footerNode.calculatedSize, CGSizeZero) ) {
+                [tableViewSection.footerNode measureWithSizeRange:ASSizeRangeMake(CGSizeMake(tableView.bounds.size.width, 0), CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX))];
+                tableViewSection.footerNode.frame = CGRectMake(0, 0, tableViewSection.footerNode.calculatedSize.width, tableViewSection.footerNode.calculatedSize.height);
+            }
+            return tableViewSection.footerNode.view;
+        }
+        else {
+            return tableViewSection.footerView;
+        }
+        
     }
     else {
         UITableViewHeaderFooterView *footerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:tableViewSection.footerReuseIdentifier];

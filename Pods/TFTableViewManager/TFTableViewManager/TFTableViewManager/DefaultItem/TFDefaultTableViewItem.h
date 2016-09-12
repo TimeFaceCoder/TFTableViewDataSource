@@ -16,11 +16,6 @@
 @property (nonatomic, assign) UITableViewCellStyle cellStyle;
 
 /**
- *  @brief the height of cell. Default is 44.0.
- */
-@property (nonatomic, assign) CGFloat cellHeight;
-
-/**
  *  @brief the display image of the imageView in cell.
  */
 @property (nonatomic, strong) UIImage *image;

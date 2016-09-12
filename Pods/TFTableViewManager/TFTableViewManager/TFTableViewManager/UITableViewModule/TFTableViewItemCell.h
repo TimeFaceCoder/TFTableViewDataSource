@@ -11,6 +11,9 @@
 @class TFTableViewManager;
 @class TFTableViewItem;
 
+/**
+ *  the table view cell when use a table view of table manager.
+ */
 @interface TFTableViewItemCell : UITableViewCell
 
 ///-----------------------------

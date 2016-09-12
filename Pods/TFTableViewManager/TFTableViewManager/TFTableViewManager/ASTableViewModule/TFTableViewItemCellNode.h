@@ -11,6 +11,9 @@
 @class TFTableViewManager;
 @class TFTableViewItem;
 
+/**
+ * the table view cell node when use a table node of table manager.
+ */
 @interface TFTableViewItemCellNode : ASCellNode
 
 /**

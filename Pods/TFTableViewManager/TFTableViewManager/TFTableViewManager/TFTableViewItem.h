@@ -19,7 +19,9 @@ typedef void (^CellClickHandler)(__kindof TFTableViewItem *item ,NSInteger actio
 typedef BOOL (^MoveHandler)(__kindof TFTableViewItem *item, NSIndexPath *sourceIndexPath, NSIndexPath *destinationIndexPath);
 typedef void(^MoveCompletionHandler)(__kindof TFTableViewItem *item, NSIndexPath *sourceIndexPath, NSIndexPath *destinationIndexPath);
 
-
+/**
+ *  the table view item just like the model of the MV. Use the item can handle the common actions of the cell.
+ */
 @interface TFTableViewItem : NSObject
 
 ///-----------------------------
@@ -72,6 +74,21 @@ typedef void(^MoveCompletionHandler)(__kindof TFTableViewItem *item, NSIndexPath
 @property (nonatomic, strong) id model;
 
 /**
+ *  @brief title for delete confirmation button
+ */
+@property (nonatomic, strong) NSString *titleForDelete;
+
+/**
+ *  @brief edit actions for row.
+ */
+@property (nonatomic, strong) NSArray<UITableViewRowAction *> *editActions;
+
+/**
+ *  @brief the height of cell. when the value is not set, cell height is determined by autolayout or aslayoutspec of the cell.
+ */
+@property (nonatomic, assign) CGFloat cellHeight;
+
+/**
  *  @brief handle item inset action.
  */
 @property (copy, nonatomic) InsertionHandler insertionHandler;
@@ -90,17 +107,6 @@ typedef void(^MoveCompletionHandler)(__kindof TFTableViewItem *item, NSIndexPath
  *  @brief handle item when cell subview click.
  */
 @property (copy, nonatomic) CellClickHandler cellClickHandler;
-
-
-/** 
- *  @brief title for delete confirmation button
- */
-@property (nonatomic, strong) NSString *titleForDelete;
-
-/**
- *  @brief edit actions for row.
- */
-@property (nonatomic, strong) NSArray<UITableViewRowAction *> *editActions;
 
 /**
  *  @brief handle item move action.

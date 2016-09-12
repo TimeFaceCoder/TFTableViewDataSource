@@ -9,4 +9,6 @@ pod 'TFNetwork', :git => 'https://github.com/TimeFaceCoder/TFNetwork.git'
 pod 'JSONModel'
 pod 'YYDispatchQueuePool'
 pod 'UzysAnimatedGifPullToRefresh'
+pod 'pop', '~> 1.0.9'
+
 end
