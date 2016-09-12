@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "TFTableViewDataSource"
-  s.version      = "0.0.1"
+  s.version      = "1.0.0"
   s.summary      = "时光流影iOS TableView DataSource 框架"
   s.homepage     = "https://github.com/TimeFaceCoder/TFTableViewDataSource"
   s.license      = "Copyright (C) 2016 TimeFace, Inc.  All rights reserved."
