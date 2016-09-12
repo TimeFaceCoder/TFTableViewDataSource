@@ -6,13 +6,13 @@
 //  Copyright © 2016年 Summer. All rights reserved.
 //
 
-#import "TFASDefaultTableViewItemCell.h"
+#import "TFDefaultTableViewItemCellNode.h"
 
 static CGFloat kContentHorizontalMarginSpace = 15.0;
 static CGFloat kContentVerticalMarginSpace = 0.0;
 static CGFloat kContentSpace = 15.0;
 
-@interface TFASDefaultTableViewItemCell ()
+@interface TFDefaultTableViewItemCellNode ()
 
 @property (nonatomic, strong) ASTextNode *textNode;
 
@@ -22,7 +22,7 @@ static CGFloat kContentSpace = 15.0;
 
 @end
 
-@implementation TFASDefaultTableViewItemCell
+@implementation TFDefaultTableViewItemCellNode
 
 @dynamic tableViewItem;
 

@@ -12,11 +12,10 @@
 #import "TFTableViewDataManager.h"
 #import "TFTableViewClassList.h"
 #import "TFTableViewItem.h"
+#import "TFLoadingTableViewItem.h"
+#import <TFTableViewManager.h>
 
-#import <MYTableViewManager/MYTableViewLoadingItem.h>
-#import <MYTableViewManager/MYTableViewLoadingItemCell.h>
-
-@interface TFTableViewDataSource()<MYTableViewManagerDelegate> {
+@interface TFTableViewDataSource()<TFTableViewManagerDelegate> {
     
 }
 
@@ -41,7 +40,7 @@
  */
 @property (nonatomic ,assign) CGFloat                  accumulatedY;
 
-@property (nonatomic ,strong) MYTableViewManager       *manager;
+@property (nonatomic ,strong) TFTableViewManager       *manager;
 /**
  *  网络数据加载工具
  */
@@ -57,7 +56,7 @@
 
 @implementation TFTableViewDataSource
 
-- (instancetype)initWithTableView:(ASTableView *)tableView
+- (instancetype)initWithTableView:(UITableView *)tableView
                          listType:(NSInteger)listType
                            params:(NSDictionary *)params
                          delegate:(id /*<TFTableViewDataSourceDelegate>*/)delegate {
@@ -69,10 +68,31 @@
     _tableView = tableView;
     _listType  = listType;
     _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
-    _manager = [[MYTableViewManager alloc] initWithTableView:tableView delegate:self];
+    _manager = [[TFTableViewManager alloc] initWithTableView:tableView];
+    _manager.delegate = self;
     [self initTableViewPullRefresh];
     [self setupDataSource];
     return self;
+}
+
+- (instancetype)initWithTableNode:(ASTableNode *)tableNode
+                         listType:(NSInteger)listType
+                           params:(NSDictionary *)params
+                         delegate:(id)delegate {
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    _delegate  = delegate;
+    _tableNode = tableNode;
+    _listType  = listType;
+    _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
+    _manager = [[TFTableViewManager alloc] initWithTableNode:tableNode];
+    _manager.delegate = self;
+    [self initTableViewPullRefresh];
+    [self setupDataSource];
+    return self;
+
 }
 
 #pragma mark - Public
@@ -119,10 +139,15 @@
         _tableViewDataManager = [[class alloc] initWithDataSource:self listType:_listType];
     }
     //registerClass
-    NSArray *itemClassList = [TFTableViewClassList subclassesOfClass:[MYTableViewItem class]];
+    NSArray *itemClassList = [TFTableViewClassList subclassesOfClass:[TFTableViewItem class]];
     for (Class itemClass in itemClassList) {
         NSString *itemName = NSStringFromClass(itemClass);
-        self.manager[itemName] = [itemName stringByAppendingString:@"Cell"];
+        if (self.tableNode) {
+            self.manager[itemName] = [itemName stringByAppendingString:@"CellNode"];
+        }
+        else {
+            self.manager[itemName] = [itemName stringByAppendingString:@"Cell"];
+        }
     }
 }
 
@@ -235,7 +260,7 @@
     }
     __weak __typeof(self)weakSelf = self;
     [self.tableViewDataManager reloadView:result
-                                    block:^(BOOL finished, id object, NSError *error, NSArray <MYTableViewSection *> *sections)
+                                    block:^(BOOL finished, id object, NSError *error, NSArray <TFTableViewSection *> *sections)
      {
          typeof(self) strongSelf = weakSelf;
          if (finished) {
@@ -249,9 +274,9 @@
              //需要在主线程执行
              if (_currentPage < _totalPage) {
                  //存在下一页数据，在列表尾部追加loading item
-                 MYTableViewSection *section = [MYTableViewSection section];
+                 TFTableViewSection *section = [TFTableViewSection section];
                  //loading item
-                 [section addItem:[MYTableViewLoadingItem itemWithTitle:NSLocalizedString(@"正在加载...", nil)]];
+                 [section addItem:[TFLoadingTableViewItem itemWithModel:NSLocalizedString(@"正在加载...", nil)]];
                  [strongSelf.manager addSection:section];
                  rangelength += sections.count;
              }
@@ -288,17 +313,24 @@
 
 #pragma mark - 刷新列表
 - (void)reloadTableView {
-    UIView *snapshot = [self.tableView snapshotViewAfterScreenUpdates:NO];
-    [self.tableView.superview insertSubview:snapshot aboveSubview:_tableView];
-    [self.tableView beginUpdates];
-    [self.tableView reloadDataImmediately];
-    [self.tableView endUpdatesAnimated:NO completion:^(BOOL completed) {
-        [UIView animateWithDuration:0.75 animations:^{
-            snapshot.alpha = 0;
-        } completion:^(BOOL finished) {
-            [snapshot removeFromSuperview];
-        }];
-    }];
+    if (self.tableNode) {
+        [self.tableNode.view reloadData];
+//        UIView *snapshot = [self.tableView snapshotViewAfterScreenUpdates:NO];
+//        [self.tableNode.view.superview insertSubview:snapshot aboveSubview:_tableView];
+//        [self.tableNode.view beginUpdates];
+//        [self.tableNode.view reloadDataImmediately];
+//        [self.tableNode.view endUpdatesAnimated:NO completion:^(BOOL completed) {
+//            [UIView animateWithDuration:0.75 animations:^{
+//                snapshot.alpha = 0;
+//            } completion:^(BOOL finished) {
+//                [snapshot removeFromSuperview];
+//            }];
+//        }];
+
+    }
+    else if (self.tableView) {
+        [self.tableView reloadData];
+    }
 
 }
 

@@ -1,15 +1,15 @@
 //
-//  PFASTableViewItemCell.m
+//  TFTableViewItemCellNode.m
 //  TFTableViewManagerDemo
 //
 //  Created by Summer on 16/9/5.
 //  Copyright © 2016年 Summer. All rights reserved.
 //
 
-#import "TFASTableViewItemCell.h"
+#import "TFTableViewItemCellNode.h"
 #import "TFTableViewItem.h"
 
-@implementation TFASTableViewItemCell
+@implementation TFTableViewItemCellNode
 
 - (instancetype)initWithTableViewItem:(TFTableViewItem *)tableViewItem {
     self = [super init];

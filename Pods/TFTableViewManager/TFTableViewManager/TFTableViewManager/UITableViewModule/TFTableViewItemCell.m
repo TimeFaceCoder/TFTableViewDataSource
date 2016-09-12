@@ -6,14 +6,14 @@
 //  Copyright © 2016年 Summer. All rights reserved.
 //
 
-#import "TFUITableViewItemCell.h"
+#import "TFTableViewItemCell.h"
 #import "TFTableViewItem.h"
 
-@interface TFUITableViewItemCell ()
+@interface TFTableViewItemCell ()
 
 @end
 
-@implementation TFUITableViewItemCell
+@implementation TFTableViewItemCell
 
 - (void)awakeFromNib {
     [super awakeFromNib];

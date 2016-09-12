@@ -1,5 +1,5 @@
 //
-//  PFASTableViewItemCell.h
+//  TFTableViewItemCellNode.h
 //  TFTableViewManagerDemo
 //
 //  Created by Summer on 16/9/5.
@@ -11,15 +11,15 @@
 @class TFTableViewManager;
 @class TFTableViewItem;
 
-@interface TFASTableViewItemCell : ASCellNode
+@interface TFTableViewItemCellNode : ASCellNode
 
 /**
- *  @brief The `TFASTableViewManager` that needs to be managed using this `PFASTableViewItemCell`.
+ *  @brief The `TFASTableViewManager` that needs to be managed using this `TFTableViewItemCellNode`.
  */
 @property (weak, nonatomic) TFTableViewManager *tableViewManager;
 
 /**
- *  @brief the item of the cell.
+ *  @brief the item of the cell node.
  */
 @property (strong, nonatomic) TFTableViewItem *tableViewItem;
 
@@ -28,7 +28,7 @@
  *
  *  @param tableViewItem item.
  *
- *  @return PFASTableViewItemCell.
+ *  @return TFTableViewItemCellNode.
  */
 - (instancetype)initWithTableViewItem:(TFTableViewItem *)tableViewItem;
 

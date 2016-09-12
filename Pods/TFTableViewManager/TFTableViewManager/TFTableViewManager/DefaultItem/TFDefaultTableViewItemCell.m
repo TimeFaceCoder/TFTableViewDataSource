@@ -6,9 +6,9 @@
 //  Copyright © 2016年 Summer. All rights reserved.
 //
 
-#import "TFUIDefaultTableViewItemCell.h"
+#import "TFDefaultTableViewItemCell.h"
 
-@implementation TFUIDefaultTableViewItemCell
+@implementation TFDefaultTableViewItemCell
 
 @dynamic tableViewItem;
 

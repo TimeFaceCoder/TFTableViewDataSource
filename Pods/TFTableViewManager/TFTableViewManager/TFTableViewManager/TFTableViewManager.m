@@ -7,8 +7,8 @@
 //
 
 #import "TFTableViewManager.h"
-#import "TFUITableViewItemCell.h"
-#import "TFASTableViewItemCell.h"
+#import "TFTableViewItemCell.h"
+#import "TFTableViewItemCellNode.h"
 #import "TFDefaultTableViewItem.h"
 
 @interface TFTableViewManager ()<UITableViewDataSource,UITableViewDelegate,ASTableDataSource,ASTableDelegate>
@@ -296,7 +296,7 @@
     if ([item isKindOfClass:[TFDefaultTableViewItem class]]) {
         identifier = [identifier stringByAppendingFormat:@"%ld",(long)((TFDefaultTableViewItem *)item).cellStyle];
     }
-    TFUITableViewItemCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    TFTableViewItemCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     
     if (!cell) {
         cell = [[cellClass alloc] initWithTableViewItem:item reuseIdentifier:identifier];
@@ -320,7 +320,7 @@
     Class cellClass = [self classForCellAtIndexPath:indexPath];
     typeof(self) __weak weakSelf = self;
     return ^{
-        TFASTableViewItemCell *cell = [[cellClass alloc] initWithTableViewItem:item];
+        TFTableViewItemCellNode *cell = [[cellClass alloc] initWithTableViewItem:item];
         cell.tableViewManager = weakSelf;
         return cell;
     };
@@ -429,7 +429,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [(TFUITableViewItemCell *)cell cellDidDisappear];
+    [(TFTableViewItemCell *)cell cellDidDisappear];
     if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingCell:forRowAtIndexPath:)]) {
         [self.delegate tableView:tableView didEndDisplayingCell:cell forRowAtIndexPath:indexPath];
     }

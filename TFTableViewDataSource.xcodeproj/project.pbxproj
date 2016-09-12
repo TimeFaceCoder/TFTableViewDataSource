@@ -26,9 +26,11 @@
 		B07E47C41CB3B44900F1D5DD /* TFTableViewDataSourceConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B07E47C31CB3B44900F1D5DD /* TFTableViewDataSourceConfig.m */; };
 		B0F589531CB5064900BEE18A /* TFModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F589521CB5064900BEE18A /* TFModel.m */; };
 		B0F589561CB507CC00BEE18A /* TimeLineTableViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F589551CB507CC00BEE18A /* TimeLineTableViewItem.m */; };
-		B0F589591CB5086600BEE18A /* TimeLineTableViewItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F589581CB5086600BEE18A /* TimeLineTableViewItemCell.m */; };
+		B0F589591CB5086600BEE18A /* TimeLineTableViewItemCellNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F589581CB5086600BEE18A /* TimeLineTableViewItemCellNode.m */; };
 		B0F5895C1CB50AB900BEE18A /* TimeLineTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F5895B1CB50AB900BEE18A /* TimeLineTextStyle.m */; };
-		C48C78931D82A777003589B8 /* TFTableViewLoadingItem.m in Sources */ = {isa = PBXBuildFile; fileRef = C48C78921D82A777003589B8 /* TFTableViewLoadingItem.m */; };
+		C47796BF1D82B0B200B9699F /* TFLoadingTableViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = C47796BE1D82B0B200B9699F /* TFLoadingTableViewItem.m */; };
+		C47796C21D82B0CC00B9699F /* TFLoadingTableViewItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C47796C11D82B0CC00B9699F /* TFLoadingTableViewItemCell.m */; };
+		C47796C51D82B0F500B9699F /* TFLoadingTableViewItemCellNode.m in Sources */ = {isa = PBXBuildFile; fileRef = C47796C41D82B0F500B9699F /* TFLoadingTableViewItemCellNode.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,12 +91,16 @@
 		B0F589521CB5064900BEE18A /* TFModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFModel.m; sourceTree = "<group>"; };
 		B0F589541CB507CC00BEE18A /* TimeLineTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeLineTableViewItem.h; sourceTree = "<group>"; };
 		B0F589551CB507CC00BEE18A /* TimeLineTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeLineTableViewItem.m; sourceTree = "<group>"; };
-		B0F589571CB5086600BEE18A /* TimeLineTableViewItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeLineTableViewItemCell.h; sourceTree = "<group>"; };
-		B0F589581CB5086600BEE18A /* TimeLineTableViewItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeLineTableViewItemCell.m; sourceTree = "<group>"; };
+		B0F589571CB5086600BEE18A /* TimeLineTableViewItemCellNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeLineTableViewItemCellNode.h; sourceTree = "<group>"; };
+		B0F589581CB5086600BEE18A /* TimeLineTableViewItemCellNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeLineTableViewItemCellNode.m; sourceTree = "<group>"; };
 		B0F5895A1CB50AB900BEE18A /* TimeLineTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeLineTextStyle.h; sourceTree = "<group>"; };
 		B0F5895B1CB50AB900BEE18A /* TimeLineTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeLineTextStyle.m; sourceTree = "<group>"; };
-		C48C78911D82A777003589B8 /* TFTableViewLoadingItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFTableViewLoadingItem.h; sourceTree = "<group>"; };
-		C48C78921D82A777003589B8 /* TFTableViewLoadingItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTableViewLoadingItem.m; sourceTree = "<group>"; };
+		C47796BD1D82B0B200B9699F /* TFLoadingTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLoadingTableViewItem.h; sourceTree = "<group>"; };
+		C47796BE1D82B0B200B9699F /* TFLoadingTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLoadingTableViewItem.m; sourceTree = "<group>"; };
+		C47796C01D82B0CC00B9699F /* TFLoadingTableViewItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLoadingTableViewItemCell.h; sourceTree = "<group>"; };
+		C47796C11D82B0CC00B9699F /* TFLoadingTableViewItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLoadingTableViewItemCell.m; sourceTree = "<group>"; };
+		C47796C31D82B0F500B9699F /* TFLoadingTableViewItemCellNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLoadingTableViewItemCellNode.h; sourceTree = "<group>"; };
+		C47796C41D82B0F500B9699F /* TFLoadingTableViewItemCellNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLoadingTableViewItemCellNode.m; sourceTree = "<group>"; };
 		EF3C8F8ADFAD71A72A1334B6 /* Pods-TFTableViewDataSource.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFTableViewDataSource.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TFTableViewDataSource/Pods-TFTableViewDataSource.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -154,8 +160,8 @@
 				B0F589521CB5064900BEE18A /* TFModel.m */,
 				B0F589541CB507CC00BEE18A /* TimeLineTableViewItem.h */,
 				B0F589551CB507CC00BEE18A /* TimeLineTableViewItem.m */,
-				B0F589571CB5086600BEE18A /* TimeLineTableViewItemCell.h */,
-				B0F589581CB5086600BEE18A /* TimeLineTableViewItemCell.m */,
+				B0F589571CB5086600BEE18A /* TimeLineTableViewItemCellNode.h */,
+				B0F589581CB5086600BEE18A /* TimeLineTableViewItemCellNode.m */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -267,8 +273,12 @@
 		C48C78901D82A748003589B8 /* LoadingItem */ = {
 			isa = PBXGroup;
 			children = (
-				C48C78911D82A777003589B8 /* TFTableViewLoadingItem.h */,
-				C48C78921D82A777003589B8 /* TFTableViewLoadingItem.m */,
+				C47796BD1D82B0B200B9699F /* TFLoadingTableViewItem.h */,
+				C47796BE1D82B0B200B9699F /* TFLoadingTableViewItem.m */,
+				C47796C01D82B0CC00B9699F /* TFLoadingTableViewItemCell.h */,
+				C47796C11D82B0CC00B9699F /* TFLoadingTableViewItemCell.m */,
+				C47796C31D82B0F500B9699F /* TFLoadingTableViewItemCellNode.h */,
+				C47796C41D82B0F500B9699F /* TFLoadingTableViewItemCellNode.m */,
 			);
 			path = LoadingItem;
 			sourceTree = "<group>";
@@ -462,14 +472,16 @@
 				B05F05F71C9957240048BB13 /* ViewController.m in Sources */,
 				B05F05F41C9957240048BB13 /* AppDelegate.m in Sources */,
 				B05F06251C995F5D0048BB13 /* TFTableViewDataSource.m in Sources */,
+				C47796C51D82B0F500B9699F /* TFLoadingTableViewItemCellNode.m in Sources */,
 				B05F06281C995FDA0048BB13 /* TFTableViewDataManager.m in Sources */,
 				B05F05F11C9957240048BB13 /* main.m in Sources */,
 				B07E47BB1CB3AA3B00F1D5DD /* TFTableViewDataSource+Demo.m in Sources */,
+				C47796C21D82B0CC00B9699F /* TFLoadingTableViewItemCell.m in Sources */,
 				B03133201CB4D84B005E4E3D /* TFTableViewClassList.m in Sources */,
 				B0F589561CB507CC00BEE18A /* TimeLineTableViewItem.m in Sources */,
-				C48C78931D82A777003589B8 /* TFTableViewLoadingItem.m in Sources */,
+				C47796BF1D82B0B200B9699F /* TFLoadingTableViewItem.m in Sources */,
 				B0F589531CB5064900BEE18A /* TFModel.m in Sources */,
-				B0F589591CB5086600BEE18A /* TimeLineTableViewItemCell.m in Sources */,
+				B0F589591CB5086600BEE18A /* TimeLineTableViewItemCellNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

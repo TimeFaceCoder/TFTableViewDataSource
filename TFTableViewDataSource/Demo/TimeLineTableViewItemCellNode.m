@@ -6,11 +6,11 @@
 //  Copyright © 2016 TimeFace. All rights reserved.
 //
 
-#import "TimeLineTableViewItemCell.h"
+#import "TimeLineTableViewItemCellNode.h"
 #import "TimeLineTextStyle.h"
 #import <YYDispatchQueuePool/YYDispatchQueuePool.h>
 
-@interface TimeLineTableViewItemCell() {
+@interface TimeLineTableViewItemCellNode() {
     /**
      *  伪造卡片形式
      */
@@ -26,7 +26,7 @@
 
 @end
 
-@implementation TimeLineTableViewItemCell
+@implementation TimeLineTableViewItemCellNode
 @dynamic tableViewItem;
 - (void)cellLoadSubNodes {
     [super cellLoadSubNodes];

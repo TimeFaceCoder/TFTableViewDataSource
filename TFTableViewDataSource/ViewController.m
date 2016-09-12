@@ -14,7 +14,7 @@
 @interface ViewController ()<TFTableViewDataSourceDelegate>
 
 @property (nonatomic ,strong) DemoTableViewDataSource *dataSource;
-@property (nonatomic ,strong) ASTableView           *tableView;
+@property (nonatomic ,strong) ASTableNode           *tableNode;
 
 @end
 
@@ -22,19 +22,15 @@
 
 - (void)loadView {
     [super loadView];
-    _tableView = [[ASTableView alloc] initWithFrame:self.view.bounds
-                                              style:UITableViewStylePlain
-                                  asyncDataFetching:YES];
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.view addSubview:_tableView];
-    _tableView.backgroundColor = [UIColor lightGrayColor];
+    
+    _tableNode = [[ASTableNode alloc] initWithStyle:UITableViewStylePlain];
+    _tableNode.frame = self.view.bounds;
+    [self.view addSubnode:self.tableNode];
+    _tableNode.backgroundColor = [UIColor lightGrayColor];
 }
 
 - (void)createDataSource {
-    self.dataSource = [[[[TFTableViewDataSourceConfig sharedInstance] dataSourceByListType:1] alloc] initWithTableView:_tableView
-                                                                                                                          listType:1
-                                                                                                                params:@{}
-                                                                                                                          delegate:self];
+    self.dataSource = [[[[TFTableViewDataSourceConfig sharedInstance] dataSourceByListType:1] alloc] initWithTableNode:_tableNode listType:1 params:@{} delegate:self];
     self.dataSource.cacheTimeInSeconds = 60;
 }
 
@@ -76,7 +72,7 @@
  *  @param error      错误
  */
 - (void)didFinishLoad:(TFDataLoadPolicy)loadPolicy object:(id)object error:(NSError *)error {
-    self.tableView.tableFooterView = [[UIView alloc] init];
+    self.tableNode.view.tableFooterView = [[UIView alloc] init];
 }
 
 

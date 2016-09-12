@@ -11,7 +11,7 @@
 @class TFTableViewManager;
 @class TFTableViewItem;
 
-@interface TFUITableViewItemCell : UITableViewCell
+@interface TFTableViewItemCell : UITableViewCell
 
 ///-----------------------------
 /// @name Properties.

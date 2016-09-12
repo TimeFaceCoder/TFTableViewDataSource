@@ -1,13 +1,15 @@
 //
-//  TFTableViewLoadingItem.h
+//  TFLoadingTableViewItem.m
 //  TFTableViewDataSource
 //
 //  Created by Summer on 16/9/9.
 //  Copyright © 2016年 TimeFace. All rights reserved.
 //
 
-#import <TFTableViewManager/TFTableViewManager.h>
+#import "TFLoadingTableViewItem.h"
 
-@interface TFTableViewLoadingItem : TFTableViewItem
+@implementation TFLoadingTableViewItem
+
+@dynamic model;
 
 @end

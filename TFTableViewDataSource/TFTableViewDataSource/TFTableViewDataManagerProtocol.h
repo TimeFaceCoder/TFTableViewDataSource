@@ -13,10 +13,10 @@
 #import <TFNetwork/TFNetwork.h>
 
 @class TFTableViewItem;
-@class MYTableViewSection;
+@class TFTableViewSection;
 
 typedef void (^Completion)(void);
-typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error, NSArray <MYTableViewSection *> *sections);
+typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *error, NSArray <TFTableViewSection *> *sections);
 typedef void (^DeletionHandlerWithCompletion)(__kindof TFTableViewItem *item, Completion completion);
 
 @protocol TFTableViewDataManagerProtocol <NSObject>

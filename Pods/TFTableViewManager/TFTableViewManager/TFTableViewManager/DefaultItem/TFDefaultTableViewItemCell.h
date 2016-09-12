@@ -1,15 +1,15 @@
 //
-//  TFUIDefaultTableViewItemCell.h
+//  TFDefaultTableViewItemCell.h
 //  TFTableViewManager
 //
 //  Created by Summer on 16/9/6.
 //  Copyright © 2016年 Summer. All rights reserved.
 //
 
-#import "TFUITableViewItemCell.h"
+#import "TFTableViewItemCell.h"
 #import "TFDefaultTableViewItem.h"
 
-@interface TFUIDefaultTableViewItemCell : TFUITableViewItemCell
+@interface TFDefaultTableViewItemCell : TFTableViewItemCell
 
 @property (nonatomic, strong) TFDefaultTableViewItem *tableViewItem;
 
