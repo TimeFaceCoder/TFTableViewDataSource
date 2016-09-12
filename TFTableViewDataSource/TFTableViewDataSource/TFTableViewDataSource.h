@@ -92,10 +92,7 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
  *  @param actionType 事件类型
  */
 - (void)actionOnView:(TFTableViewItem *)item actionType:(NSInteger)actionType;
-/**
- *  开始加载
- */
-- (void)didStartLoad;
+
 /**
  *  加载完成
  *
