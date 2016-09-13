@@ -221,8 +221,9 @@
 }
 
 - (void)deleteSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
-    [self removeSectionsAtIndexes:sections];
+    
     [self.tableView beginUpdates];
+    [self removeSectionsAtIndexes:sections];
     [self.tableView deleteSections:sections withRowAnimation:animation];
     [self.tableView endUpdates];
 }

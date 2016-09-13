@@ -25,6 +25,12 @@
     
     _tableNode = [[ASTableNode alloc] initWithStyle:UITableViewStylePlain];
     _tableNode.frame = self.view.bounds;
+//    __weak ViewController* wself = self;
+//    _tableNode.layoutSpecBlock = ^ASLayoutSpec* (ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize){
+//        
+//        return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(8, 8, 8, 8) child:wself.tableNode];
+////        return nil;
+//    };
     [self.view addSubnode:self.tableNode];
     _tableNode.backgroundColor = [UIColor lightGrayColor];
 }
@@ -32,6 +38,12 @@
 - (void)createDataSource {
     self.dataSource = [[[[TFTableViewDataSourceConfig sharedInstance] dataSourceByListType:1] alloc] initWithTableNode:_tableNode listType:1 params:@{} delegate:self];
     self.dataSource.cacheTimeInSeconds = 60;
+    self.dataSource.pageSize = 5;
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    [self.tableNode measure:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height)];
 }
 
 - (void)viewDidLoad {

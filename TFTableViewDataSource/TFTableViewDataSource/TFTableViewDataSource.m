@@ -87,6 +87,7 @@
     }
     _delegate  = delegate;
     _tableNode = tableNode;
+    _tableView = tableNode.view;
     _listType  = listType;
     _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
     _manager = [[TFTableViewManager alloc] initWithTableNode:tableNode];
@@ -196,8 +197,14 @@
         _currentPage = 1;
         _totalPage = 1;
     }
-    [_requestArgument setObject:[NSNumber numberWithInteger:[TFTableViewDataSourceConfig pageSize]]
-                         forKey:@"pageSize"];
+    if (self.pageSize > 0) {
+        [_requestArgument setObject:@(self.pageSize) forKey:@"pageSize"];
+    }
+    else {
+        [_requestArgument setObject:[NSNumber numberWithInteger:[TFTableViewDataSourceConfig pageSize]]
+                             forKey:@"pageSize"];
+
+    }
     [_requestArgument setObject:[NSNumber numberWithInteger:_currentPage] forKey:@"currentPage"];
     _dataRequest.requestArgument    = _requestArgument;
     _dataRequest.cacheTimeInSeconds = _cacheTimeInSeconds;
@@ -245,11 +252,7 @@
     NSInteger lastSectionIndex = [[self.manager sections] count] - 1;
     if (dataLoadPolicy == TFDataLoadPolicyMore) {
         //加载下一页，移除loading item
-        [self.manager removeLastSection];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex]
-                          withRowAnimation:UITableViewRowAnimationFade];
-        });
+        [self.manager deleteSectionsAtIndexSet:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
     }
     [self setTotalPage:[[result objectForKey:@"totalPage"] integerValue]];
     if (_totalPage == 0) {
@@ -281,6 +284,7 @@
              }
              dispatch_async(dispatch_get_main_queue(), ^{
                  if (dataLoadPolicy == TFDataLoadPolicyMore) {
+                     
                      [strongSelf.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
                                          withRowAnimation:UITableViewRowAnimationFade];
                      if (context) {
@@ -312,13 +316,7 @@
 
 #pragma mark - 刷新列表
 - (void)reloadTableView {
-    if (self.tableNode) {
-        [self.tableNode.view reloadData];
-    }
-    else if (self.tableView) {
-        [self.tableView reloadData];
-    }
-
+    [self.tableView reloadData];
 }
 
 #pragma mark - UITableViewDelegate & ASTableViewDelegate

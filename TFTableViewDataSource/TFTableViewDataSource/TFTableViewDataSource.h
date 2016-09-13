@@ -198,6 +198,12 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
  */
 @property (nonatomic ,assign) NSInteger cacheTimeInSeconds;
 
+
+/**
+ *  @brief 当前pageSize
+ */
+@property (nonatomic, assign) NSInteger pageSize;
+
 /**
  *  初始化方法
  *
