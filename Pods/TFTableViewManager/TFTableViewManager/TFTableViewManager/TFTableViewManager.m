@@ -10,12 +10,9 @@
 #import "TFTableViewItemCell.h"
 #import "TFTableViewItemCellNode.h"
 #import "TFDefaultTableViewItem.h"
+#import "TFTableViewItem.h"
 
 @interface TFTableViewManager ()<UITableViewDataSource,UITableViewDelegate,ASTableDataSource,ASTableDelegate>
-{
-    CGSize _nodeMinSize;
-    CGSize _nodeMaxSize;
-}
 
 @property (nonatomic, strong) NSMutableArray *mutableSections;
 
@@ -55,10 +52,6 @@
 - (instancetype)initWithTableNode:(ASTableNode *)tableNode {
     self = [super init];
     if (self) {
-        CGFloat tableNodeWidth = CGRectGetWidth(tableNode.frame);
-        CGFloat tableNodeHeight = CGRectGetHeight(tableNode.frame);
-        _nodeMinSize = CGSizeMake(tableNodeWidth, 0.0);
-        _nodeMaxSize = CGSizeMake(tableNodeWidth, tableNodeHeight);
         tableNode.delegate     = self;
         tableNode.dataSource   = self;
         self.tableNode         = tableNode;
@@ -491,11 +484,12 @@
     if ([self.delegate respondsToSelector:@selector(tableView:constrainedSizeForRowAtIndexPath:)]) {
         return [self.delegate tableView:tableView constrainedSizeForRowAtIndexPath:indexPath];
     }
+    CGFloat tableViewWidth = CGRectGetWidth(tableView.frame);
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
     if (item.cellHeight) {
-        return ASSizeRangeMake(CGSizeMake(_nodeMinSize.width, item.cellHeight), CGSizeMake(_nodeMaxSize.width, item.cellHeight));
+        return ASSizeRangeMake(CGSizeMake(tableViewWidth, item.cellHeight), CGSizeMake(tableViewWidth, item.cellHeight));
     }
-    return ASSizeRangeMake(_nodeMinSize, _nodeMaxSize);
+    return ASSizeRangeMake(CGSizeMake(tableViewWidth, 0.0),CGSizeMake(tableViewWidth, CGFLOAT_MAX));
 }
 
 #pragma mark same methods for UITableViewDelegate and ASTableViewDelegate.

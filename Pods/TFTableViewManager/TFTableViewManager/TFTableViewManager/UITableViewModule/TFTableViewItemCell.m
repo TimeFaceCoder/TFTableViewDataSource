@@ -41,6 +41,7 @@
 #pragma mark - Cell life cycle
 
 - (void)cellLoadSubViews {
+    
     //add subviews at here.
     self.selectionStyle = self.tableViewItem.selectionStyle;
     self.accessoryType = self.tableViewItem.accessoryType;

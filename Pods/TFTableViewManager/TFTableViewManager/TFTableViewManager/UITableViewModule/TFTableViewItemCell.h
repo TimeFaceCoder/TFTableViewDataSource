@@ -60,17 +60,17 @@
 /**
  *  add cell subviews in this method.
  */
-- (void)cellLoadSubViews;
+- (void)cellLoadSubViews __attribute__((objc_requires_super));
 
 /**
  *  cell will appear, deal with the display values of subviews in this method.
  */
-- (void)cellWillAppear;
+- (void)cellWillAppear __attribute__((objc_requires_super));;
 
 /**
  *  cell did disappear.
  */
-- (void)cellDidDisappear;
+- (void)cellDidDisappear __attribute__((objc_requires_super));;
 
 
 

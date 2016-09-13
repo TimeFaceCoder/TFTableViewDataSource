@@ -6,7 +6,7 @@
 //  Copyright © 2016年 TimeFace. All rights reserved.
 //
 
-#import <TFTableViewManager/TFTableViewManager.h>
+#import <TFTableViewManager/TFTableViewItem.h>
 
 @interface TFLoadingTableViewItem : TFTableViewItem
 

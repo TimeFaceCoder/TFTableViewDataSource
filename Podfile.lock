@@ -67,7 +67,7 @@ CHECKOUT OPTIONS:
     :commit: 90337a76ac8a17c03a168a4ebf8af5ab23ae1ae9
     :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
-    :commit: c9eeb0d2db3fde0d934597d4c9dce7b339b875c8
+    :commit: a5e495e3ef61026e9b99d3e875910a9f3fee27df
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
 SPEC CHECKSUMS:
