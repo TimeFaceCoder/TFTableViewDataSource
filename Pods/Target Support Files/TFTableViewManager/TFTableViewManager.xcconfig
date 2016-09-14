@@ -1,9 +1,4 @@
-CONFIGURATION_BUILD_DIR = $PODS_CONFIGURATION_BUILD_DIR/TFTableViewManager
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/TFTableViewManager" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/AnimatedGIFImageSerialization" "${PODS_ROOT}/Headers/Public/AsyncDisplayKit" "${PODS_ROOT}/Headers/Public/GHODictionary" "${PODS_ROOT}/Headers/Public/JSONModel" "${PODS_ROOT}/Headers/Public/MPMessagePack" "${PODS_ROOT}/Headers/Public/PINCache" "${PODS_ROOT}/Headers/Public/PINRemoteImage" "${PODS_ROOT}/Headers/Public/TFNetwork" "${PODS_ROOT}/Headers/Public/TFTableViewManager" "${PODS_ROOT}/Headers/Public/UzysAnimatedGifPullToRefresh" "${PODS_ROOT}/Headers/Public/YYDispatchQueuePool" "${PODS_ROOT}/Headers/Public/pop"
-LIBRARY_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/AsyncDisplayKit" "$PODS_CONFIGURATION_BUILD_DIR/PINCache" "$PODS_CONFIGURATION_BUILD_DIR/PINRemoteImage"
-PODS_BUILD_DIR = $BUILD_DIR
-PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_ROOT = ${SRCROOT}
-PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.${PRODUCT_NAME:rfc1034identifier}
 SKIP_INSTALL = YES

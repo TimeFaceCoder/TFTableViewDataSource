@@ -119,7 +119,7 @@ static CGFloat kContentSpace = 15.0;
         }
             break;
         case UITableViewCellStyleValue2: {
-            NSAssert(UITableViewCellStyleSubtitle, @"UITableViewCellStyleValue2 is not support now.");
+            @throw [NSException exceptionWithName:@"UITableViewCellStyleValue2" reason:@"UITableViewCellStyleValue2 is not support now." userInfo:nil];
             return nil;
         }
             break;

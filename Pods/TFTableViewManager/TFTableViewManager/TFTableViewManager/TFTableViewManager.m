@@ -10,12 +10,9 @@
 #import "TFTableViewItemCell.h"
 #import "TFTableViewItemCellNode.h"
 #import "TFDefaultTableViewItem.h"
+#import "TFTableViewItem.h"
 
 @interface TFTableViewManager ()<UITableViewDataSource,UITableViewDelegate,ASTableDataSource,ASTableDelegate>
-{
-    CGSize _nodeMinSize;
-    CGSize _nodeMaxSize;
-}
 
 @property (nonatomic, strong) NSMutableArray *mutableSections;
 
@@ -55,10 +52,6 @@
 - (instancetype)initWithTableNode:(ASTableNode *)tableNode {
     self = [super init];
     if (self) {
-        CGFloat tableNodeWidth = CGRectGetWidth(tableNode.frame);
-        CGFloat tableNodeHeight = CGRectGetHeight(tableNode.frame);
-        _nodeMinSize = CGSizeMake(tableNodeWidth, 0.0);
-        _nodeMaxSize = CGSizeMake(tableNodeWidth, tableNodeHeight);
         tableNode.delegate     = self;
         tableNode.dataSource   = self;
         self.tableNode         = tableNode;
@@ -77,12 +70,20 @@
 - (void)registerWithItemClass:(NSString *)itemClass cellClass:(NSString *)cellClass
 {
     NSAssert(NSClassFromString(itemClass), ([NSString stringWithFormat:@"Item class '%@' does not exist.", itemClass]));
-    NSAssert(NSClassFromString(itemClass), ([NSString stringWithFormat:@"Cell class '%@' does not exist.", cellClass]));
+    NSAssert(NSClassFromString(cellClass), ([NSString stringWithFormat:@"Cell class '%@' does not exist.", cellClass]));
     self.registeredClasses[(id <NSCopying>)NSClassFromString(itemClass)] = NSClassFromString(cellClass);
-    
-    if ([[NSBundle mainBundle] pathForResource:itemClass ofType:@"nib"]) {
-        //XIB exists with the same name as the cell class
-        [self.tableView registerNib:[UINib nibWithNibName:cellClass bundle:[NSBundle mainBundle]] forCellReuseIdentifier:cellClass];
+    NSString *nibPath = [[NSBundle mainBundle] pathForResource:cellClass ofType:@"nib"];
+    if (nibPath) {
+        UITableViewCell *cell = [[[NSBundle mainBundle] loadNibNamed:cellClass owner:nil options:nil] lastObject];
+        BOOL isEqual = [cell.reuseIdentifier isEqualToString:cellClass];
+        if (isEqual) {
+            //XIB exists with the same name as the cell class
+            [self.tableView registerNib:[UINib nibWithNibName:cellClass bundle:[NSBundle mainBundle]] forCellReuseIdentifier:cellClass];
+        }
+        else {
+            NSAssert(isEqual, @"cell reuse identifier must be equal to cell class name.");
+        }
+       
     }
     
 }
@@ -221,9 +222,8 @@
 }
 
 - (void)deleteSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
-    
-    [self.tableView beginUpdates];
     [self removeSectionsAtIndexes:sections];
+    [self.tableView beginUpdates];
     [self.tableView deleteSections:sections withRowAnimation:animation];
     [self.tableView endUpdates];
 }
@@ -492,11 +492,12 @@
     if ([self.delegate respondsToSelector:@selector(tableView:constrainedSizeForRowAtIndexPath:)]) {
         return [self.delegate tableView:tableView constrainedSizeForRowAtIndexPath:indexPath];
     }
+    CGFloat tableViewWidth = CGRectGetWidth(tableView.frame);
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
     if (item.cellHeight) {
-        return ASSizeRangeMake(CGSizeMake(_nodeMinSize.width, item.cellHeight), CGSizeMake(_nodeMaxSize.width, item.cellHeight));
+        return ASSizeRangeMake(CGSizeMake(tableViewWidth, item.cellHeight), CGSizeMake(tableViewWidth, item.cellHeight));
     }
-    return ASSizeRangeMake(_nodeMinSize, _nodeMaxSize);
+    return ASSizeRangeMake(CGSizeMake(tableViewWidth, 0.0),CGSizeMake(tableViewWidth, CGFLOAT_MAX));
 }
 
 #pragma mark same methods for UITableViewDelegate and ASTableViewDelegate.
@@ -627,11 +628,12 @@
     else {
         UITableViewHeaderFooterView *headerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:tableViewSection.headerReuseIdentifier];
         if (!headerView) {
-            if ([tableViewSection.headerView isKindOfClass:[UITableViewHeaderFooterView class]]) {
+            BOOL isClass = [tableViewSection.headerView isKindOfClass:[UITableViewHeaderFooterView class]];
+            if (isClass) {
                 headerView = (UITableViewHeaderFooterView *)tableViewSection.headerView;
             }
             else {
-                NSAssert(headerView, @"headerView is not a UITableViewHeaderFooterView class, can not use as reuse view.");
+                NSAssert(isClass, @"headerView is not a UITableViewHeaderFooterView class, can not use as reuse view.");
             }
             headerView = (UITableViewHeaderFooterView *)tableViewSection.headerView;
         }
@@ -660,11 +662,13 @@
     else {
         UITableViewHeaderFooterView *footerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:tableViewSection.footerReuseIdentifier];
         if (!footerView) {
-            if ([tableViewSection.footerView isKindOfClass:[UITableViewHeaderFooterView class]]) {
+            BOOL isClass = [tableViewSection.footerView isKindOfClass:[UITableViewHeaderFooterView class]];
+
+            if (isClass) {
                 footerView = (UITableViewHeaderFooterView *)tableViewSection.footerView;
             }
             else {
-                NSAssert(footerView, @"footView is not a UITableViewHeaderFooterView class, can not use as reuse view.");
+                NSAssert(isClass, @"footView is not a UITableViewHeaderFooterView class, can not use as reuse view.");
             }
         }
         return footerView;

@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <AsyncDisplayKit.h>
-
 #import "TFTableViewSection.h"
-#import "TFTableViewItem.h"
+
+@class TFTableViewItem;
 
 @protocol TFTableViewManagerDelegate;
 

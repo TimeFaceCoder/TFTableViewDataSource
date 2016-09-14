@@ -38,7 +38,7 @@
 /**
  *  add sub nodes in this method.
  */
-- (void)cellLoadSubNodes;
+- (void)cellLoadSubNodes __attribute__((objc_requires_super));
 
 
 @end
