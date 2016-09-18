@@ -6,7 +6,7 @@
 //  Copyright © 2016年 TimeFace. All rights reserved.
 //
 
-#import <TFTableViewItemCellNode.h>
+#import <TFTableViewManager/TFTableViewItemCellNode.h>
 #import "TFLoadingTableViewItem.h"
 
 @interface TFLoadingTableViewItemCellNode : TFTableViewItemCellNode
