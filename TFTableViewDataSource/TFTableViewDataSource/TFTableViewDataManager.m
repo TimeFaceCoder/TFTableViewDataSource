@@ -80,7 +80,6 @@
     
 }
 
-
 - (void)clearCompletionBlock {
     self.cellClickHandler = nil;
     self.deletionHandler = nil;

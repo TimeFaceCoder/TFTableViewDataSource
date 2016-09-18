@@ -145,10 +145,10 @@
     NSArray *itemClassList = [TFTableViewClassList subclassesOfClass:[TFTableViewItem class]];
     for (Class itemClass in itemClassList) {
         NSString *itemName = NSStringFromClass(itemClass);
-        if (self.tableNode) {
+        if (NSClassFromString([itemName stringByAppendingString:@"CellNode"]) && self.tableNode) {
             self.manager[itemName] = [itemName stringByAppendingString:@"CellNode"];
         }
-        else {
+        else if (NSClassFromString([itemName stringByAppendingString:@"Cell"]) && self.tableView) {
             self.manager[itemName] = [itemName stringByAppendingString:@"Cell"];
         }
     }
