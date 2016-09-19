@@ -95,7 +95,7 @@
     [self initTableViewPullRefresh];
     [self setupDataSource];
     return self;
-
+    
 }
 
 #pragma mark - Public
@@ -203,7 +203,7 @@
     else {
         [_requestArgument setObject:[NSNumber numberWithInteger:[TFTableViewDataSourceConfig pageSize]]
                              forKey:@"pageSize"];
-
+        
     }
     [_requestArgument setObject:[NSNumber numberWithInteger:_currentPage] forKey:@"currentPage"];
     _dataRequest.requestArgument    = _requestArgument;
@@ -283,12 +283,15 @@
                  rangelength += sections.count;
              }
              dispatch_async(dispatch_get_main_queue(), ^{
+                 
                  if (dataLoadPolicy == TFDataLoadPolicyMore) {
-                     
-                     [strongSelf.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
-                                         withRowAnimation:UITableViewRowAnimationFade];
                      if (context) {
+                         [strongSelf.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
+                                             withRowAnimation:UITableViewRowAnimationFade];
                          [context completeBatchFetching:YES];
+                     }
+                     else {
+                         [self.tableView reloadData];
                      }
                  }
                  else {
@@ -316,7 +319,14 @@
 
 #pragma mark - 刷新列表
 - (void)reloadTableView {
-    [self.tableView reloadData];
+    if (self.tableNode) {
+        [self.tableNode.view reloadDataWithCompletion:^{
+            
+        }];
+    }
+    else {
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mark - UITableViewDelegate & ASTableViewDelegate
@@ -324,7 +334,7 @@
 #pragma mark unique methods for UITableViewDelegate.
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    
     if ([cell isKindOfClass:[TFLoadingTableViewItemCell class]]) {
         [self performSelector:@selector(loadMore) withObject:nil afterDelay:0.3];
     }
