@@ -341,7 +341,7 @@
 }
 
 #pragma mark unique methods for ASTableDataSource.
-
+/*
 - (ASCellNodeBlock)tableView:(ASTableView *)tableView nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
     Class cellClass = [self classForCellAtIndexPath:indexPath];
@@ -351,6 +351,15 @@
         cell.tableViewManager = weakSelf;
         return cell;
     };
+}*/
+
+- (ASCellNode *)tableView:(ASTableView *)tableView nodeForRowAtIndexPath:(NSIndexPath *)indexPath {
+    TFTableViewItem *item = [self itemAtIndexPath:indexPath];
+    Class cellClass = [self classForCellAtIndexPath:indexPath];
+
+    TFTableViewItemCellNode *cell = [[cellClass alloc] initWithTableViewItem:item];
+    cell.tableViewManager = self;
+    return cell;
 }
 
 #pragma mark the same methods for UITableViewDataSource and ASTableDataSource.
