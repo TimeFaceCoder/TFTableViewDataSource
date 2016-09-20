@@ -359,6 +359,8 @@
 				TargetAttributes = {
 					B05F05EB1C9957240048BB13 = {
 						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = N7HPU2D4KX;
+						ProvisioningStyle = Manual;
 					};
 					B05F06041C9957240048BB13 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -643,10 +645,13 @@
 			baseConfigurationReference = EF3C8F8ADFAD71A72A1334B6 /* Pods-TFTableViewDataSource.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = N7HPU2D4KX;
 				INFOPLIST_FILE = TFTableViewDataSource/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.base.TFTableViewDataSource;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "9e8080ff-0637-4766-8897-a582bcd31d6a";
+				PROVISIONING_PROFILE_SPECIFIER = "base app_dev";
 			};
 			name = Debug;
 		};
@@ -655,6 +660,7 @@
 			baseConfigurationReference = 962CAC963F5B8A5FD4485387 /* Pods-TFTableViewDataSource.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TFTableViewDataSource/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.base.TFTableViewDataSource;

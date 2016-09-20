@@ -87,9 +87,6 @@
     
     executing = NO;
     finished = YES;
-//    if (self.completionBlock) {
-//        self.completionBlock();
-//    }
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
 }
