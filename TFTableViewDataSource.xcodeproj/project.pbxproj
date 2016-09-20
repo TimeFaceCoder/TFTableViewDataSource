@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		02DAADCA678BE390A1A443A0 /* libPods-TFTableViewDataSource.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 25926079C928349E5155C6DA /* libPods-TFTableViewDataSource.a */; };
+		6C6425831D90CC7700BECF5F /* LoadDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C6425821D90CC7700BECF5F /* LoadDataOperation.m */; };
 		B03133151CB4B259005E4E3D /* TimeLineDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B03133141CB4B259005E4E3D /* TimeLineDataManager.m */; };
 		B03133181CB4B3C9005E4E3D /* TFTableViewDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B03133171CB4B3C9005E4E3D /* TFTableViewDataRequest.m */; };
 		B03133201CB4D84B005E4E3D /* TFTableViewClassList.m in Sources */ = {isa = PBXBuildFile; fileRef = B031331F1CB4D84B005E4E3D /* TFTableViewClassList.m */; };
@@ -52,6 +53,8 @@
 
 /* Begin PBXFileReference section */
 		25926079C928349E5155C6DA /* libPods-TFTableViewDataSource.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TFTableViewDataSource.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C6425811D90CC7700BECF5F /* LoadDataOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadDataOperation.h; sourceTree = "<group>"; };
+		6C6425821D90CC7700BECF5F /* LoadDataOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadDataOperation.m; sourceTree = "<group>"; };
 		962CAC963F5B8A5FD4485387 /* Pods-TFTableViewDataSource.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFTableViewDataSource.release.xcconfig"; path = "Pods/Target Support Files/Pods-TFTableViewDataSource/Pods-TFTableViewDataSource.release.xcconfig"; sourceTree = "<group>"; };
 		B03133131CB4B259005E4E3D /* TimeLineDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeLineDataManager.h; sourceTree = "<group>"; };
 		B03133141CB4B259005E4E3D /* TimeLineDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeLineDataManager.m; sourceTree = "<group>"; };
@@ -266,6 +269,8 @@
 				B07E47C31CB3B44900F1D5DD /* TFTableViewDataSourceConfig.m */,
 				B031331D1CB4D820005E4E3D /* Common */,
 				B03133191CB4B62E005E4E3D /* TableViewDataManager */,
+				6C6425811D90CC7700BECF5F /* LoadDataOperation.h */,
+				6C6425821D90CC7700BECF5F /* LoadDataOperation.m */,
 			);
 			path = TFTableViewDataSource;
 			sourceTree = "<group>";
@@ -349,7 +354,7 @@
 		B05F05E41C9957240048BB13 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = TimeFace;
 				TargetAttributes = {
 					B05F05EB1C9957240048BB13 = {
@@ -491,6 +496,7 @@
 				B05F05F41C9957240048BB13 /* AppDelegate.m in Sources */,
 				B05F06251C995F5D0048BB13 /* TFTableViewDataSource.m in Sources */,
 				C47796C51D82B0F500B9699F /* TFLoadingTableViewItemCellNode.m in Sources */,
+				6C6425831D90CC7700BECF5F /* LoadDataOperation.m in Sources */,
 				B05F06281C995FDA0048BB13 /* TFTableViewDataManager.m in Sources */,
 				B05F05F11C9957240048BB13 /* main.m in Sources */,
 				B07E47BB1CB3AA3B00F1D5DD /* TFTableViewDataSource+Demo.m in Sources */,
@@ -567,8 +573,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -610,8 +618,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
