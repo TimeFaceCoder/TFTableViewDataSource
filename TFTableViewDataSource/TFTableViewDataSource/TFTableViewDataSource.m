@@ -137,10 +137,7 @@
 - (void)setupDataSource {
     _downThresholdY = 200.0;
     _upThresholdY = 25.0;
-    
-    NSString *requestURL = [[TFTableViewDataSourceConfig sharedInstance] requestURLByListType:_listType];
     NSString *className = [[TFTableViewDataSourceConfig sharedInstance] classNameByListType:_listType];
-    _dataRequest = [[TFTableViewDataRequest alloc] initWithRequestURL:requestURL params:_requestArgument];
     if (className) {
         Class class = NSClassFromString(className);
         _tableViewDataManager = [[class alloc] initWithDataSource:self listType:_listType];
@@ -217,7 +214,9 @@
     _dataRequest.cacheTimeInSeconds = _cacheTimeInSeconds;
     //设置操作标示
     _dataSourceState = TFDataSourceStateLoading;
-    LoadDataOperation* opeartion = [[LoadDataOperation alloc]initWithRequest:self.dataRequest dataLoadPolocy:loadPolicy firstLoadOver:self.loadCacheDataOver];
+    NSString *requestURL = [[TFTableViewDataSourceConfig sharedInstance] requestURLByListType:_listType];
+    _dataRequest = [[TFTableViewDataRequest alloc] initWithRequestURL:requestURL params:_requestArgument];
+    LoadDataOperation* opeartion = [[LoadDataOperation alloc]initWithRequest:_dataRequest dataLoadPolocy:loadPolicy firstLoadOver:self.loadCacheDataOver];
     __weak TFTableViewDataSource* wself = self;
     __weak LoadDataOperation* wOperation = opeartion;
     _loadCacheDataOver = YES;
