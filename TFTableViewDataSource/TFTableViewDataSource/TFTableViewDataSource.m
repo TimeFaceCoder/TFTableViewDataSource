@@ -13,7 +13,7 @@
 #import "TFTableViewClassList.h"
 #import "TFLoadingTableViewItem.h"
 #import "TFLoadingTableViewItemCell.h"
-
+#import "LoadDataOperation.h"
 @interface TFTableViewDataSource()<TFTableViewManagerDelegate> {
     
 }
@@ -50,8 +50,10 @@
 
 @property (nonatomic ,strong) NSMutableDictionary      *requestArgument;
 
-@property (nonatomic ,assign) BOOL                     firstLoadOver;
+@property (nonatomic ,assign) BOOL                     loadCacheDataOver;
 
+
+@property (nonatomic, strong) NSOperationQueue* loadDataOperationQueue;
 @end
 
 @implementation TFTableViewDataSource
@@ -72,6 +74,7 @@
     _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
     _manager = [[TFTableViewManager alloc] initWithTableView:tableView];
     _manager.delegate = self;
+    
     [self initTableViewPullRefresh];
     [self setupDataSource];
     return self;
@@ -95,7 +98,7 @@
     [self initTableViewPullRefresh];
     [self setupDataSource];
     return self;
-
+    
 }
 
 #pragma mark - Public
@@ -116,7 +119,8 @@
     else {
         _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
     }
-    [self load:TFDataLoadPolicyNone context:nil];
+    _loadCacheDataOver = NO;
+    [self loadDataWithPolicy:TFDataLoadPolicyNone context:nil];
 }
 
 
@@ -133,10 +137,7 @@
 - (void)setupDataSource {
     _downThresholdY = 200.0;
     _upThresholdY = 25.0;
-    
-    NSString *requestURL = [[TFTableViewDataSourceConfig sharedInstance] requestURLByListType:_listType];
     NSString *className = [[TFTableViewDataSourceConfig sharedInstance] classNameByListType:_listType];
-    _dataRequest = [[TFTableViewDataRequest alloc] initWithRequestURL:requestURL params:_requestArgument];
     if (className) {
         Class class = NSClassFromString(className);
         _tableViewDataManager = [[class alloc] initWithDataSource:self listType:_listType];
@@ -145,42 +146,44 @@
     NSArray *itemClassList = [TFTableViewClassList subclassesOfClass:[TFTableViewItem class]];
     for (Class itemClass in itemClassList) {
         NSString *itemName = NSStringFromClass(itemClass);
-        if (self.tableNode) {
+        if (NSClassFromString([itemName stringByAppendingString:@"CellNode"]) && self.tableNode) {
             self.manager[itemName] = [itemName stringByAppendingString:@"CellNode"];
         }
-        else {
+        else if (NSClassFromString([itemName stringByAppendingString:@"Cell"]) && self.tableView) {
             self.manager[itemName] = [itemName stringByAppendingString:@"Cell"];
         }
     }
+    
+    _loadDataOperationQueue = [[NSOperationQueue alloc]init];
+    _loadDataOperationQueue.maxConcurrentOperationCount = 1;
+    _loadDataOperationQueue.qualityOfService = NSQualityOfServiceBackground;
 }
 
 - (void)loadMore {
     if (_currentPage < _totalPage) {
-        [self load:TFDataLoadPolicyMore context:nil];
+        [self loadDataWithPolicy:TFDataLoadPolicyMore context:nil];
     }
 }
 
 #pragma mark - 重载以下方法可以自定义下拉刷新组件
-////////////////////////////////////////////初始化下拉刷新////////////////////////////////////////////
+
 - (void)initTableViewPullRefresh {
     TFTableViewLogDebug(@"%s",__func__);
 }
 
-////////////////////////////////////////////开始下拉刷新//////////////////////////////////////////////
 - (void)startTableViewPullRefresh {
     TFTableViewLogDebug(@"%s",__func__);
-    _firstLoadOver = YES;
-    [self load:TFDataLoadPolicyReload context:nil];
+    [self loadDataWithPolicy:TFDataLoadPolicyReload context:nil];
 }
 
-////////////////////////////////////////////结束下拉刷新//////////////////////////////////////////////
 - (void)stopTableViewPullRefresh {
     TFTableViewLogDebug(@"%s",__func__);
 }
 
 #pragma mark - 数据加载核心方法
-////////////////////////////////////////////加载数据//////////////////////////////////////////////////
-- (void)load:(TFDataLoadPolicy)loadPolicy context:(ASBatchContext *)context {
+
+- (void)loadDataWithPolicy:(TFDataLoadPolicy)loadPolicy context:(ASBatchContext *)context{
+    
     //当前正在加载数据
     if (_dataSourceState == TFDataSourceStateLoading) {
         return;
@@ -197,48 +200,34 @@
         _currentPage = 1;
         _totalPage = 1;
     }
+    
     if (self.pageSize > 0) {
         [_requestArgument setObject:@(self.pageSize) forKey:@"pageSize"];
     }
     else {
-        [_requestArgument setObject:[NSNumber numberWithInteger:[TFTableViewDataSourceConfig pageSize]]
+        [_requestArgument setObject:@([TFTableViewDataSourceConfig pageSize])
                              forKey:@"pageSize"];
-
+        
     }
-    [_requestArgument setObject:[NSNumber numberWithInteger:_currentPage] forKey:@"currentPage"];
+    [_requestArgument setObject:@(_currentPage) forKey:@"currentPage"];
     _dataRequest.requestArgument    = _requestArgument;
     _dataRequest.cacheTimeInSeconds = _cacheTimeInSeconds;
     //设置操作标示
     _dataSourceState = TFDataSourceStateLoading;
-    //加载第一页时候使用缓存数据
-    if ([_dataRequest cacheResponseObject] && !_firstLoadOver) {
-        //使用缓存数据绘制UI
-        TFTableViewLogDebug(@"use cache data for %@",_dataRequest.requestURL);
-        [self handleResultData:[_dataRequest cacheResponseObject]
-                dataLoadPolicy:TFDataLoadPolicyCache
-                       context:context
-                         error:nil];
-    }
-    else {
-        [_dataRequest startWithCompletionBlockWithSuccess:^(__kindof TFBaseRequest *request) {
-            TFTableViewLogDebug(@"get data from server %@ page:%@",request.requestUrl,@(_currentPage));
-            [self handleResultData:request.responseObject dataLoadPolicy:loadPolicy context:context error:nil];
-        } failure:^(__kindof TFBaseRequest *request) {
-            TFTableViewLogDebug(@"get data from %@ error :%@ userinfo:%@",request.requestUrl,request.error,request.userInfo);
-            if ([request cacheResponseObject]) {
-                [self handleResultData:[request cacheResponseObject]
-                        dataLoadPolicy:loadPolicy
-                               context:context
-                                 error:nil];
-            }
-            else {
-                [self handleResultData:nil
-                        dataLoadPolicy:loadPolicy
-                               context:context
-                                 error:request.error];
-            }
-        }];
-    }
+    NSString *requestURL = [[TFTableViewDataSourceConfig sharedInstance] requestURLByListType:_listType];
+    _dataRequest = [[TFTableViewDataRequest alloc] initWithRequestURL:requestURL params:_requestArgument];
+    LoadDataOperation* opeartion = [[LoadDataOperation alloc]initWithRequest:_dataRequest dataLoadPolocy:loadPolicy firstLoadOver:self.loadCacheDataOver];
+    __weak TFTableViewDataSource* wself = self;
+    __weak LoadDataOperation* wOperation = opeartion;
+    _loadCacheDataOver = YES;
+    [opeartion setCompletionBlock:^{
+        [wself handleResultData:wOperation.result
+                 dataLoadPolicy:wOperation.policy
+                        context:context
+                          error:nil];
+    }];
+    [self.loadDataOperationQueue addOperation:opeartion];
+    
 }
 
 #pragma mark 处理返回数据并绘制UI
@@ -249,11 +238,8 @@
                    error:(NSError *)error {
     TFTableViewLogDebug(@"%s",__func__);
     NSError *hanldeError = nil;
-    NSInteger lastSectionIndex = [[self.manager sections] count] - 1;
-    if (dataLoadPolicy == TFDataLoadPolicyMore) {
-        //加载下一页，移除loading item
-        [self.manager deleteSectionsAtIndexSet:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
-    }
+    
+    
     [self setTotalPage:[[result objectForKey:@"totalPage"] integerValue]];
     if (_totalPage == 0) {
         //数据边界检查
@@ -266,57 +252,81 @@
      {
          typeof(self) strongSelf = weakSelf;
          if (finished) {
-             if (dataLoadPolicy == TFDataLoadPolicyReload || dataLoadPolicy == TFDataLoadPolicyNone) {
-                 //重新加载列表数据
-                 [strongSelf.manager removeAllSections];
-             }
-             NSInteger rangelocation = [strongSelf.manager.sections count];
-             [strongSelf.manager addSectionsFromArray:sections];
-             NSInteger rangelength = 1;
-             //需要在主线程执行
-             if (_currentPage < _totalPage) {
-                 //存在下一页数据，在列表尾部追加loading item
-                 TFTableViewSection *section = [TFTableViewSection section];
-                 //loading item
-                 [section addItem:[TFLoadingTableViewItem itemWithModel:NSLocalizedString(@"正在加载...", nil)]];
-                 [strongSelf.manager addSection:section];
-                 rangelength += sections.count;
-             }
+             
              dispatch_async(dispatch_get_main_queue(), ^{
+                 NSInteger lastSectionIndex = strongSelf.manager.sections.count - 1;
                  if (dataLoadPolicy == TFDataLoadPolicyMore) {
-                     
-                     [strongSelf.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
-                                         withRowAnimation:UITableViewRowAnimationFade];
-                     if (context) {
-                         [context completeBatchFetching:YES];
-                     }
+                     [strongSelf.tableView beginUpdates];
+                     //加载下一页，移除loading item
+                     [self.manager removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
+                     [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+                     //重新载入新的section和loadsection
+                     [strongSelf addNewAndLoadingSectionsWith:sections];
+                     [strongSelf.tableView endUpdates];
+                     [context completeBatchFetching:YES];
                  }
                  else {
-                     [strongSelf reloadTableView];
-                     strongSelf.firstLoadOver = YES;
-                     if (dataLoadPolicy == TFDataLoadPolicyReload) {
-                         [strongSelf stopTableViewPullRefresh];
+                     if (strongSelf.tableNode) {
+                         UIView *snapshot = [self.tableView snapshotViewAfterScreenUpdates:NO];
+                         [strongSelf.tableView.superview insertSubview:snapshot aboveSubview:strongSelf.tableView];
+                         [strongSelf.tableView beginUpdates];
+                         //重新加载列表数据
+                         NSInteger sectionCount = self.manager.sections.count;
+                         [strongSelf.manager removeAllSections];
+                         [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
+                                             withRowAnimation:UITableViewRowAnimationFade];
+                         //重新载入新的section和loadsection
+                         [strongSelf addNewAndLoadingSectionsWith:sections];
+                         [strongSelf.tableNode.view endUpdatesAnimated:NO completion:^(BOOL completed) {
+                             [UIView animateWithDuration:0.75 animations:^{
+                                 snapshot.alpha = 0;
+                             } completion:^(BOOL finished) {
+                                 [snapshot removeFromSuperview];
+                             }];
+                         }];
                      }
-                     if (dataLoadPolicy == TFDataLoadPolicyCache) {
-                         //第一次从缓存加载数据后延迟触发下拉刷新重新加载
-                         [strongSelf performSelector:@selector(startTableViewPullRefresh)
-                                          withObject:nil
-                                          afterDelay:0.75];
+                     else {
+                         [strongSelf.tableView beginUpdates];
+                         //重新加载列表数据
+                         NSInteger sectionCount = self.manager.sections.count;
+                         [strongSelf.manager removeAllSections];
+                         [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
+                                             withRowAnimation:UITableViewRowAnimationFade];
+                         //重新载入新的section和loadsection
+                         [strongSelf addNewAndLoadingSectionsWith:sections];
+                         [strongSelf.tableView endUpdates];
                      }
-                 }
+                }
                  //数据加载完成
+                 if (dataLoadPolicy == TFDataLoadPolicyReload) {
+                     [strongSelf stopTableViewPullRefresh];
+                 }
                  if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:object:error:)]) {
                      [strongSelf.delegate didFinishLoad:dataLoadPolicy object:object error:error?error:hanldeError];
                  }
+                 strongSelf.dataSourceState = TFDataSourceStateFinished;
              });
-             strongSelf.dataSourceState = TFDataSourceStateFinished;
+             
          }
      }];
 }
 
-#pragma mark - 刷新列表
-- (void)reloadTableView {
-    [self.tableView reloadData];
+- (void)addNewAndLoadingSectionsWith:(NSArray *)sections {
+    NSInteger rangelocation = self.manager.sections.count;
+    [self.manager addSectionsFromArray:sections];
+    NSInteger rangelength = 1;
+    //需要在主线程执行
+    if (_currentPage < _totalPage) {
+        //存在下一页数据，在列表尾部追加loading item
+        TFTableViewSection *section = [TFTableViewSection section];
+        //loading item
+        [section addItem:[TFLoadingTableViewItem itemWithModel:NSLocalizedString(@"正在加载...", nil)]];
+        [self.manager addSection:section];
+        rangelength += sections.count;
+    }
+    [self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
+                        withRowAnimation:UITableViewRowAnimationFade];
+    
 }
 
 #pragma mark - UITableViewDelegate & ASTableViewDelegate
@@ -324,7 +334,7 @@
 #pragma mark unique methods for UITableViewDelegate.
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    
     if ([cell isKindOfClass:[TFLoadingTableViewItemCell class]]) {
         [self performSelector:@selector(loadMore) withObject:nil afterDelay:0.3];
     }
@@ -364,7 +374,7 @@
 
 - (void)tableView:(ASTableView *)tableView willBeginBatchFetchWithContext:(ASBatchContext *)context {
     TFTableViewLogDebug(@"Class %@ will fetch next page",NSStringFromClass(self.class));
-    [self load:TFDataLoadPolicyMore context:context];
+    [self loadDataWithPolicy:TFDataLoadPolicyMore context:context];
 }
 
 #pragma mark same methods for UITableViewDelegate and ASTableViewDelegate.
@@ -523,10 +533,6 @@
     }
     return ret;
 }
-
-
-
-#pragma mark
 
 - (void)dealloc {
     _manager.delegate = nil;
