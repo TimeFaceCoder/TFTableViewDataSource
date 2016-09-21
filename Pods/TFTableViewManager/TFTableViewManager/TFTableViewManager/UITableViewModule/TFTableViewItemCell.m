@@ -26,7 +26,6 @@
     if (self) {
         self.tableViewItem = tableViewItem;
     }
-    [self cellLoadSubViews];
     return self;
 }
 
