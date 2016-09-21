@@ -12,43 +12,29 @@
 
 @property (strong ,nonatomic) UILabel *loadingLabel;
 
-@property (strong ,nonatomic) UIActivityIndicatorView *loadingView;
-
 @end
 
 @implementation TFLoadingTableViewItemCell
 
 @dynamic tableViewItem;
 
-+ (CGFloat)heightWithItem:(TFTableViewItem *)item tableViewManager:(TFTableViewManager *)tableViewManager {
++ (CGFloat)cellHeightWithItem:(TFTableViewItem *)item {
     return 60.0;
 }
 
 - (void)cellLoadSubViews {
     [super cellLoadSubViews];
-    [self.contentView addSubview:self.loadingView];
     [self.contentView addSubview:self.loadingLabel];
+    NSDictionary *viewDic = @{@"loadingLabel":self.loadingLabel};
+    [self.loadingLabel addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[loadingLabel]-0-|" options:0 metrics:nil views:viewDic]];
+    [self.loadingLabel addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[loadingLabel]-0-|" options:0 metrics:nil views:viewDic]];
 }
 
 - (void)cellWillAppear {
     [super cellWillAppear];
     self.textLabel.text = self.tableViewItem.model;
-    [self.loadingView startAnimating];
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    self.loadingView.center = self.contentView.center;
-    [self.loadingLabel sizeToFit];
-    self.loadingLabel.center = CGPointMake(0, CGRectGetMidY(self.loadingView.frame));
-    CGFloat left = (CGRectGetWidth(self.frame) - (CGRectGetWidth(self.loadingView.frame) + CGRectGetWidth(self.loadingLabel.frame)) ) / 2;
-    CGRect loadViewframe = self.loadingView.frame;
-    loadViewframe.origin.x = left;
-    self.loadingView.frame = loadViewframe;
-    CGRect loadingLabelFrame = self.loadingLabel.frame;
-    loadingLabelFrame.origin.x = CGRectGetMaxX(loadViewframe) + 6.0;
-    self.loadingLabel.frame = loadingLabelFrame;
-}
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -63,17 +49,13 @@
 - (UILabel *)loadingLabel {
     if (!_loadingLabel) {
         _loadingLabel = [[UILabel alloc]init];
-        _loadingLabel.font = [UIFont systemFontOfSize:14];
+        _loadingLabel.font = [UIFont systemFontOfSize:15];
         _loadingLabel.textColor = [UIColor lightGrayColor];
+        _loadingLabel.textAlignment = NSTextAlignmentCenter;
+        _loadingLabel.numberOfLines = 0;
+        _loadingLabel.translatesAutoresizingMaskIntoConstraints = NO;
     }
     return _loadingLabel;
-}
-
-- (UIActivityIndicatorView *)loadingView {
-    if (!_loadingView) {
-        _loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    }
-    return _loadingView;
 }
 
 

@@ -22,7 +22,7 @@
     [super cellLoadSubNodes];
     [self addSubnode:self.titleNode];
     _titleNode.attributedText = [[NSAttributedString alloc] initWithString:self.tableViewItem.model
-                                                                attributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:15.0],NSForegroundColorAttributeName: [UIColor blackColor]}];
+                                                                attributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:15.0],NSForegroundColorAttributeName: [UIColor lightGrayColor]}];
 }
 
 - (void)layout {

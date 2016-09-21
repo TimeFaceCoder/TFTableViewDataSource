@@ -494,8 +494,9 @@
     }
     CGFloat tableViewWidth = CGRectGetWidth(tableView.frame);
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    if (item.cellHeight) {
-        return ASSizeRangeMake(CGSizeMake(tableViewWidth, item.cellHeight), CGSizeMake(tableViewWidth, item.cellHeight));
+    CGFloat cellHeight = [TFTableViewItemCellNode cellNodeHeightWithItem:item];
+    if (cellHeight) {
+        return ASSizeRangeMake(CGSizeMake(tableViewWidth, cellHeight), CGSizeMake(tableViewWidth, cellHeight));
     }
     return ASSizeRangeMake(CGSizeMake(tableViewWidth, 0.0),CGSizeMake(tableViewWidth, CGFLOAT_MAX));
 }
@@ -531,7 +532,7 @@
         return [self.delegate tableView:tableView heightForRowAtIndexPath:indexPath];
     }
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    return [[self classForCellAtIndexPath:indexPath] heightWithItem:item tableViewManager:self];
+    return [[self classForCellAtIndexPath:indexPath] cellHeightWithItem:item];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {

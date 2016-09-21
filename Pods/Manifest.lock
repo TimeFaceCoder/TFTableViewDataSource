@@ -67,7 +67,7 @@ CHECKOUT OPTIONS:
     :commit: 90337a76ac8a17c03a168a4ebf8af5ab23ae1ae9
     :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
-    :commit: d3354df4d140686abfe33f83883f1dbe3a759bc8
+    :commit: 4cd93c1de73ae2ec1c36f17af0fe411632cbc27a
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
 SPEC CHECKSUMS:
@@ -85,4 +85,6 @@ SPEC CHECKSUMS:
   UzysAnimatedGifPullToRefresh: ca441a89a0cbf704c0c9dd2f1320fb91ffc7f86b
   YYDispatchQueuePool: 3dfb2274bcc74207688dde8ac6f7bdd46871dd7b
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 1d4925b3d218f34635f6f42861089930b262c6d9
+
+COCOAPODS: 1.0.1

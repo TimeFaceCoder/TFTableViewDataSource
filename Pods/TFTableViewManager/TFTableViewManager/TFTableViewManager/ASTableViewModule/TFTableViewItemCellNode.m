@@ -11,6 +11,10 @@
 
 @implementation TFTableViewItemCellNode
 
++ (CGFloat)cellNodeHeightWithItem:(TFTableViewItem *)item {
+    return item.cellHeight? :0.0;
+}
+
 - (instancetype)initWithTableViewItem:(TFTableViewItem *)tableViewItem {
     self = [super init];
     if (self) {

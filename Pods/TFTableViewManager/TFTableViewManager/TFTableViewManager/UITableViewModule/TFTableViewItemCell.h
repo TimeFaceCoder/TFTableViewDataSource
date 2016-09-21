@@ -47,11 +47,10 @@
  *  height for the item
  *
  *  @param item             a TFTableViewItem.
- *  @param tableViewManager handle items.
  *
  *  @return a CGFloat value of cell height.
  */
-+ (CGFloat)heightWithItem:(TFTableViewItem *)item tableViewManager:(TFTableViewManager *)tableViewManager;
++ (CGFloat)cellHeightWithItem:(TFTableViewItem *)item;
 
 ///-----------------------------
 /// @name Cell life cycle.

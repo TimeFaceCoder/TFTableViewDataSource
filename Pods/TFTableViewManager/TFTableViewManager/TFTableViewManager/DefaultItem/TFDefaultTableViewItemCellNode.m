@@ -26,6 +26,10 @@ static CGFloat kContentSpace = 15.0;
 
 @dynamic tableViewItem;
 
++ (CGFloat)cellNodeHeightWithItem:(TFTableViewItem *)item {
+    return item.cellHeight ? :44.0;
+}
+
 - (void)cellLoadSubNodes {
     [super cellLoadSubNodes];
     [self addSubnode:self.textNode];

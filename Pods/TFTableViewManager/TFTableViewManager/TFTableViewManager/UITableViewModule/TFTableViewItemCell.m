@@ -33,33 +33,33 @@
 
 #pragma mark - Handling Cell Events.
 
-+ (CGFloat)heightWithItem:(TFTableViewItem *)item tableViewManager:(TFTableViewManager *)tableViewManager
++ (CGFloat)cellHeightWithItem:(TFTableViewItem *)item
 {
-    return UITableViewAutomaticDimension;
+    return item.cellHeight? :UITableViewAutomaticDimension;
 }
 
 #pragma mark - Cell life cycle
 
 - (void)cellLoadSubViews {
-    
-    //add subviews at here.
-    self.selectionStyle = self.tableViewItem.selectionStyle;
-    self.accessoryType = self.tableViewItem.accessoryType;
-    if (self.tableViewItem.accessoryView) {
-        self.accessoryView = self.tableViewItem.accessoryView;
-    }
+    // set separator sunk.
     if (!self.tableViewItem.separatorSunk) {
         self.preservesSuperviewLayoutMargins = NO;
         UIEdgeInsets lineInsets =  UIEdgeInsetsZero;
         self.separatorInset = lineInsets;
         self.layoutMargins = lineInsets;
     }
-   
+    //add subviews at here.
 }
 
 - (void)cellWillAppear {
     //set subviews property values at here.
     
+    self.selectionStyle = self.tableViewItem.selectionStyle;
+    self.accessoryType = self.tableViewItem.accessoryType;
+    if (self.tableViewItem.accessoryView) {
+        self.accessoryView = self.tableViewItem.accessoryView;
+    }
+
 }
 
 - (void)cellDidDisappear {

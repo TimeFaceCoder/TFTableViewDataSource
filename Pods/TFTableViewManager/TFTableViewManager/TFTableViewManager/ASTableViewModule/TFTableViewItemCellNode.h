@@ -27,6 +27,15 @@
 @property (strong, nonatomic) TFTableViewItem *tableViewItem;
 
 /**
+ *  the static height for the matched cell node.
+ *
+ *  @param item             a TFTableViewItem.
+ *  @warning When implement this method, cell node height is constant, use ASLayoutSpec,can not implement this method.
+ *  @return a CGFloat value of static cell node height.
+ */
++ (CGFloat)cellNodeHeightWithItem:(TFTableViewItem *)item;
+
+/**
  *  the item of the cell.
  *
  *  @param tableViewItem item.
