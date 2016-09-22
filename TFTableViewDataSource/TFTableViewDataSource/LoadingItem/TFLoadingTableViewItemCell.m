@@ -26,13 +26,13 @@
     [super cellLoadSubViews];
     [self.contentView addSubview:self.loadingLabel];
     NSDictionary *viewDic = @{@"loadingLabel":self.loadingLabel};
-    [self.loadingLabel addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[loadingLabel]-0-|" options:0 metrics:nil views:viewDic]];
-    [self.loadingLabel addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[loadingLabel]-0-|" options:0 metrics:nil views:viewDic]];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[loadingLabel]-0-|" options:0 metrics:nil views:viewDic]];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[loadingLabel]-0-|" options:0 metrics:nil views:viewDic]];
 }
 
 - (void)cellWillAppear {
     [super cellWillAppear];
-    self.textLabel.text = self.tableViewItem.model;
+    self.loadingLabel.text = self.tableViewItem.model;
 }
 
 
