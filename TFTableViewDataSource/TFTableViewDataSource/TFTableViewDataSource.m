@@ -258,7 +258,7 @@
                  if (dataLoadPolicy == TFDataLoadPolicyMore) {
                      [strongSelf.tableView beginUpdates];
                      //加载下一页，移除loading item
-                     [self.manager removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
+                     [strongSelf.manager removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
                      [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
                      //重新载入新的section和loadsection
                      [strongSelf addNewAndLoadingSectionsWith:sections];
@@ -267,11 +267,11 @@
                  }
                  else {
                      if (strongSelf.tableNode) {
-                         UIView *snapshot = [self.tableView snapshotViewAfterScreenUpdates:NO];
+                         UIView *snapshot = [strongSelf.tableView snapshotViewAfterScreenUpdates:NO];
                          [strongSelf.tableView.superview insertSubview:snapshot aboveSubview:strongSelf.tableView];
                          [strongSelf.tableView beginUpdates];
                          //重新加载列表数据
-                         NSInteger sectionCount = self.manager.sections.count;
+                         NSInteger sectionCount = strongSelf.manager.sections.count;
                          [strongSelf.manager removeAllSections];
                          [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
                                              withRowAnimation:UITableViewRowAnimationFade];
@@ -288,7 +288,7 @@
                      else {
                          [strongSelf.tableView beginUpdates];
                          //重新加载列表数据
-                         NSInteger sectionCount = self.manager.sections.count;
+                         NSInteger sectionCount = strongSelf.manager.sections.count;
                          [strongSelf.manager removeAllSections];
                          [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
                                              withRowAnimation:UITableViewRowAnimationFade];
@@ -374,6 +374,7 @@
 
 - (void)tableView:(ASTableView *)tableView willBeginBatchFetchWithContext:(ASBatchContext *)context {
     TFTableViewLogDebug(@"Class %@ will fetch next page",NSStringFromClass(self.class));
+    
     [self loadDataWithPolicy:TFDataLoadPolicyMore context:context];
 }
 
