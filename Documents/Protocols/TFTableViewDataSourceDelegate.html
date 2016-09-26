@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>TFTableViewDataSourceDelegate Protocol Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">TFTableViewDataSource </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">Timeface</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/actionOnView:actionType:">- actionOnView:actionType:</option>
+		
+		<option value="//api/name/didFinishLoad:object:error:">- didFinishLoad:object:error:</option>
+		
+		<option value="//api/name/scrollFullScreenScrollViewDidEndDraggingScrollDown">- scrollFullScreenScrollViewDidEndDraggingScrollDown</option>
+		
+		<option value="//api/name/scrollFullScreenScrollViewDidEndDraggingScrollUp">- scrollFullScreenScrollViewDidEndDraggingScrollUp</option>
+		
+		<option value="//api/name/scrollViewDidEndDragging:willDecelerate:">- scrollViewDidEndDragging:willDecelerate:</option>
+		
+		<option value="//api/name/scrollViewDidScroll:">- scrollViewDidScroll:</option>
+		
+		<option value="//api/name/scrollViewDidScrollDown:">- scrollViewDidScrollDown:</option>
+		
+		<option value="//api/name/scrollViewDidScrollUp:">- scrollViewDidScrollUp:</option>
+		
+		<option value="//api/name/showPullRefresh">- showPullRefresh</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">TFTableViewDataSourceDelegate Protocol Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Conforms to</th>
+	<td>TFTableViewManagerDelegate</td>
+</tr><tr>
+	<th>Declared in</th>
+	<td>TFTableViewDataSource.h</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/actionOnView:actionType:" title="actionOnView:actionType:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/actionOnView:actionType:">&ndash;&nbsp;actionOnView:actionType:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>列表及其控件点击事件回调</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)actionOnView:(TFTableViewItem *)<em>item</em> actionType:(NSInteger)<em>actionType</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>actionType</code></th>
+						<td><p>事件类型</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>列表及其控件点击事件回调</p>
+
+<p>@param item</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/didFinishLoad:object:error:" title="didFinishLoad:object:error:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/didFinishLoad:object:error:">&ndash;&nbsp;didFinishLoad:object:error:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>加载完成</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)didFinishLoad:(TFDataLoadPolicy)<em>loadPolicy</em> object:(id)<em>object</em> error:(NSError *)<em>error</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>loadPolicy</code></th>
+						<td><p>加载类型</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>object</code></th>
+						<td><p>返回数据</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>error</code></th>
+						<td><p>错误</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>加载完成</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/showPullRefresh" title="showPullRefresh"></a>
+	<h3 class="method-title"><code><a href="#//api/name/showPullRefresh">&ndash;&nbsp;showPullRefresh</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>是否显示下拉刷新</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (BOOL)showPullRefresh</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>a bool value.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>是否显示下拉刷新</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/scrollViewDidScroll:" title="scrollViewDidScroll:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/scrollViewDidScroll:">&ndash;&nbsp;scrollViewDidScroll:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>scrollView正在滚动</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)scrollViewDidScroll:(UIScrollView *)<em>scrollView</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>scrollView</code></th>
+						<td><p>当前的scrollView</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>scrollView正在滚动</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/scrollViewDidScrollUp:" title="scrollViewDidScrollUp:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/scrollViewDidScrollUp:">&ndash;&nbsp;scrollViewDidScrollUp:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>scrollView向上滚动</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)scrollViewDidScrollUp:(CGFloat)<em>deltaY</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>deltaY</code></th>
+						<td><p>向上滚动偏移量</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>scrollView向上滚动</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/scrollViewDidScrollDown:" title="scrollViewDidScrollDown:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/scrollViewDidScrollDown:">&ndash;&nbsp;scrollViewDidScrollDown:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>scrollView向下滚动</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)scrollViewDidScrollDown:(CGFloat)<em>deltaY</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>deltaY</code></th>
+						<td><p>向下滚动偏移量</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>scrollView向下滚动</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/scrollFullScreenScrollViewDidEndDraggingScrollUp" title="scrollFullScreenScrollViewDidEndDraggingScrollUp"></a>
+	<h3 class="method-title"><code><a href="#//api/name/scrollFullScreenScrollViewDidEndDraggingScrollUp">&ndash;&nbsp;scrollFullScreenScrollViewDidEndDraggingScrollUp</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>scrollView停止向上拖动</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)scrollFullScreenScrollViewDidEndDraggingScrollUp</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>scrollView停止向上拖动</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/scrollFullScreenScrollViewDidEndDraggingScrollDown" title="scrollFullScreenScrollViewDidEndDraggingScrollDown"></a>
+	<h3 class="method-title"><code><a href="#//api/name/scrollFullScreenScrollViewDidEndDraggingScrollDown">&ndash;&nbsp;scrollFullScreenScrollViewDidEndDraggingScrollDown</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>scrollView停止向下拖动</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)scrollFullScreenScrollViewDidEndDraggingScrollDown</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>scrollView停止向下拖动</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/scrollViewDidEndDragging:willDecelerate:" title="scrollViewDidEndDragging:willDecelerate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/scrollViewDidEndDragging:willDecelerate:">&ndash;&nbsp;scrollViewDidEndDragging:willDecelerate:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>scrollView停止拖动将要停止减速</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)scrollViewDidEndDragging:(UIScrollView *)<em>scrollView</em> willDecelerate:(BOOL)<em>decelerate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>scrollView</code></th>
+						<td><p>当前的scrollView</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>decelerate</code></th>
+						<td><p>是否减速</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>scrollView停止拖动将要停止减速</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">TFTableViewDataSource.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 Timeface. All rights reserved. Updated: 2016-09-26</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>

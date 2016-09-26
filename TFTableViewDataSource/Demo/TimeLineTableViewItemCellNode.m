@@ -40,7 +40,7 @@
 
     NSString *nickName = [[(NSDictionary *)self.tableViewItem.model objectForKey:@"author"] objectForKey:@"nickName"];
     _nickNameNode.attributedText = [[NSAttributedString alloc] initWithString:nickName ? nickName: @""
-                                                                     attributes:[TimeLineTextStyle nickNameStyle]];
+                                                                    attributes:[TimeLineTextStyle  nickNameStyle]];
     [_nickNameNode addTarget:self action:@selector(onViewClick:) forControlEvents:ASControlNodeEventTouchUpInside];
     _nickNameNode.maximumNumberOfLines = 1;
     [self addSubnode:_nickNameNode];
