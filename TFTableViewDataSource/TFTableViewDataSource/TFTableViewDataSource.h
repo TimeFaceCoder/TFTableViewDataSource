@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <TFTableViewManager.h>
+#import <TFTableViewManager/TFTableViewManager.h>
 
 @class TFTableViewItem;
 @class ASTableView;
