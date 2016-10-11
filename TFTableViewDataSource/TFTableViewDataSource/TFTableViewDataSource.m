@@ -260,60 +260,61 @@
                      strongSelf.dataSourceState = TFDataSourceStateFinished;
                  });
              }
-             dispatch_async(dispatch_get_main_queue(), ^{
-                 NSInteger lastSectionIndex = strongSelf.manager.sections.count - 1;
-                 if (dataLoadPolicy == TFDataLoadPolicyMore) {
-                     [strongSelf.tableView beginUpdates];
-                     //加载下一页，移除loading item
-                     [strongSelf.manager removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
-                     [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
-                     //重新载入新的section和loadsection
-                     [strongSelf addNewAndLoadingSectionsWith:sections];
-                     [strongSelf.tableView endUpdates];
-                     [context completeBatchFetching:YES];
-                 }
-                 else {
-                     if (strongSelf.tableNode) {
-                         UIView *snapshot = [strongSelf.tableView snapshotViewAfterScreenUpdates:NO];
-                         [strongSelf.tableView.superview insertSubview:snapshot aboveSubview:strongSelf.tableView];
+             else {
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     NSInteger lastSectionIndex = strongSelf.manager.sections.count - 1;
+                     if (dataLoadPolicy == TFDataLoadPolicyMore) {
                          [strongSelf.tableView beginUpdates];
-                         //重新加载列表数据
-                         NSInteger sectionCount = strongSelf.manager.sections.count;
-                         [strongSelf.manager removeAllSections];
-                         [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
-                                             withRowAnimation:UITableViewRowAnimationFade];
-                         //重新载入新的section和loadsection
-                         [strongSelf addNewAndLoadingSectionsWith:sections];
-                         [strongSelf.tableNode.view endUpdatesAnimated:NO completion:^(BOOL completed) {
-                             [UIView animateWithDuration:0.75 animations:^{
-                                 snapshot.alpha = 0;
-                             } completion:^(BOOL finished) {
-                                 [snapshot removeFromSuperview];
-                             }];
-                         }];
-                     }
-                     else {
-                         [strongSelf.tableView beginUpdates];
-                         //重新加载列表数据
-                         NSInteger sectionCount = strongSelf.manager.sections.count;
-                         [strongSelf.manager removeAllSections];
-                         [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
-                                             withRowAnimation:UITableViewRowAnimationFade];
+                         //加载下一页，移除loading item
+                         [strongSelf.manager removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
+                         [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
                          //重新载入新的section和loadsection
                          [strongSelf addNewAndLoadingSectionsWith:sections];
                          [strongSelf.tableView endUpdates];
+                         [context completeBatchFetching:YES];
                      }
-                }
-                 //数据加载完成
-                 if (dataLoadPolicy == TFDataLoadPolicyReload) {
-                     [strongSelf stopTableViewPullRefresh];
-                 }
-                 if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:object:error:)]) {
-                     [strongSelf.delegate didFinishLoad:dataLoadPolicy object:object error:error?error:hanldeError];
-                 }
-                 strongSelf.dataSourceState = TFDataSourceStateFinished;
-             });
-             
+                     else {
+                         if (strongSelf.tableNode) {
+                             UIView *snapshot = [strongSelf.tableView snapshotViewAfterScreenUpdates:NO];
+                             [strongSelf.tableView.superview insertSubview:snapshot aboveSubview:strongSelf.tableView];
+                             [strongSelf.tableView beginUpdates];
+                             //重新加载列表数据
+                             NSInteger sectionCount = strongSelf.manager.sections.count;
+                             [strongSelf.manager removeAllSections];
+                             [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
+                                                 withRowAnimation:UITableViewRowAnimationFade];
+                             //重新载入新的section和loadsection
+                             [strongSelf addNewAndLoadingSectionsWith:sections];
+                             [strongSelf.tableNode.view endUpdatesAnimated:NO completion:^(BOOL completed) {
+                                 [UIView animateWithDuration:0.75 animations:^{
+                                     snapshot.alpha = 0;
+                                 } completion:^(BOOL finished) {
+                                     [snapshot removeFromSuperview];
+                                 }];
+                             }];
+                         }
+                         else {
+                             [strongSelf.tableView beginUpdates];
+                             //重新加载列表数据
+                             NSInteger sectionCount = strongSelf.manager.sections.count;
+                             [strongSelf.manager removeAllSections];
+                             [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
+                                                 withRowAnimation:UITableViewRowAnimationFade];
+                             //重新载入新的section和loadsection
+                             [strongSelf addNewAndLoadingSectionsWith:sections];
+                             [strongSelf.tableView endUpdates];
+                         }
+                     }
+                     //数据加载完成
+                     if (dataLoadPolicy == TFDataLoadPolicyReload) {
+                         [strongSelf stopTableViewPullRefresh];
+                     }
+                     if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:object:error:)]) {
+                         [strongSelf.delegate didFinishLoad:dataLoadPolicy object:object error:error?error:hanldeError];
+                     }
+                     strongSelf.dataSourceState = TFDataSourceStateFinished;
+                 });
+             }
          }
      }];
 }
