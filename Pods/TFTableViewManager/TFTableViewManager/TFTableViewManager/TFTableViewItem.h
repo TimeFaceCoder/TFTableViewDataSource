@@ -15,7 +15,7 @@
 typedef void (^InsertionHandler)(__kindof TFTableViewItem *item, NSIndexPath *indexPath);
 typedef void (^DeletionHandler)(__kindof TFTableViewItem *item, NSIndexPath *indexPath);
 typedef void (^SelectionHandler)(__kindof TFTableViewItem *item, NSIndexPath *indexPath);
-typedef void (^CellClickHandler)(__kindof TFTableViewItem *item ,NSInteger actionType);
+typedef void (^CellClickHandler)(__kindof TFTableViewItem *item ,NSInteger actionType, id sender);
 typedef BOOL (^MoveHandler)(__kindof TFTableViewItem *item, NSIndexPath *sourceIndexPath, NSIndexPath *destinationIndexPath);
 typedef void(^MoveCompletionHandler)(__kindof TFTableViewItem *item, NSIndexPath *sourceIndexPath, NSIndexPath *destinationIndexPath);
 

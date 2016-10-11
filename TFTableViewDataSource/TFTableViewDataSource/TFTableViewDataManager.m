@@ -27,7 +27,7 @@
     _tableViewDataSource = tableViewDataSource;
     _listType = listType;
     __weak __typeof(self)weakSelf = self;
-    _cellClickHandler = ^ (TFTableViewItem *item ,NSInteger actionType) {
+    _cellClickHandler = ^ (TFTableViewItem *item ,NSInteger actionType, id sender) {
         __typeof(&*weakSelf) strongSelf = weakSelf;
         strongSelf.currentIndexPath = item.indexPath;
         if ([strongSelf.tableViewDataSource.delegate respondsToSelector:@selector(actionOnView:actionType:)]) {

@@ -49,6 +49,10 @@
     return self;
 }
 
++ (void)initialize {
+    [[UILabel appearanceWhenContainedIn:[UITableViewHeaderFooterView class], nil] setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]];
+}
+
 - (instancetype)initWithTableNode:(ASTableNode *)tableNode {
     self = [super init];
     if (self) {
@@ -507,6 +511,7 @@
     if ([self.delegate respondsToSelector:@selector(tableView:willDisplayHeaderView:forSection:)]) {
         [self.delegate tableView:tableView willDisplayHeaderView:view forSection:section];
     }
+    view.tintColor = [UIColor clearColor];
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayFooterView:(UIView *)view forSection:(NSInteger)section {
@@ -566,7 +571,7 @@
         
         headerHeight = headerFrame.size.height;
         
-        return headerHeight + 20.0f;
+        return headerHeight + (self.tableView.style == UITableViewStylePlain ? 20 : 12);
     }
     
     return UITableViewAutomaticDimension;
@@ -683,6 +688,9 @@
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
     if (item.selectionHandler) {
         item.selectionHandler (item,indexPath);
+    }
+    if (item.cellClickHandler) {
+        item.cellClickHandler (item, -1, nil);
     }
 }
 

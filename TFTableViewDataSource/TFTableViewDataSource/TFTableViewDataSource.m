@@ -252,7 +252,14 @@
      {
          typeof(self) strongSelf = weakSelf;
          if (finished) {
-             
+             if (error) {
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(didFinishLoad:object:error:)]) {
+                         [strongSelf.delegate didFinishLoad:dataLoadPolicy object:object error:error?error:hanldeError];
+                     }
+                     strongSelf.dataSourceState = TFDataSourceStateFinished;
+                 });
+             }
              dispatch_async(dispatch_get_main_queue(), ^{
                  NSInteger lastSectionIndex = strongSelf.manager.sections.count - 1;
                  if (dataLoadPolicy == TFDataLoadPolicyMore) {

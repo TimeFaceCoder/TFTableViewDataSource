@@ -32,6 +32,7 @@ static CGFloat kContentSpace = 15.0;
 
 - (void)cellLoadSubNodes {
     [super cellLoadSubNodes];
+    self.backgroundColor = [UIColor whiteColor];
     [self addSubnode:self.textNode];
     if (self.tableViewItem.image) {
         self.imageNode.image = self.tableViewItem.image;
