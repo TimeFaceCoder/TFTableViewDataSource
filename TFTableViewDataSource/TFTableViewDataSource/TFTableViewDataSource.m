@@ -7,7 +7,6 @@
 //
 
 #import "TFTableViewDataSource.h"
-#import "TFTableViewDataRequest.h"
 #import "TFTableViewDataSourceConfig.h"
 #import "TFTableViewDataManager.h"
 #import "TFTableViewClassList.h"

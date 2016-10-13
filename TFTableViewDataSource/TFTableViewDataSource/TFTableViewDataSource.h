@@ -8,11 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import <TFTableViewManager/TFTableViewManager.h>
+#import "TFTableViewDataRequest.h"
 
 @class TFTableViewItem;
 @class ASTableView;
-@class TFTableViewDataRequest;
-@class TFTableViewManager;
 
 /**
  *  数据加载方式
