@@ -11,6 +11,8 @@
 
 @class TFTableViewItem;
 @class ASTableView;
+@class TFTableViewDataRequest;
+@class TFTableViewManager;
 
 /**
  *  数据加载方式
@@ -172,6 +174,11 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
  *  @brief 当前的tablenode
  */
 @property (nonatomic ,weak) ASTableNode *tableNode;
+
+/**
+ *  网络数据加载工具
+ */
+@property (nonatomic , strong, readonly) TFTableViewDataRequest *dataRequest;
 
 /**
  *  @brief 加载状态

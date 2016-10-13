@@ -43,7 +43,7 @@
 /**
  *  网络数据加载工具
  */
-@property (nonatomic ,strong) TFTableViewDataRequest   *dataRequest;
+@property (nonatomic ,strong, readwrite) TFTableViewDataRequest   *dataRequest;
 
 
 @property (nonatomic ,strong) TFTableViewDataManager   *tableViewDataManager;
