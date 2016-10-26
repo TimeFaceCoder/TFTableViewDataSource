@@ -39,7 +39,7 @@ extern NSInteger const kTFTableViewActionTypeCellSelection;
 
 + (TFTableViewDataSourceConfig *)sharedInstance;
 
-- (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo;
+- (void)mapWithMappingInfo:(NSDictionary *)mapInfo;
 
 - (NSString *)classNameByListType:(NSInteger)listType;
 

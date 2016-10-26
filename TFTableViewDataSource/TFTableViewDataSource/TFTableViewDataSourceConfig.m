@@ -60,10 +60,8 @@ NSInteger const kTFTableViewActionTypeCellSelection  = -1;
     return self;
 }
 
-- (void)mapWithListType:(NSInteger)listType mappingInfo:(NSDictionary *)mappingInfo {
-    if ([self validatorMappingInfo:mappingInfo]) {
-        [_mappingInfo setObject:mappingInfo forKey:[NSNumber numberWithInteger:listType]];
-    }
+- (void)mapWithMappingInfo:(NSDictionary *)mapInfo {
+    [_mappingInfo setValuesForKeysWithDictionary:mapInfo];
 }
 
 - (NSString *)classNameByListType:(NSInteger)listType {
@@ -88,24 +86,6 @@ NSInteger const kTFTableViewActionTypeCellSelection  = -1;
         dataSourceClassName = @"TFTableViewDataSource";
     }
     return NSClassFromString(dataSourceClassName);
-}
-
-
-- (BOOL)validatorMappingInfo:(NSDictionary *)mappingInfo {
-    if ([mappingInfo isKindOfClass:[NSDictionary class]]) {
-        if (![mappingInfo objectForKey:kTFTableViewDataRequestURLKey]) {
-            NSAssert(NO, @"mapping info must have an object with kTFTableViewDataRequestURLKey");
-            return NO;
-        }
-        if (![mappingInfo objectForKey:kTFTableViewDataManagerClassKey]) {
-            NSAssert(NO, @"mapping info must have an object with kTFTableViewDataManagerClassKey");
-            return NO;
-        }
-    }
-    else {
-        return NO;
-    }
-    return YES;
 }
 
 @end
