@@ -34,6 +34,11 @@ typedef void(^MoveCompletionHandler)(__kindof TFTableViewItem *item, NSIndexPath
 @property (weak, nonatomic) TFTableViewSection *section;
 
 /**
+ *  @brief tell current item can be edit.
+ */
+@property (nonatomic, assign) BOOL edit;
+
+/**
  *  @brief Item cell editing style.
  */
 @property (assign, nonatomic) UITableViewCellEditingStyle editingStyle;
@@ -59,12 +64,12 @@ typedef void(^MoveCompletionHandler)(__kindof TFTableViewItem *item, NSIndexPath
 @property (nonatomic, strong) UIView *accessoryView;
 
 /**
- *  @brief Item indexPath in UITableView.
+ *  @brief Item indexPath in table View.
  */
 @property (strong, readonly, nonatomic) NSIndexPath *indexPath;
 
 /**
- *  @brief when use UITableViewCell,must set it's cellIdentifier.
+ *  @brief when use UITableViewCell,not set it's cellIdentifier,will get it from cell class name.
  */
 @property (nonatomic, copy) NSString *cellIdentifier;
 

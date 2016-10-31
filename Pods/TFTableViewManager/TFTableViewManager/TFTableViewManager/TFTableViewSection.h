@@ -25,7 +25,7 @@
 /**
  *  @brief An array of section items (rows).
  */
-@property (strong, readonly, nonatomic) NSArray<TFTableViewItem *> *items;
+@property (strong, readonly, nonatomic) NSArray<__kindof TFTableViewItem *> *items;
 
 /**
  *  @brief The title of the header of the specified section of the table view.
@@ -83,7 +83,7 @@
 @property (weak, nonatomic) TFTableViewManager *tableViewManager;
 
 /**
- *  @brief Section index in UITableView.
+ *  @brief Section index in table View.
  */
 @property (assign, readonly, nonatomic) NSUInteger index;
 
@@ -112,6 +112,15 @@
 - (instancetype)initWithHeaderTitle:(NSString *)headerTitle;
 
 /**
+ *  Initializes a newly allocated section and sets footer title.
+ *
+ *  @param footerTitle A footer title.
+ *
+ *  @return A new section initialized with a footer title.
+ */
+- (instancetype)initWithFooterTitle:(NSString *)footerTitle;
+
+/**
  *  Initializes a newly allocated section with header and footer titles.
  *
  *  @param headerTitle A header title.
@@ -129,6 +138,15 @@
  *  @return A new section initialized containing a header view.
  */
 - (instancetype)initWithHeaderView:(UIView *)headerView;
+
+/**
+ *  Initializes a newly allocated section containing a footer view.
+ *
+ *  @param footerView A footer view.
+ *
+ *  @return A new section initialized containing a footer view.
+ */
+- (instancetype)initWithFooterView:(UIView *)footerView;
 
 /**
  *  Initializes a newly allocated section containing header and footer views.
@@ -157,6 +175,15 @@
 + (instancetype)sectionWithHeaderTitle:(NSString *)headerTitle;
 
 /**
+ *  Creates and returns a new section with predefined footer title.
+ *
+ *  @param headerTitle A footer title.
+ *
+ *  @return A new section with defined footer title.
+ */
++ (instancetype)sectionWithFooterTitle:(NSString *)footerTitle;
+
+/**
  *  Creates and returns a new section with predefined header and footer titles.
  *
  *  @param headerTitle A header title.
@@ -174,6 +201,15 @@
  *  @return A new section containing a header view.
  */
 + (instancetype)sectionWithHeaderView:(UIView *)headerView;
+
+/**
+ *  Creates and returns a new section containing a footer view.
+ *
+ *  @param footerView A footer view.
+ *
+ *  @return A new section containing a footer view.
+ */
++ (instancetype)sectionWithFooterView:(UIView *)footerView;
 
 /**
  *  Creates and returns a new section containing header and footer views.

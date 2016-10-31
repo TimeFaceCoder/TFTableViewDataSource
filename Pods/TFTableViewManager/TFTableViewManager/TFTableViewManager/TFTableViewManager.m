@@ -7,14 +7,15 @@
 //
 
 #import "TFTableViewManager.h"
+#import "TFTableViewItem.h"
 #import "TFTableViewItemCell.h"
 #import "TFTableViewItemCellNode.h"
-#import "TFDefaultTableViewItem.h"
-#import "TFTableViewItem.h"
 
 @interface TFTableViewManager ()<UITableViewDataSource,UITableViewDelegate,ASTableDataSource,ASTableDelegate>
 
 @property (nonatomic, strong) NSMutableArray *mutableSections;
+
+@property (nonatomic, strong) NSMutableDictionary *registeredClasses;
 
 @end
 
@@ -323,9 +324,9 @@
 {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
     Class cellClass = [self classForCellAtIndexPath:indexPath];
-    NSString *identifier = NSStringFromClass(cellClass);
-    if ([item isKindOfClass:[TFDefaultTableViewItem class]]) {
-        identifier = [identifier stringByAppendingFormat:@"%ld",(long)((TFDefaultTableViewItem *)item).cellStyle];
+    NSString *identifier = item.cellIdentifier;
+    if (!identifier) {
+        identifier = NSStringFromClass(cellClass);
     }
     TFTableViewItemCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     
@@ -381,13 +382,13 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    BOOL edit = ((item.editingStyle != UITableViewCellEditingStyleNone) | (item.editActions.count!=0));
+    BOOL edit = ((item.editingStyle != UITableViewCellEditingStyleNone) | (item.editActions.count!=0) | (item.edit));
     return edit;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    return (item.moveHandler != nil);
+    return ((item.moveHandler != nil) | (item.moveCompletionHandler != nil));
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
@@ -556,7 +557,7 @@
         return CGRectGetHeight(tableViewSection.headerNode.frame);
     }
     if (tableViewSection.headerView) {
-        return CGRectGetHeight(tableViewSection.headerView.frame);
+        return CGRectGetHeight(tableViewSection.headerView.frame)? :UITableViewAutomaticDimension;
     }
     if (tableViewSection.headerTitle) {
         CGFloat headerHeight = 0;
@@ -593,7 +594,7 @@
         return CGRectGetHeight(tableViewSection.footerNode.frame);
     }
     if (tableViewSection.footerView) {
-        return CGRectGetHeight(tableViewSection.footerView.frame);
+        return CGRectGetHeight(tableViewSection.footerView.frame)? :UITableViewAutomaticDimension;
     }
     if (tableViewSection.footerTitle) {
         CGFloat footerHeight = 0;
@@ -728,12 +729,99 @@
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath {
+    TFTableViewSection *sourceSection = self.mutableSections[sourceIndexPath.section];
+    TFTableViewItem *item = sourceSection.items[sourceIndexPath.row];
+    if (item.moveHandler) {
+        BOOL allowed = item.moveHandler(item, sourceIndexPath, proposedDestinationIndexPath);
+        if (!allowed)
+        return sourceIndexPath;
+    }
     if ([self.delegate respondsToSelector:@selector(tableView:targetIndexPathForMoveFromRowAtIndexPath:toProposedIndexPath:)]) {
         return [self.delegate tableView:tableView targetIndexPathForMoveFromRowAtIndexPath:sourceIndexPath toProposedIndexPath:proposedDestinationIndexPath];
     }
     return proposedDestinationIndexPath;
 }
 
+#pragma mark - UIScrollViewDelegate
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidScroll:)]) {
+        [self.delegate scrollViewDidScroll:scrollView];
+    }
+}
+
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidZoom:)]) {
+        [self.delegate scrollViewDidZoom:scrollView];
+    }
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewWillBeginDragging:)]) {
+        [self.delegate scrollViewWillBeginDragging:scrollView];
+    }
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    if ([self.delegate respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)]) {
+        [self.delegate scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+    }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)]) {
+        [self.delegate scrollViewDidEndDragging:scrollView willDecelerate:YES];
+    }
+}
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewWillBeginDecelerating:)]) {
+        [self.delegate scrollViewWillBeginDecelerating:scrollView];
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndDecelerating:)]) {
+        [self.delegate scrollViewDidEndDecelerating:scrollView];
+    }
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndScrollingAnimation:)]) {
+        [self.delegate scrollViewDidEndScrollingAnimation:scrollView];
+    }
+}
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(viewForZoomingInScrollView:)]) {
+        return [self.delegate viewForZoomingInScrollView:scrollView];
+    }
+    return nil;
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view {
+    if ([self.delegate respondsToSelector:@selector(scrollViewWillBeginZooming:withView:)]) {
+        [self.delegate scrollViewWillBeginZooming:scrollView withView:view];
+    }
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndZooming:withView:atScale:)]) {
+        [self.delegate scrollViewDidEndZooming:scrollView withView:view atScale:scale];
+    }
+}
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewShouldScrollToTop:)]) {
+        return [self.delegate scrollViewShouldScrollToTop:scrollView];
+    }
+    return YES;
+}
+
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidScrollToTop:)]) {
+        [self.delegate scrollViewDidScrollToTop:scrollView];
+    }
+}
 
 @end

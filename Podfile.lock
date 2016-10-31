@@ -23,13 +23,19 @@ PODS:
   - AsyncDisplayKit/PINRemoteImage (2.0-beta.1):
     - AsyncDisplayKit/Core
     - PINRemoteImage/iOS (>= 3.0.0-beta.3)
+  - FLAnimatedImage (1.0.12)
   - GHODictionary (1.0.9)
   - JSONModel (1.4.0)
   - MPMessagePack (1.3.11):
     - GHODictionary
   - PINCache (3.0.1-beta)
+  - PINRemoteImage (3.0.0-beta.3):
+    - PINRemoteImage/FLAnimatedImage (= 3.0.0-beta.3)
   - PINRemoteImage/Core (3.0.0-beta.3):
     - PINCache (>= 3.0.0-beta)
+  - PINRemoteImage/FLAnimatedImage (3.0.0-beta.3):
+    - FLAnimatedImage (>= 1.0)
+    - PINRemoteImage/Core
   - PINRemoteImage/iOS (3.0.0-beta.3):
     - PINRemoteImage/Core
   - pop (1.0.9)
@@ -45,6 +51,7 @@ PODS:
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/TimeFaceCoder/AsyncDisplayKit.git`)
   - JSONModel
+  - PINRemoteImage (= 3.0.0-beta.3)
   - pop (~> 1.0.9)
   - TFNetwork (from `https://github.com/TimeFaceCoder/TFNetwork.git`)
   - TFTableViewManager (from `https://github.com/TimeFaceCoder/TFTableViewManager.git`)
@@ -67,13 +74,14 @@ CHECKOUT OPTIONS:
     :commit: 90337a76ac8a17c03a168a4ebf8af5ab23ae1ae9
     :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
-    :commit: 34c42101d0d9ebbac3c9adffe45e2360e82b5c6e
+    :commit: dc79887453f5e875a8729b6915e3f7a3408e39e4
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   AnimatedGIFImageSerialization: b0f0cfe71eac1ee45a3d57ae533c23b8e6f29501
   AsyncDisplayKit: 5825688cd0b447ca0e39fb16e91fc23e48fd7294
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   GHODictionary: 1f7873492445e0f33ac19575a358c3c91926b564
   JSONModel: 58fe3f8c29ff95ed94e7ee7dde87e807f5da5371
   MPMessagePack: 71e6be8e3c058b521c5ddaaa54c8b9191ef4b59d
@@ -85,6 +93,6 @@ SPEC CHECKSUMS:
   UzysAnimatedGifPullToRefresh: ca441a89a0cbf704c0c9dd2f1320fb91ffc7f86b
   YYDispatchQueuePool: 3dfb2274bcc74207688dde8ac6f7bdd46871dd7b
 
-PODFILE CHECKSUM: 1d4925b3d218f34635f6f42861089930b262c6d9
+PODFILE CHECKSUM: 8d72073e43b4129d7056b93dcdae9297e3b9cd73
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.1.1

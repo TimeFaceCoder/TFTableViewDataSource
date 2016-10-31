@@ -35,21 +35,40 @@
 {
     self = [super init];
     if (self) {
-        _mutableItems = [NSMutableArray array];
-        _headerHeight = 0.0;
-        _footerHeight = 0.0;
-        _sectionIndex = -1;
+        [self p_setDefaultValues];
     }
     return self;
 }
 
+- (void)p_setDefaultValues {
+    _mutableItems = [NSMutableArray array];
+    _headerHeight = 0.0;
+    _footerHeight = 0.0;
+    _sectionIndex = -1;
+}
+
 - (instancetype)initWithHeaderTitle:(NSString *)headerTitle {
-    return [self initWithHeaderTitle:headerTitle footerTitle:nil];
+    self = [super init];
+    if (self) {
+        [self p_setDefaultValues];
+        self.headerTitle = headerTitle;
+    }
+    return self;
+}
+
+- (instancetype)initWithFooterTitle:(NSString *)footerTitle {
+    self = [super init];
+    if (self) {
+        [self p_setDefaultValues];
+        self.footerTitle = footerTitle;
+    }
+    return self;
 }
 
 - (instancetype)initWithHeaderTitle:(NSString *)headerTitle footerTitle:(NSString *)footerTitle {
-    self = [self init];
+    self = [super init];
     if (self) {
+        [self p_setDefaultValues];
         self.headerTitle = headerTitle;
         self.footerTitle = footerTitle;
     }
@@ -57,16 +76,27 @@
 }
 
 - (instancetype)initWithHeaderView:(UIView *)headerView {
-    self = [self init];
+    self = [super init];
     if (self) {
+        [self p_setDefaultValues];
         self.headerView = headerView;
     }
     return self;
 }
 
-- (instancetype)initWithHeaderView:(UIView *)headerView footerView:(UIView *)footerView {
-    self = [self init];
+- (instancetype)initWithFooterView:(UIView *)footerView {
+    self = [super init];
     if (self) {
+        [self p_setDefaultValues];
+        self.footerView = footerView;
+    }
+    return self;
+}
+
+- (instancetype)initWithHeaderView:(UIView *)headerView footerView:(UIView *)footerView {
+    self = [super init];
+    if (self) {
+        [self p_setDefaultValues];
         self.headerView  = headerView;
         self.footerView  = footerView;
     }
@@ -81,12 +111,20 @@
     return [[self alloc] initWithHeaderTitle:headerTitle];
 }
 
++ (instancetype)sectionWithFooterTitle:(NSString *)footerTitle {
+    return [[self alloc] initWithFooterTitle:footerTitle];
+}
+
 + (instancetype)sectionWithHeaderTitle:(NSString *)headerTitle footerTitle:(NSString *)footerTitle {
     return [[self alloc] initWithHeaderTitle:headerTitle footerTitle:footerTitle];
 }
 
 + (instancetype)sectionWithHeaderView:(UIView *)headerView {
     return [[self alloc] initWithHeaderView:headerView];
+}
+
++ (instancetype)sectionWithFooterView:(UIView *)footerView {
+    return [[self alloc] initWithFooterView:footerView];
 }
 
 + (instancetype)sectionWithHeaderView:(UIView *)headerView footerView:(UIView *)footerView {

@@ -44,11 +44,6 @@
  */
 @property (strong, readonly, nonatomic) NSArray<TFTableViewSection *> *sections;
 
-/**
- *  @brief The array of pairs of items / cell classes.
- */
-@property (strong, nonatomic) NSMutableDictionary *registeredClasses;
-
 ///-----------------------------
 /// @name Creating and Initializing a TFTableViewManager.
 ///-----------------------------
@@ -56,16 +51,16 @@
 /**
  *  Initialize a table view manager object for a specific `UITableView`.
  *
- *  @param tableView The ASTableView or UITableView that needs to be managed.
+ *  @param tableView The UITableView that needs to be managed.
  *
  *  @return The pointer to the instance, or `nil` if initialization failed.
  */
 - (instancetype)initWithTableView:(UITableView *)tableView;
 
 /**
- *  Initialize a table view manager object for a specific `ASTableView`.
+ *  Initialize a table view manager object for a specific `ASTableNode`.
  *
- *  @param tableView The ASTableView that needs to be managed.
+ *  @param tableNode The ASTableNode that needs to be managed.
  *
  *  @return The pointer to the instance, or `nil` if initialization failed.
  */
@@ -75,6 +70,9 @@
  *  Get the item at index path.
  *
  *  @param indexPath the item index path.
+ 
+    @return TFCollectionViewItem.
+
  */
 - (TFTableViewItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -277,7 +275,8 @@
 /**
  *  Insert sections with a given animation effect.
  *
- *  @param sections  the index set of section.
+ *  @param sections  an array of TFTableViewSection.
+ *  @param indexSet  the index set of sections.
  *  @param animation A constant that indicates how the insert is to be animated.
  */
 - (void)insertSections:(NSArray<TFTableViewSection *> *)sections atIndexes:(NSIndexSet *)indexSet withRowAnimation:(UITableViewRowAnimation)animation;
@@ -286,7 +285,7 @@
 /**
  *  Insert sections with a given animation effect in the end of section array.
  *
- *  @param sections  the index set of section.
+ *  @param sections  an array of TFTableViewSection.
  *  @param animation A constant that indicates how the insert is to be animated.
  */
 - (void)addSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation;
@@ -294,41 +293,40 @@
 /**
  *  Delete sections with index set of section and a given animation effect.
  *
- *  @param sections  the index set of section.
+ *  @param indexSet  the index set of sections.
  *  @param animation A constant that indicates how the insert is to be animated.
  */
-- (void)deleteSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)deleteSectionsAtIndexSet:(NSIndexSet *)indexSet withRowAnimation:(UITableViewRowAnimation)animation;
 
 /**
- *  Delete sections  and a given animation effect.
+ *  Delete sections with an array of sections and a given animation effect.
  *
- *  @param sections  the index set of section.
+ *  @param sections  an array of TFTableViewSection.
  *  @param animation A constant that indicates how the insert is to be animated.
  */
 - (void)deleteSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation;
 
 
 /**
- *  Reload sections with
+ *  Reload sections with a given animation effect.
  *
- *  @param sections  the index set of section.
+ *  @param indexSet  the index set of sections.
  *  @param animation A constant that indicates how the insert is to be animated.
  */
-- (void)reloadSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)reloadSectionsAtIndexSet:(NSIndexSet *)indexSet withRowAnimation:(UITableViewRowAnimation)animation;
 
 
 /**
- *  Reload sections with
+ *  Reload sections with a given animation effect.
  *
- *  @param sections  the index set of section.
+ *  @param sections  an array of TFTableViewSection.
  *  @param animation A constant that indicates how the insert is to be animated.
  */
 - (void)reloadSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation;
 
 /**
- *  Reload sections with
+ *  Reload sections with a given animation effect.
  *
- *  @param sections  the index set of section.
  *  @param animation A constant that indicates how the insert is to be animated.
  */
 - (void)reloadAllSectionsWithRowAnimation:(UITableViewRowAnimation)animation;
@@ -378,7 +376,7 @@
  *  Select row at index path.
  *
  *  @param indexPath      the row index path.
- *  @param animated       using animation
+ *  @param animated       using animation.
  *  @param scrollPosition scroll position type.
  */
 - (void)selectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition;
