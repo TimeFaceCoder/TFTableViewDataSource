@@ -24,9 +24,9 @@ PODS:
     - AsyncDisplayKit/Core
     - PINRemoteImage/iOS (>= 3.0.0-beta.3)
   - FLAnimatedImage (1.0.12)
-  - GHODictionary (1.0.9)
+  - GHODictionary (1.1.0)
   - JSONModel (1.4.0)
-  - MPMessagePack (1.3.11):
+  - MPMessagePack (1.3.12):
     - GHODictionary
   - PINCache (3.0.1-beta)
   - PINRemoteImage (3.0.0-beta.3):
@@ -39,7 +39,7 @@ PODS:
   - PINRemoteImage/iOS (3.0.0-beta.3):
     - PINRemoteImage/Core
   - pop (1.0.9)
-  - TFNetwork (0.0.1):
+  - TFNetwork (0.1.4):
     - AFNetworking
     - MPMessagePack
   - TFTableViewManager (1.0.0):
@@ -53,7 +53,7 @@ DEPENDENCIES:
   - JSONModel
   - PINRemoteImage (= 3.0.0-beta.3)
   - pop (~> 1.0.9)
-  - TFNetwork (from `https://github.com/TimeFaceCoder/TFNetwork.git`)
+  - TFNetwork (~> 0.1.4)
   - TFTableViewManager (from `https://github.com/TimeFaceCoder/TFTableViewManager.git`)
   - UzysAnimatedGifPullToRefresh
   - YYDispatchQueuePool
@@ -61,8 +61,6 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   AsyncDisplayKit:
     :git: https://github.com/TimeFaceCoder/AsyncDisplayKit.git
-  TFNetwork:
-    :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
@@ -70,9 +68,6 @@ CHECKOUT OPTIONS:
   AsyncDisplayKit:
     :commit: cf1f438c651f5fe7abdc38850d43ba98e621657b
     :git: https://github.com/TimeFaceCoder/AsyncDisplayKit.git
-  TFNetwork:
-    :commit: 90337a76ac8a17c03a168a4ebf8af5ab23ae1ae9
-    :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
     :commit: dc79887453f5e875a8729b6915e3f7a3408e39e4
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
@@ -82,17 +77,17 @@ SPEC CHECKSUMS:
   AnimatedGIFImageSerialization: b0f0cfe71eac1ee45a3d57ae533c23b8e6f29501
   AsyncDisplayKit: 5825688cd0b447ca0e39fb16e91fc23e48fd7294
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
-  GHODictionary: 1f7873492445e0f33ac19575a358c3c91926b564
+  GHODictionary: 225e042596a4b3d5b66b2b24250086b2f95514af
   JSONModel: 58fe3f8c29ff95ed94e7ee7dde87e807f5da5371
-  MPMessagePack: 71e6be8e3c058b521c5ddaaa54c8b9191ef4b59d
+  MPMessagePack: 078f8c3aed25079bac89003391fdb71f44bcf37a
   PINCache: 6911fe422a633e18b3d3ddf2bd4f0e55e36e2892
   PINRemoteImage: 308731aa6534500e58fc211b9cc2bb7252df25ba
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
-  TFNetwork: 2c70cbf58bb7be5293fd10b837224280b15bf223
+  TFNetwork: d08395c4bd4da1534271366ff7dd8378182d35e6
   TFTableViewManager: f206be524ad73c10498b1402025d6b04e6efb12a
   UzysAnimatedGifPullToRefresh: ca441a89a0cbf704c0c9dd2f1320fb91ffc7f86b
   YYDispatchQueuePool: 3dfb2274bcc74207688dde8ac6f7bdd46871dd7b
 
-PODFILE CHECKSUM: 8d72073e43b4129d7056b93dcdae9297e3b9cd73
+PODFILE CHECKSUM: 4245a28127aeea98e7773542ba0f1e0641d831e4
 
 COCOAPODS: 1.1.1

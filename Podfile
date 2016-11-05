@@ -7,7 +7,7 @@ target :TFTableViewDataSource do
 pod 'PINRemoteImage', '3.0.0-beta.3'
 pod 'AsyncDisplayKit', :git => 'https://github.com/TimeFaceCoder/AsyncDisplayKit.git'
 pod 'TFTableViewManager', :git => 'https://github.com/TimeFaceCoder/TFTableViewManager.git'
-pod 'TFNetwork', :git => 'https://github.com/TimeFaceCoder/TFNetwork.git'
+pod 'TFNetwork', '~> 0.1.4'
 pod 'JSONModel'
 pod 'YYDispatchQueuePool'
 pod 'UzysAnimatedGifPullToRefresh'

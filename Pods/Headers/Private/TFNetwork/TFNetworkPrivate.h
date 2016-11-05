@@ -1,1 +1,1 @@
-../../../TFNetwork/TFNetwork/TFNetwork/TFNetworkPrivate.h
+../../../TFNetwork/TFNetwork/Classes/TFNetworkPrivate.h

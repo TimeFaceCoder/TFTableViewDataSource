@@ -180,6 +180,16 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 @property (nonatomic , strong, readonly) TFTableViewDataRequest *dataRequest;
 
 /**
+ *  附加的网络请求数组,默认会加入dataRequest.
+ */
+@property (nonatomic, strong) NSArray *batchRequestArr;
+
+/**
+ 是否只是第一页加载附加的请求,默认YES，当为NO时，加载每一页数据时都会加载对应数据
+ */
+@property (nonatomic, assign) BOOL batchShouldLoadInFirstPage;
+
+/**
  *  @brief 加载状态
  */
 @property (nonatomic ,assign) TFDataSourceState dataSourceState;

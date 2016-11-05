@@ -1,1 +1,1 @@
-../../../TFNetwork/TFNetwork/TFNetwork/TFNetworkConfig.h
+../../../TFNetwork/TFNetwork/Classes/TFNetworkConfig.h

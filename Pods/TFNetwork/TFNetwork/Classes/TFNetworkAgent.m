@@ -94,7 +94,7 @@
         _manager.requestSerializer = [AFHTTPRequestSerializer serializer];
         _manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     } else if (request.requestSerializerType == TFRequestSerializerTypeJSON) {
-        _manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        _manager.requestSerializer = [AFJSONRequestSerializer serializer];
         _manager.responseSerializer = [AFJSONResponseSerializer serializer];
     } else if (request.requestSerializerType == TFRequestSerializerTypeMsgPack) {
         _manager.requestSerializer = [AFHTTPRequestSerializer serializer];

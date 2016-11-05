@@ -12,7 +12,10 @@
 #import "TFTableViewClassList.h"
 #import "TFLoadingTableViewItem.h"
 #import "TFLoadingTableViewItemCell.h"
+//数据请求
 #import "LoadDataOperation.h"
+#import <TFNetwork/TFBatchRequest.h>
+
 @interface TFTableViewDataSource()<TFTableViewManagerDelegate> {
     
 }
@@ -44,6 +47,7 @@
  */
 @property (nonatomic ,strong, readwrite) TFTableViewDataRequest   *dataRequest;
 
+@property (nonatomic, strong) TFBatchRequest *dataBatchRequest;
 
 @property (nonatomic ,strong) TFTableViewDataManager   *tableViewDataManager;
 
@@ -67,6 +71,7 @@
     if (!self) {
         return nil;
     }
+    _batchShouldLoadInFirstPage = YES;
     _delegate  = delegate;
     _tableView = tableView;
     _listType  = listType;
@@ -87,6 +92,7 @@
     if (!self) {
         return nil;
     }
+    _batchShouldLoadInFirstPage = YES;
     _delegate  = delegate;
     _tableNode = tableNode;
     _tableView = tableNode.view;
@@ -128,9 +134,6 @@
         [_tableViewDataManager refreshCell:actionType identifier:identifier];
     }
 }
-
-
-#pragma mark - Private
 
 #pragma mark - 初始化数据加载方法
 - (void)setupDataSource {
@@ -215,7 +218,18 @@
     _dataSourceState = TFDataSourceStateLoading;
     NSString *requestURL = [[TFTableViewDataSourceConfig sharedInstance] requestURLByListType:_listType];
     _dataRequest = [[TFTableViewDataRequest alloc] initWithRequestURL:requestURL params:_requestArgument];
-    LoadDataOperation* opeartion = [[LoadDataOperation alloc]initWithRequest:_dataRequest dataLoadPolocy:loadPolicy firstLoadOver:self.loadCacheDataOver];
+    NSMutableArray *requestArr = [NSMutableArray arrayWithObject:_dataRequest];
+    if (_batchShouldLoadInFirstPage) {
+        if (_currentPage==1) {
+            [requestArr addObjectsFromArray:_batchRequestArr];
+        }
+    }
+    else {
+        [requestArr addObjectsFromArray:_batchRequestArr];
+    }
+    _dataBatchRequest = [[TFBatchRequest alloc] initWithRequestArray:requestArr];
+    
+    LoadDataOperation* opeartion = [[LoadDataOperation alloc]initWithRequest:_dataBatchRequest dataLoadPolocy:loadPolicy firstLoadOver:self.loadCacheDataOver];
     __weak TFTableViewDataSource* wself = self;
     __weak LoadDataOperation* wOperation = opeartion;
     _loadCacheDataOver = YES;
@@ -321,7 +335,7 @@
 - (void)addNewAndLoadingSectionsWith:(NSArray *)sections {
     NSInteger rangelocation = self.manager.sections.count;
     [self.manager addSectionsFromArray:sections];
-    NSInteger rangelength = 1;
+    NSInteger rangelength = rangelength += sections.count;
     //需要在主线程执行
     if (_currentPage < _totalPage) {
         //存在下一页数据，在列表尾部追加loading item
@@ -329,7 +343,7 @@
         //loading item
         [section addItem:[TFLoadingTableViewItem itemWithModel:NSLocalizedString(@"正在加载...", nil)]];
         [self.manager addSection:section];
-        rangelength += sections.count;
+        rangelength +=1;
     }
     [self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
                         withRowAnimation:UITableViewRowAnimationFade];

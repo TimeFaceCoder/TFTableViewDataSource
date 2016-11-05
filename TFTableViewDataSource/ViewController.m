@@ -10,6 +10,7 @@
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 #import "DemoTableViewDataSource.h"
 #import "TFTableViewDataSourceConfig.h"
+#import <TFNetwork/TFBatchRequest.h>
 
 @interface ViewController ()<TFTableViewDataSourceDelegate>
 

@@ -7,14 +7,16 @@
 //
 
 #import "LoadDataOperation.h"
+#import <TFNetwork/TFBatchRequest.h>
 #import "TFTableViewDataRequest.h"
+
 @interface LoadDataOperation ()
 
 @end
 
 @implementation LoadDataOperation
 @dynamic finished;
-- (id)initWithRequest:(TFTableViewDataRequest *)request dataLoadPolocy:(TFDataLoadPolicy)policy firstLoadOver:(BOOL)firstLoadOver{
+- (id)initWithRequest:(TFBatchRequest *)request dataLoadPolocy:(TFDataLoadPolicy)policy firstLoadOver:(BOOL)firstLoadOver{
     self = [super init];
     if (self) {
         executing = NO;
@@ -56,21 +58,29 @@
     @try {
         
         // Do the main work of the operation here.
-        if ([self.request cacheResponseObject] && !_firstLoadOver) {
-            self.result = self.request.responseObject;
+        TFTableViewDataRequest *dataRequest = [self.request.requestArray firstObject];
+        
+        if ([dataRequest cacheResponseObject] && !_firstLoadOver) {
+            self.result = dataRequest.responseObject;
             [self completeOperation];
         }
         else {
-            [self.request startWithCompletionBlockWithSuccess:^(__kindof TFBaseRequest *request) {
-                self.result = self.request.responseObject;
+            [self.request startWithCompletionBlockWithSuccess:^(TFBatchRequest *batchRequest) {
+                self.result = dataRequest.responseObject;
+                self.batchResult = nil;
+//                [self dealWithBatchResult];
                 [self completeOperation];
-            } failure:^(__kindof TFBaseRequest *request) {
-                if ([self.request cacheResponseObject]) {
-                    self.result = self.request.responseObject;
+                
+            } failure:^(TFBatchRequest *batchRequest) {
+                if ([dataRequest cacheResponseObject]) {
+                    self.result = dataRequest.responseObject;
+//                    [self dealWithBatchResult];
+
                     [self completeOperation];
                 }
                 else {
-                    self.result = nil;
+                    self.result = dataRequest.responseObject;
+//                    [self dealWithBatchResult];
                     [self completeOperation];
                 }
             }];
@@ -78,6 +88,19 @@
     }
     @catch(...) {
         // Do not rethrow exceptions.
+    }
+}
+
+- (void)dealWithBatchResult {
+    self.batchResult = nil;
+    NSArray *batchArr = self.request.requestArray;
+    if (batchArr.count>1) {
+        NSMutableArray *tempArr = [NSMutableArray array];
+        for (NSInteger i=1; i<batchArr.count; i++) {
+            TFBaseRequest *request = batchArr[i];
+            [tempArr addObject:request.responseObject];
+        }
+        self.batchResult = [NSArray arrayWithArray:tempArr];
     }
 }
 

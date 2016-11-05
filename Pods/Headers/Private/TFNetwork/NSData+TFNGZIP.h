@@ -1,1 +1,1 @@
-../../../TFNetwork/TFNetwork/TFNetwork/NSData+TFNGZIP.h
+../../../TFNetwork/TFNetwork/Classes/NSData+TFNGZIP.h
