@@ -16,7 +16,6 @@
 - (instancetype)initWithRequest:(TFBatchRequest*)request dataLoadPolocy:(TFDataLoadPolicy)policy firstLoadOver:(BOOL)firstLoadOver;
 
 @property (nonatomic, strong)NSDictionary *result;
-@property (nonatomic, strong) NSArray *batchResult;
 @property (nonatomic, strong)TFBatchRequest* request;
 /**
  *  网络数据加载工具

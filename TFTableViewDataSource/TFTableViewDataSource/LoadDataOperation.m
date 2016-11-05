@@ -67,20 +67,16 @@
         else {
             [self.request startWithCompletionBlockWithSuccess:^(TFBatchRequest *batchRequest) {
                 self.result = dataRequest.responseObject;
-                self.batchResult = nil;
-//                [self dealWithBatchResult];
                 [self completeOperation];
                 
             } failure:^(TFBatchRequest *batchRequest) {
                 if ([dataRequest cacheResponseObject]) {
                     self.result = dataRequest.responseObject;
-//                    [self dealWithBatchResult];
 
                     [self completeOperation];
                 }
                 else {
                     self.result = dataRequest.responseObject;
-//                    [self dealWithBatchResult];
                     [self completeOperation];
                 }
             }];
@@ -88,19 +84,6 @@
     }
     @catch(...) {
         // Do not rethrow exceptions.
-    }
-}
-
-- (void)dealWithBatchResult {
-    self.batchResult = nil;
-    NSArray *batchArr = self.request.requestArray;
-    if (batchArr.count>1) {
-        NSMutableArray *tempArr = [NSMutableArray array];
-        for (NSInteger i=1; i<batchArr.count; i++) {
-            TFBaseRequest *request = batchArr[i];
-            [tempArr addObject:request.responseObject];
-        }
-        self.batchResult = [NSArray arrayWithArray:tempArr];
     }
 }
 

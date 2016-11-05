@@ -335,7 +335,8 @@
 - (void)addNewAndLoadingSectionsWith:(NSArray *)sections {
     NSInteger rangelocation = self.manager.sections.count;
     [self.manager addSectionsFromArray:sections];
-    NSInteger rangelength = rangelength += sections.count;
+    NSInteger rangelength = 0;
+    rangelength += sections.count;
     //需要在主线程执行
     if (_currentPage < _totalPage) {
         //存在下一页数据，在列表尾部追加loading item
