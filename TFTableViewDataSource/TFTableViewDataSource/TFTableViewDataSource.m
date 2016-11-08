@@ -144,18 +144,6 @@
         Class class = NSClassFromString(className);
         _tableViewDataManager = [[class alloc] initWithDataSource:self listType:_listType];
     }
-    //registerClass
-    NSArray *itemClassList = [TFTableViewClassList subclassesOfClass:[TFTableViewItem class]];
-    for (Class itemClass in itemClassList) {
-        NSString *itemName = NSStringFromClass(itemClass);
-        if (NSClassFromString([itemName stringByAppendingString:@"CellNode"]) && self.tableNode) {
-            self.manager[itemName] = [itemName stringByAppendingString:@"CellNode"];
-        }
-        else if (NSClassFromString([itemName stringByAppendingString:@"Cell"]) && self.tableView) {
-            self.manager[itemName] = [itemName stringByAppendingString:@"Cell"];
-        }
-    }
-    
     _loadDataOperationQueue = [[NSOperationQueue alloc]init];
     _loadDataOperationQueue.maxConcurrentOperationCount = 1;
     _loadDataOperationQueue.qualityOfService = NSQualityOfServiceBackground;

@@ -15,8 +15,6 @@
 
 @property (nonatomic, strong) NSMutableArray *mutableSections;
 
-@property (nonatomic, strong) NSMutableDictionary *registeredClasses;
-
 @end
 
 @implementation TFTableViewManager
@@ -45,7 +43,6 @@
         tableView.delegate     = self;
         tableView.dataSource   = self;
         self.tableView         = tableView;
-        self.registeredClasses = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -61,7 +58,6 @@
         tableNode.dataSource   = self;
         self.tableNode         = tableNode;
         self.tableView         = tableNode.view;
-        self.registeredClasses = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -69,47 +65,6 @@
 - (TFTableViewItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
     return ((TFTableViewSection *)self.mutableSections[indexPath.section]).items[indexPath.row];
 }
-
-#pragma mark - Register Custom Cells
-
-- (void)registerWithItemClass:(NSString *)itemClass cellClass:(NSString *)cellClass
-{
-    NSAssert(NSClassFromString(itemClass), ([NSString stringWithFormat:@"Item class '%@' does not exist.", itemClass]));
-    NSAssert(NSClassFromString(cellClass), ([NSString stringWithFormat:@"Cell class '%@' does not exist.", cellClass]));
-    self.registeredClasses[(id <NSCopying>)NSClassFromString(itemClass)] = NSClassFromString(cellClass);
-    NSString *nibPath = [[NSBundle mainBundle] pathForResource:cellClass ofType:@"nib"];
-    if (nibPath) {
-        UITableViewCell *cell = [[[NSBundle mainBundle] loadNibNamed:cellClass owner:nil options:nil] lastObject];
-        BOOL isEqual = [cell.reuseIdentifier isEqualToString:cellClass];
-        if (isEqual) {
-            //XIB exists with the same name as the cell class
-            [self.tableView registerNib:[UINib nibWithNibName:cellClass bundle:[NSBundle mainBundle]] forCellReuseIdentifier:cellClass];
-        }
-        else {
-            NSAssert(isEqual, @"cell reuse identifier must be equal to cell class name.");
-        }
-       
-    }
-    
-}
-
-- (id)objectAtKeyedSubscript:(id <NSCopying>)key
-{
-    return [self.registeredClasses objectForKey:key];
-}
-
-- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key
-{
-    [self registerWithItemClass:(NSString *)key cellClass:obj];
-}
-
-- (Class)classForCellAtIndexPath:(NSIndexPath *)indexPath
-{
-    TFTableViewSection *section = self.mutableSections[indexPath.section];
-    NSObject *item = section.items[indexPath.row];
-    return self.registeredClasses[item.class];
-}
-
 
 #pragma mark Add and insert sections.
 
@@ -323,7 +278,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    Class cellClass = [self classForCellAtIndexPath:indexPath];
+    Class cellClass = [self _cellClassWithItem:item];
     NSString *identifier = item.cellIdentifier;
     if (!identifier) {
         identifier = NSStringFromClass(cellClass);
@@ -331,7 +286,20 @@
     TFTableViewItemCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     
     if (!cell) {
-        cell = [[cellClass alloc] initWithTableViewItem:item reuseIdentifier:identifier];
+        NSString *cellName = NSStringFromClass(cellClass);
+        //先获取xib存在不存在,存在获取xib
+        NSString *nibPath = [[NSBundle mainBundle] pathForResource:cellName ofType:@"nib"];
+        if (nibPath) {
+            if (!cell) {
+                cell = [[[NSBundle mainBundle]loadNibNamed:cellName owner:nil options:nil] lastObject];
+                NSAssert([identifier isEqualToString:cell.reuseIdentifier], @"cell reuse idetifier must be equal to the identifier in xib file you set.");
+            }
+        }
+        else {
+            if (!cell) {
+                cell = [[cellClass alloc] initWithTableViewItem:item reuseIdentifier:identifier];
+            }
+        }
         // TFTableViewManagerDelegate
         if ([self.delegate respondsToSelector:@selector(tableView:didLoadCellSubViews:forRowAtIndexPath:)]) {
             [self.delegate tableView:tableView didLoadCellSubViews:cell forRowAtIndexPath:indexPath];
@@ -345,11 +313,29 @@
     
 }
 
+- (Class)_cellClassWithItem:(__kindof TFTableViewItem *)item {
+    if (item.registerCellClassName.length) {
+        Class cellClass = NSClassFromString(item.registerCellClassName);
+        NSAssert(cellClass, @"the register cell class name is not exist.");
+        return cellClass;
+    }
+    else {
+        NSString *suffix = @"Cell";
+        if (_tableNode) {
+            suffix = @"CellNode";
+        }
+        NSString *className = [NSString stringWithFormat:@"%@%@",NSStringFromClass([item class]),suffix];
+        Class cellClass = NSClassFromString(className);
+        NSAssert(cellClass, @"item matched cell class name is not standard,please use property 'registerCellClassName' to set nonstandard cell class name.");
+        return cellClass;
+    }
+}
+
 #pragma mark unique methods for ASTableDataSource.
 
 - (ASCellNodeBlock)tableView:(ASTableView *)tableView nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    Class cellClass = [self classForCellAtIndexPath:indexPath];
+    Class cellClass = [self _cellClassWithItem:item];
     typeof(self) __weak weakSelf = self;
     return ^{
         TFTableViewItemCellNode *cell = [[cellClass alloc] initWithTableViewItem:item];
@@ -538,7 +524,7 @@
         return [self.delegate tableView:tableView heightForRowAtIndexPath:indexPath];
     }
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
-    return [[self classForCellAtIndexPath:indexPath] cellHeightWithItem:item];
+    return [[self _cellClassWithItem:item] cellHeightWithItem:item];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {

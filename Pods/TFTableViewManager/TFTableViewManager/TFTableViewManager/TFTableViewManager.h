@@ -77,45 +77,6 @@
 - (TFTableViewItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
 
 ///-----------------------------
-/// @name Register Custom Cells
-///-----------------------------
-
-/**
- *  For each custom item class that the manager will use, register a cell class.
- *
- *  @param itemClass The item class to be associated with a cell class.
- *  @param cellClass The cell class.
- *  @warning the cell class string must be the same with cell reuseIdentifier.
- */
-- (void)registerWithItemClass:(NSString *)itemClass cellClass:(NSString *)cellClass;
-
-/**
- *  Returns cell class at the keyed subscript.
- *
- *  @param key The keyed subscript.
- *
- *  @return The cell class the keyed subscript.
- */
-- (id)objectAtKeyedSubscript:(id <NSCopying>)key;
-
-/**
- *  Sets a cell class for the keyed subscript.
- *
- *  @param obj The cell class to set for the keyed subscript.
- *  @param key The keyed subscript.
- */
-- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key;
-
-/**
- *  Returns cell class at specified index path.
- *
- *  @param indexPath The index path of cell.
- *
- *  @return The cell class at index path.
- */
-- (Class)classForCellAtIndexPath:(NSIndexPath *)indexPath;
-
-///-----------------------------
 /// @name Add and insert sections.
 ///-----------------------------
 

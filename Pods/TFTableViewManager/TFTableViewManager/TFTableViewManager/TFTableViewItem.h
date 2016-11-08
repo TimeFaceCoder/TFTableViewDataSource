@@ -74,6 +74,11 @@ typedef void(^MoveCompletionHandler)(__kindof TFTableViewItem *item, NSIndexPath
 @property (nonatomic, copy) NSString *cellIdentifier;
 
 /**
+    @brief class name of item matched cell, if not set this value, it will be item class name append "Cell"/"CellNode".
+ */
+@property (nonatomic, copy) NSString *registerCellClassName;
+
+/**
  *  @brief the model of this item.
  */
 @property (nonatomic, strong) id model;

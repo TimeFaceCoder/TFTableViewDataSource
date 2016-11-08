@@ -69,7 +69,7 @@ CHECKOUT OPTIONS:
     :commit: cf1f438c651f5fe7abdc38850d43ba98e621657b
     :git: https://github.com/TimeFaceCoder/AsyncDisplayKit.git
   TFTableViewManager:
-    :commit: dc79887453f5e875a8729b6915e3f7a3408e39e4
+    :commit: 8cad037cca3b49187553b52d40c5e8ea5e61083d
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
 SPEC CHECKSUMS:

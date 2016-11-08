@@ -51,7 +51,6 @@
     [super viewDidLoad];
     [self createDataSource];
     [self.dataSource startLoading];
-    self.dataSource.manager[@"TimeLineTableViewItem"] = @"TimeLineTableViewItemCellNode";
     // Do any additional setup after loading the view, typically from a nib.
 }
 
