@@ -1,2 +1,0 @@
-# TFTableViewManager
-TFTableViewManager
