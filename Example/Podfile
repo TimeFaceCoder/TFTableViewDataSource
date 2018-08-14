@@ -1,0 +1,14 @@
+use_frameworks!
+inhibit_all_warnings!
+
+target 'TFTableViewDataSource_Example' do
+  pod 'TFTableViewDataSource', :path => '../'
+  pod 'TFTableViewManager', :git => 'https://github.com/TimeFaceCoder/TFTableViewManager.git'
+  pod 'TFNetwork', :git => 'https://github.com/TimeFaceCoder/TFNetwork.git'
+
+  target 'TFTableViewDataSource_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

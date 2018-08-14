@@ -1,0 +1,6 @@
+framework module TFTableViewManager {
+  umbrella header "TFTableViewManager-umbrella.h"
+
+  export *
+  module * { export * }
+}

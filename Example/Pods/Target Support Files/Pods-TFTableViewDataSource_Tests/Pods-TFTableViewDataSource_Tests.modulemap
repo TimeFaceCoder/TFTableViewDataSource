@@ -1,0 +1,6 @@
+framework module Pods_TFTableViewDataSource_Tests {
+  umbrella header "Pods-TFTableViewDataSource_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
