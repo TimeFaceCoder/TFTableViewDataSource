@@ -11,7 +11,7 @@
 #import "TFTableViewDataRequest.h"
 
 @class TFTableViewItem;
-@class ASTableView;
+
 
 /**
  *  数据加载方式
@@ -175,6 +175,15 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 @property (nonatomic ,weak) ASTableNode *tableNode;
 
 /**
+ *  @brief 当前的collectioView
+ */
+@property (nonatomic ,weak) ASCollectionView *collectioView;
+/**
+ *  @brief 当前的collectionNode
+ */
+@property (nonatomic ,weak) ASCollectionNode *collectionNode;
+
+/**
  *  网络数据加载工具
  */
 @property (nonatomic , strong, readonly) TFTableViewDataRequest *dataRequest;
@@ -255,6 +264,23 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
                            params:(NSDictionary *)params
                          delegate:(id /*<TFTableViewDataSourceDelegate>*/)delegate;
 
+
+/**
+ *  初始化方法
+ *
+ *  @param collectionNode the display ascollectionnode
+ *  @param listType  list type of the diaplayNode
+ *  @param params    params dictionary.
+ *  @param delegate  the delegate of data source.
+ *
+ *  @return a new data source.
+ */
+- (instancetype)initWithCollectionNode:(ASCollectionNode *)collectionNode
+                         listType:(NSInteger)listType
+                           params:(NSDictionary *)params
+                         delegate:(id /*<TFTableViewDataSourceDelegate>*/)delegate;
+
+
 /**
  *  开始加载数据
  */
@@ -283,16 +309,16 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 /**
  *  初始化下拉刷新
  */
-- (void)initTableViewPullRefresh;
+- (void)initListViewPullRefresh;
 
 /**
  *  开始下拉刷新
  */
-- (void)startTableViewPullRefresh;
+- (void)startListViewPullRefresh;
 
 /**
  *  停止下拉刷新
  */
-- (void)stopTableViewPullRefresh;
+- (void)stopListViewPullRefresh;
 
 @end

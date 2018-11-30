@@ -35,6 +35,16 @@
 @property (weak, nonatomic) UITableView *tableView;
 
 /**
+ *  @brief The 'ASCollectionNode' that needs to be managed using this 'TFTableViewManager'.
+ */
+@property (weak, nonatomic) ASCollectionNode *collectionNode;
+
+/**
+ *  @brief The `ASCollectionView` that needs to be managed using this `TFTableViewManager`.
+ */
+@property (weak, nonatomic) ASCollectionView *collectionView;
+
+/**
  *  @brief The object that acts as the delegate of the receiving table view.
  */
 @property (weak, nonatomic) id<TFTableViewManagerDelegate> delegate;
@@ -65,6 +75,17 @@
  *  @return The pointer to the instance, or `nil` if initialization failed.
  */
 - (instancetype)initWithTableNode:(ASTableNode *)tableNode;
+
+
+
+/**
+ *  Initialize a table view manager object for a specific `ASCollectionNode`.
+ *
+ *  @param collectionNode The ASCollectionNode that needs to be managed
+ *
+ *  @return The pointer to the instance, or `nil` if initialization failed.
+ */
+- (instancetype)initWithCollectionNode:(ASCollectionNode *)collectionNode;
 
 /**
  *  Get the item at index path.
@@ -356,7 +377,7 @@
 /**
  *  the table view manager delegate. support UITableViewDelegate and ASTableDelegate.
  */
-@protocol TFTableViewManagerDelegate <UITableViewDelegate,ASTableDelegate>
+@protocol TFTableViewManagerDelegate <UITableViewDelegate,ASTableDelegate,ASCollectionDelegate,ASCollectionViewLayoutInspecting>
 
 @optional;
 

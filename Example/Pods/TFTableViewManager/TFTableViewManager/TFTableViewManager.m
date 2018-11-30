@@ -11,7 +11,7 @@
 #import "TFTableViewItemCell.h"
 #import "TFTableViewItemCellNode.h"
 
-@interface TFTableViewManager ()<UITableViewDataSource,UITableViewDelegate,ASTableDataSource,ASTableDelegate>
+@interface TFTableViewManager ()<UITableViewDataSource,UITableViewDelegate,ASTableDataSource,ASTableDelegate,ASCollectionDelegate,ASCollectionDataSource>
 
 @property (nonatomic, strong) NSMutableArray *mutableSections;
 
@@ -35,11 +35,9 @@
 
 #pragma mark - Creating and Initializing a TFTableViewManager.
 
-- (id)initWithTableView:(UITableView *)tableView
-{
+- (instancetype)initWithTableView:(UITableView *)tableView {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         tableView.delegate     = self;
         tableView.dataSource   = self;
         self.tableView         = tableView;
@@ -60,6 +58,18 @@
     }
     return self;
 }
+
+- (instancetype)initWithCollectionNode:(ASCollectionNode *)collectionNode {
+    self = [super init];
+    if (self) {
+        collectionNode.delegate     = self;
+        collectionNode.dataSource   = self;
+        self.collectionNode         = collectionNode;
+        self.collectionView         = collectionNode.view;
+    }
+    return self;
+}
+
 
 - (TFTableViewItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
     return ((TFTableViewSection *)self.mutableSections[indexPath.section]).items[indexPath.row];
@@ -170,9 +180,17 @@
 
 - (void)insertSections:(NSArray<TFTableViewSection *> *)sections atIndexes:(NSIndexSet *)indexSet withRowAnimation:(UITableViewRowAnimation)animation {
     [self insertSections:sections atIndexes:indexSet];
-    [self.tableView beginUpdates];
-    [self.tableView insertSections:indexSet withRowAnimation:animation];
-    [self.tableView endUpdates];
+    
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode insertSections:indexSet];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView insertSections:indexSet withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)addSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation {
@@ -182,9 +200,16 @@
 
 - (void)deleteSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
     [self removeSectionsAtIndexes:sections];
-    [self.tableView beginUpdates];
-    [self.tableView deleteSections:sections withRowAnimation:animation];
-    [self.tableView endUpdates];
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode deleteSections:sections];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView deleteSections:sections withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)deleteSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation {
@@ -200,9 +225,17 @@
 }
 
 - (void)reloadSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
-    [self.tableView beginUpdates];
-    [self.tableView reloadSections:sections withRowAnimation:animation];
-    [self.tableView endUpdates];
+    
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode reloadSections:sections];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView reloadSections:sections withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)reloadSections:(NSArray<TFTableViewSection *> *)sections withRowAnimation:(UITableViewRowAnimation)animation {
@@ -216,15 +249,31 @@
 
 - (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection {
     [self exchangeSectionAtIndex:section withSectionAtIndex:newSection];
-    [self.tableView beginUpdates];
-    [self.tableView moveSection:section toSection:newSection];
-    [self.tableView endUpdates];
+    
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode moveSection:section toSection:newSection];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView moveSection:section toSection:newSection];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)reloadRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation {
-    [self.tableView beginUpdates];
-    [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:animation];
-    [self.tableView endUpdates];
+    
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode reloadSections:indexPaths];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)insertRows:(NSArray<TFTableViewItem *> *)rows atIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation {
@@ -236,9 +285,17 @@
         [section insertItem:item atIndex:indexPath.row];
         count ++;
     }
-    [self.tableView beginUpdates];
-    [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:animation];
-    [self.tableView endUpdates];
+    
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode insertItemsAtIndexPaths:indexPaths];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)deleteRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation {
@@ -246,9 +303,16 @@
         TFTableViewSection *section = self.mutableSections[indexPath.section];
         [section removeItemAtIndex:indexPath.row];
     }
-    [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:animation];
-    [self.tableView endUpdates];
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode deleteItemsAtIndexPaths:indexPaths];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)moveRowAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath {
@@ -258,18 +322,238 @@
     
     TFTableViewSection *newSection = self.mutableSections[newIndexPath.section];
     [newSection insertItem:oldItem atIndex:newIndexPath.row];
-    [self.tableView beginUpdates];
-    [self.tableView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
-    [self.tableView endUpdates];
+    
+    if (self.collectionNode) {
+        [self.collectionNode beginUpdates];
+        [self.collectionNode moveItemAtIndexPath:indexPath toIndexPath:newIndexPath];
+        [self.collectionNode endUpdatesAnimated:YES];
+    }
+    else {
+        [self.tableView beginUpdates];
+        [self.tableView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)selectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition {
-    [self.tableView selectRowAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+    if (self.collectionNode) {
+#warning 调整方向参数
+        [self.collectionNode selectItemAtIndexPath:indexPath animated:animated scrollPosition:0];
+    }
+    else {
+        [self.tableView selectRowAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+    }
 }
 
 - (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
-    [self.tableView deselectRowAtIndexPath:indexPath animated:animated];
+    if (self.collectionNode) {
+        [self.collectionNode deselectItemAtIndexPath:indexPath animated:animated];
+    }
+    else {
+        [self.tableView deselectRowAtIndexPath:indexPath animated:animated];
+    }
 }
+
+#pragma mark - UICollectionViewDataSource & ASCollectionDataSource
+
+
+/**
+ * Asks the data source for the number of items in the given section of the collection node.
+ *
+ * @see @c collectionView:numberOfItemsInSection:
+ */
+- (NSInteger)collectionNode:(ASCollectionNode *)collectionNode numberOfItemsInSection:(NSInteger)section {
+    
+    TFTableViewSection *tableViewSection = self.mutableSections[section];
+    return tableViewSection.items.count;
+    
+}
+
+/**
+ * Asks the data source for the number of sections in the collection node.
+ *
+ * @see @c numberOfSectionsInCollectionView:
+ */
+- (NSInteger)numberOfSectionsInCollectionNode:(ASCollectionNode *)collectionNode {
+    return self.mutableSections.count;
+}
+
+/**
+ * Similar to -collectionNode:nodeForItemAtIndexPath:
+ * This method takes precedence over collectionNode:nodeForItemAtIndexPath: if implemented.
+ *
+ * @param collectionNode The sender.
+ * @param indexPath The index path of the item.
+ *
+ * @return a block that creates the node for display for this item.
+ *   Must be thread-safe (can be called on the main thread or a background
+ *   queue) and should not implement reuse (it will be called once per row).
+ */
+- (ASCellNodeBlock)collectionNode:(ASCollectionNode *)collectionNode nodeBlockForItemAtIndexPath:(NSIndexPath *)indexPath {
+    TFTableViewItem *item = [self itemAtIndexPath:indexPath];
+    Class cellClass = [self _cellClassWithItem:item];
+    typeof(self) __weak weakSelf = self;
+    return ^{
+        TFTableViewItemCellNode *cell = [[cellClass alloc] initWithTableViewItem:item];
+        cell.tableViewManager = weakSelf;
+        return cell;
+    };
+}
+
+/**
+ * Asks the data source to provide a node-block to display for the given supplementary element in the collection view.
+ *
+ * @param collectionNode The sender.
+ * @param kind           The kind of supplementary element.
+ * @param indexPath      The index path of the supplementary element.
+ */
+//- (ASCellNodeBlock)collectionNode:(ASCollectionNode *)collectionNode nodeBlockForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+//    TFTableViewItem *item = [self itemAtIndexPath:indexPath];
+//    Class cellClass = [self _cellClassWithItem:item];
+//    typeof(self) __weak weakSelf = self;
+//    return ^{
+//        TFTableViewItemCellNode *cell = [[cellClass alloc] initWithTableViewItem:item];
+//        cell.tableViewManager = weakSelf;
+//        return cell;
+//    };
+//}
+
+
+/**
+ * Asks the data source if it's possible to move the specified item interactively.
+ *
+ * See @p -[UICollectionViewDataSource collectionView:canMoveItemAtIndexPath:] @c.
+ *
+ * @param collectionNode  The sender.
+ * @param node            The display node for the item that may be moved.
+ *
+ * @return Whether the item represented by @p node may be moved.
+ */
+- (BOOL)collectionNode:(ASCollectionNode *)collectionNode canMoveItemWithNode:(ASCellNode *)node {
+    if ([node isKindOfClass:[TFTableViewItemCellNode class]]) {
+        TFTableViewItem *item = [(TFTableViewItemCellNode *)node tableViewItem];
+        return ((item.moveHandler != nil) | (item.moveCompletionHandler != nil));
+    }
+    return NO;
+}
+
+/**
+ * Called when the user has interactively moved an item. The data source
+ * should update its internal data store to reflect the move. Note that you
+ * should not call [collectionNode moveItemAtIndexPath:toIndexPath:] – the
+ * collection node's internal state will be updated automatically.
+ *
+ * * See @p -[UICollectionViewDataSource collectionView:moveItemAtIndexPath:toIndexPath:] @c.
+ *
+ * @param collectionNode        The sender.
+ * @param sourceIndexPath       The original item index path.
+ * @param destinationIndexPath  The new item index path.
+ */
+- (void)collectionNode:(ASCollectionNode *)collectionNode moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    
+    TFTableViewSection *sourceSection = self.mutableSections[sourceIndexPath.section];
+    TFTableViewItem *sourceItem = sourceSection.items[sourceIndexPath.row];
+    [sourceSection removeItem:sourceItem];
+    TFTableViewSection *destinationSection = self.mutableSections[destinationIndexPath.section];
+    [destinationSection insertItem:sourceItem atIndex:destinationIndexPath.row];
+    if (sourceItem.moveCompletionHandler) {
+        sourceItem.moveCompletionHandler (sourceItem,sourceIndexPath,destinationIndexPath);
+    }
+}
+
+#pragma mark - ASCollectionDelegate
+
+- (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode constrainedSizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:constrainedSizeForItemAtIndexPath:)]) {
+        return [self.delegate collectionNode:collectionNode constrainedSizeForItemAtIndexPath:indexPath];
+    }
+    return ASSizeRangeZero;
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode willDisplayItemWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:willDisplayItemWithNode:)]) {
+        [self.delegate collectionNode:collectionNode willDisplayItemWithNode:node];
+    }
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode didEndDisplayingItemWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:didEndDisplayingItemWithNode:)]) {
+        [self.delegate collectionNode:collectionNode didEndDisplayingItemWithNode:node];
+    }
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode willDisplaySupplementaryElementWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:willDisplaySupplementaryElementWithNode:)]) {
+        [self.delegate collectionNode:collectionNode willDisplaySupplementaryElementWithNode:node];
+    }
+}
+- (void)collectionNode:(ASCollectionNode *)collectionNode didEndDisplayingSupplementaryElementWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:didEndDisplayingSupplementaryElementWithNode:)]) {
+        [self.delegate collectionNode:collectionNode didEndDisplayingSupplementaryElementWithNode:node];
+    }
+}
+
+- (BOOL)collectionNode:(ASCollectionNode *)collectionNode shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:shouldHighlightItemAtIndexPath:)]) {
+       return  [self.delegate collectionNode:collectionNode shouldHighlightItemAtIndexPath:indexPath];
+    }
+    return NO;
+}
+- (void)collectionNode:(ASCollectionNode *)collectionNode didHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:didHighlightItemAtIndexPath:)]) {
+        [self.delegate collectionNode:collectionNode didHighlightItemAtIndexPath:indexPath];
+    }
+}
+- (void)collectionNode:(ASCollectionNode *)collectionNode didUnhighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:didUnhighlightItemAtIndexPath:)]) {
+        [self.delegate collectionNode:collectionNode didUnhighlightItemAtIndexPath:indexPath];
+    }
+}
+- (BOOL)collectionNode:(ASCollectionNode *)collectionNode shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:shouldSelectItemAtIndexPath:)]) {
+        return  [self.delegate collectionNode:collectionNode shouldSelectItemAtIndexPath:indexPath];
+    }
+    return NO;
+
+}
+
+/**
+ * Receive a message that the collection node is near the end of its data set and more data should be fetched if
+ * necessary.
+ *
+ * @param collectionNode The sender.
+ * @param context A context object that must be notified when the batch fetch is completed.
+ *
+ * @discussion You must eventually call -completeBatchFetching: with an argument of YES in order to receive future
+ * notifications to do batch fetches. This method is called on a background queue.
+ *
+ * ASCollectionNode currently only supports batch events for tail loads. If you require a head load, consider
+ * implementing a UIRefreshControl.
+ */
+- (void)collectionNode:(ASCollectionNode *)collectionNode willBeginBatchFetchWithContext:(ASBatchContext *)context {
+    if ([self.delegate respondsToSelector:@selector(collectionNode:willBeginBatchFetchWithContext:)]) {
+        [self.delegate collectionNode:collectionNode willBeginBatchFetchWithContext:context];
+    }
+}
+
+/**
+ * Tell the collection node if batch fetching should begin.
+ *
+ * @param collectionNode The sender.
+ *
+ * @discussion Use this method to conditionally fetch batches. Example use cases are: limiting the total number of
+ * objects that can be fetched or no network connection.
+ *
+ * If not implemented, the collection node assumes that it should notify its asyncDelegate when batch fetching
+ * should occur.
+ */
+- (BOOL)shouldBatchFetchForCollectionNode:(ASCollectionNode *)collectionNode {
+    if ([self.delegate respondsToSelector:@selector(shouldBatchFetchForCollectionNode:)]) {
+        return [self.delegate shouldBatchFetchForCollectionNode:collectionNode];
+    }
+    return NO;
+}
+
 
 #pragma mark - UITableViewDataSource & ASTableDataSource
 
@@ -333,7 +617,7 @@
     }
     else {
         NSString *suffix = @"Cell";
-        if (_tableNode) {
+        if (_tableNode  || _collectionNode ) {
             suffix = @"CellNode";
         }
         NSString *className = [NSString stringWithFormat:@"%@%@",NSStringFromClass([item class]),suffix];

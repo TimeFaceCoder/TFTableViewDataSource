@@ -15,7 +15,7 @@ PODS:
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
   - GHODictionary (1.1.0)
-  - MPMessagePack (1.4.5):
+  - MPMessagePack (1.5.1):
     - GHODictionary
   - PINCache (3.0.1-beta.6):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.6)
@@ -39,13 +39,16 @@ PODS:
     - PINRemoteImage/iOS (= 3.0.0-beta.13)
     - PINRemoteImage/PINCache
     - Texture/Core
-  - TFNetwork (0.2.2):
+  - TFNetwork (1.1.0):
     - AFNetworking
     - MPMessagePack
   - TFTableViewDataSource (1.0.0):
     - TFNetwork
     - TFTableViewManager
   - TFTableViewManager (1.1.0):
+    - Texture
+    - TFTableViewManager/Core (= 1.1.0)
+  - TFTableViewManager/Core (1.1.0):
     - Texture
 
 DEPENDENCIES:
@@ -73,23 +76,23 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   TFNetwork:
-    :commit: 326c4ed45ee6daac35a76af5744f577779e24b32
+    :commit: 878b561c324ed04c783e417a1c44a7ea9c830d09
     :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
-    :commit: 5e9afc779d9c488c8170bd29746ca68a91ab7b84
+    :commit: b20f920e4ff89772cac719f97572031abd2138f8
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   GHODictionary: 225e042596a4b3d5b66b2b24250086b2f95514af
-  MPMessagePack: 5251dcd15e0c626cc50c192bdfcb5af6004cedb4
+  MPMessagePack: ee6b55fbec4e01a77e2bf631441d01f0b87b3cf5
   PINCache: d195fdba255283f7e9900a55e3cced377f431f9b
   PINOperation: a6219e6fc9db9c269eb7a7b871ac193bcf400aac
   PINRemoteImage: d6d51c5d2adda55f1ce30c96e850b6c4ebd2856a
   Texture: 9d7e38965cf22ccd7cd9c249dd78b3f14e70ab6c
-  TFNetwork: 7fac0dafee5f3e241cfe35e9beea3ac421ca98c5
+  TFNetwork: b31e4005aa7c153735d04c731c235168ea94c2c9
   TFTableViewDataSource: b2bc70728c494450c7ca33b4f7f41b5577391355
-  TFTableViewManager: afb71a852b1ba6d2cec7469d30484a4a2b788269
+  TFTableViewManager: 5f58a2b8698fa782725804ecc3cda3dd6cd8fda5
 
 PODFILE CHECKSUM: 5880fc2c65904f405c46cf92d65cbd61bf750627
 
