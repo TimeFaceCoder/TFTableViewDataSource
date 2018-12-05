@@ -55,7 +55,7 @@
 
 @property (nonatomic ,assign) BOOL                     loadCacheDataOver;
 
-@property (nonatomic ,assign) BOOL                      isCollectionNode;
+@property (nonatomic ,assign) BOOL                     isCollectionNode;
 
 @property (nonatomic, strong) NSOperationQueue* loadDataOperationQueue;
 @end
@@ -77,6 +77,7 @@
     _tableView = tableView;
     _listType  = listType;
     _isCollectionNode = NO;
+    _enableSkeletonView = YES;
     _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
     _manager = [[TFTableViewManager alloc] initWithTableView:tableView];
     _manager.delegate = self;
@@ -100,6 +101,7 @@
     _tableView = tableNode.view;
     _listType  = listType;
     _isCollectionNode = NO;
+    _enableSkeletonView = YES;
     _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
     _manager = [[TFTableViewManager alloc] initWithTableNode:tableNode];
     _manager.delegate = self;
@@ -125,6 +127,7 @@
     _collectioView = collectionNode.view;
     _listType  = listType;
     _isCollectionNode = YES;
+    _enableSkeletonView = YES;
     _requestArgument = [NSMutableDictionary dictionaryWithDictionary:params];
     _manager = [[TFTableViewManager alloc] initWithCollectionNode:collectionNode];
     _manager.delegate = self;
@@ -139,8 +142,12 @@
 #pragma mark - Public
 
 - (void)startLoading {
+    if (_enableSkeletonView) {
+        
+    }
     [self startLoadingWithParams:_requestArgument];
 }
+
 
 - (void)stopLoading {
     _dataSourceState = TFDataSourceStateFinished;
@@ -202,8 +209,7 @@
 
 #pragma mark - 数据加载核心方法
 
-- (void)loadDataWithPolicy:(TFDataLoadPolicy)loadPolicy context:(ASBatchContext *)context{
-    
+- (void)loadDataWithPolicy:(TFDataLoadPolicy)loadPolicy context:(ASBatchContext *)context {
     //当前正在加载数据
     if (_dataSourceState == TFDataSourceStateLoading) {
         return;
@@ -227,7 +233,6 @@
     else {
         [_requestArgument setObject:@([TFTableViewDataSourceConfig pageSize])
                              forKey:@"pageSize"];
-        
     }
     [_requestArgument setObject:@(_currentPage) forKey:@"currentPage"];
     //设置操作标示

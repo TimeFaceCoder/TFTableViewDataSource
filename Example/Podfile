@@ -5,6 +5,7 @@ target 'TFTableViewDataSource_Example' do
   pod 'TFTableViewDataSource', :path => '../'
   pod 'TFTableViewManager', :git => 'https://github.com/TimeFaceCoder/TFTableViewManager.git'
   pod 'TFNetwork', :git => 'https://github.com/TimeFaceCoder/TFNetwork.git'
+  pod 'SkeletonView'
 
   target 'TFTableViewDataSource_Tests' do
     inherit! :search_paths

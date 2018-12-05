@@ -32,6 +32,7 @@ PODS:
   - PINRemoteImage/PINCache (3.0.0-beta.13):
     - PINCache (= 3.0.1-beta.6)
     - PINRemoteImage/Core
+  - SkeletonView (1.4.1)
   - Texture (2.7):
     - Texture/PINRemoteImage (= 2.7)
   - Texture/Core (2.7)
@@ -52,6 +53,7 @@ PODS:
     - Texture
 
 DEPENDENCIES:
+  - SkeletonView
   - TFNetwork (from `https://github.com/TimeFaceCoder/TFNetwork.git`)
   - TFTableViewDataSource (from `../`)
   - TFTableViewManager (from `https://github.com/TimeFaceCoder/TFTableViewManager.git`)
@@ -64,6 +66,7 @@ SPEC REPOS:
     - PINCache
     - PINOperation
     - PINRemoteImage
+    - SkeletonView
     - Texture
 
 EXTERNAL SOURCES:
@@ -89,11 +92,12 @@ SPEC CHECKSUMS:
   PINCache: d195fdba255283f7e9900a55e3cced377f431f9b
   PINOperation: a6219e6fc9db9c269eb7a7b871ac193bcf400aac
   PINRemoteImage: d6d51c5d2adda55f1ce30c96e850b6c4ebd2856a
+  SkeletonView: 60d6ce7edb0cb4c7758db33c74add50392b3c475
   Texture: 9d7e38965cf22ccd7cd9c249dd78b3f14e70ab6c
   TFNetwork: b31e4005aa7c153735d04c731c235168ea94c2c9
   TFTableViewDataSource: b2bc70728c494450c7ca33b4f7f41b5577391355
   TFTableViewManager: 5f58a2b8698fa782725804ecc3cda3dd6cd8fda5
 
-PODFILE CHECKSUM: 5880fc2c65904f405c46cf92d65cbd61bf750627
+PODFILE CHECKSUM: b272b08beb64a82a381e35c2bd282719e35ff8ca
 
 COCOAPODS: 1.5.3

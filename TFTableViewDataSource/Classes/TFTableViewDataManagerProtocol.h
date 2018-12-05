@@ -38,6 +38,8 @@ typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *
  *  @param completionBlock 回调block
  */
 - (void)reloadView:(NSDictionary *)result block:(TableViewReloadCompletionBlock)completionBlock;
+
+
 /**
  *  列表内View事件处理
  *
@@ -60,6 +62,12 @@ typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *
  *  @param dataId
  */
 - (void)refreshCell:(NSInteger)actionType identifier:(NSString *)identifier;
+
+
+@optional
+- (void)showSkeletonView;
+
+- (void)hideSkeletonView;
 
 @end
 

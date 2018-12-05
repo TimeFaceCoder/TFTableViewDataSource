@@ -18,6 +18,10 @@
  */
 typedef NS_ENUM(NSInteger, TFDataLoadPolicy) {
     /**
+     *  展示骨架图
+     */
+    TFDataLoadPolicySkeletion = -1,
+    /**
      *  正常加载
      */
     TFDataLoadPolicyNone      = 0,
@@ -197,6 +201,11 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
  是否只是第一页加载附加的请求,默认YES，当为NO时，加载每一页数据时都会加载对应数据
  */
 @property (nonatomic, assign) BOOL batchShouldLoadInFirstPage;
+/**
+ 是否显示骨架效果,默认YES
+ */
+@property (nonatomic, assign) BOOL enableSkeletonView;
+
 
 /**
  *  @brief 加载状态
