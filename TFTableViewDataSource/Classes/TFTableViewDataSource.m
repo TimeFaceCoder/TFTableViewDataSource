@@ -303,8 +303,11 @@
                          [strongSelf.delegate didFinishLoad:blockDataLoadPolicy object:object error:error?error:hanldeError];
                      }
                      strongSelf.dataSourceState = TFDataSourceStateFinished;
-                     if (strongSelf->_isCollectionNode) {
+                     if (strongSelf.collectionNode) {
                          [strongSelf.collectionNode reloadData];
+                     }
+                     else if (strongSelf.tableNode) {
+                         [strongSelf.tableNode reloadData];
                      }
                      else {
                          [strongSelf.tableView reloadData];
@@ -325,8 +328,11 @@
                              NSInteger totalCount = strongSelf.manager.sections.count;
                              NSInteger replaceCount = sections.count;
                              [strongSelf.manager replaceSectionsInRange:NSMakeRange(totalCount-replaceCount, replaceCount) withSectionsFromArray:sections];
-                             if (strongSelf->_isCollectionNode) {
+                             if (strongSelf.collectionNode) {
                                  [strongSelf.collectionNode reloadData];
+                             }
+                             else if (strongSelf.tableNode) {
+                                 [strongSelf.tableNode reloadData];
                              }
                              else {
                                  [strongSelf.tableView reloadData];
@@ -336,9 +342,7 @@
                              //加载下一页，移除loading item
                              [strongSelf.manager removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
                              if (strongSelf->_isCollectionNode) {
-                                 
                                  [strongSelf.collectionNode performBatchUpdates:^{
-                                     
                                      [strongSelf.collectionNode deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
                                      [strongSelf addNewAndLoadingSectionsWith:sections];
                                      
@@ -352,13 +356,16 @@
                                  //重新载入新的section和loadsection
                                  if (strongSelf.tableNode) {
                                      [strongSelf.tableNode performBatchUpdates:^{
-                                         [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+                                         [strongSelf.tableNode deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
                                          [strongSelf addNewAndLoadingSectionsWith:sections];
                                      } completion:^(BOOL finished) {
                                          [strongSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
                                      }];
                                  }
                                  else {
+                                     [strongSelf.tableView beginUpdates];
+                                     [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+                                     [strongSelf addNewAndLoadingSectionsWith:sections];
                                      [strongSelf.tableView endUpdates];
                                      //请求新的数据
                                      [weakSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
@@ -398,14 +405,14 @@
                          }
                          else if (strongSelf.tableNode) {
                              //support for astablenode
-                             UIView *snapshot = [strongSelf.tableView snapshotViewAfterScreenUpdates:NO];
-                             [strongSelf.tableView.superview insertSubview:snapshot aboveSubview:strongSelf.tableView];
+                             UIView *snapshot = [strongSelf.tableNode.view snapshotViewAfterScreenUpdates:NO];
+                             [strongSelf.tableNode.view insertSubview:snapshot aboveSubview:strongSelf.tableNode.view];
                              
-                             [strongSelf.collectionNode performBatchUpdates:^{
+                             [strongSelf.tableNode performBatchUpdates:^{
                                  //重新加载列表数据
                                  NSInteger sectionCount = strongSelf.manager.sections.count;
                                  [strongSelf.manager removeAllSections];
-                                 [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
+                                 [strongSelf.tableNode deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
                                                      withRowAnimation:UITableViewRowAnimationFade];
                                  //重新载入新的section和loadsection
                                  [strongSelf addNewAndLoadingSectionsWith:sections];
@@ -467,8 +474,14 @@
         [self.collectionNode insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]];
     }
     else {
-        [self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
-                      withRowAnimation:UITableViewRowAnimationFade];
+        if (self.tableNode) {
+            [self.tableNode insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
+                          withRowAnimation:UITableViewRowAnimationFade];
+        }
+        else {
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(rangelocation, rangelength)]
+                          withRowAnimation:UITableViewRowAnimationFade];
+        }
     }
     
 }
