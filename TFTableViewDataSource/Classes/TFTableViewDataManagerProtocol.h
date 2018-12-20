@@ -43,23 +43,23 @@ typedef void (^TableViewReloadCompletionBlock)(BOOL finished,id object,NSError *
 /**
  *  列表内View事件处理
  *
- *  @param item
- *  @param actionType
+ *  @param item TFTableViewItem
+ *  @param actionType   actionType
  */
 - (void)cellViewClickHandler:(TFTableViewItem *)item actionType:(NSInteger)actionType;
 
 /**
  *  列表删除事件处理
  *
- *  @param item
+ *  @param item TFTableViewItem
  */
 - (void)deleteHanlder:(TFTableViewItem *)item;
 
 /**
  *  刷新指定Cell
  *
- *  @param actionType
- *  @param dataId
+ *  @param actionType   actionType
+ *  @param identifier  identifier
  */
 - (void)refreshCell:(NSInteger)actionType identifier:(NSString *)identifier;
 

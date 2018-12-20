@@ -182,9 +182,14 @@
     [self insertSections:sections atIndexes:indexSet];
     
     if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode insertSections:indexSet];
-        [self.collectionNode endUpdatesAnimated:YES];
+        [self.collectionNode performBatchUpdates:^{
+            [self.collectionNode insertSections:indexSet];
+        } completion:nil];
+    }
+    else if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode insertSections:indexSet withRowAnimation:animation];
+        } completion:nil];
     }
     else {
         [self.tableView beginUpdates];
@@ -201,9 +206,14 @@
 - (void)deleteSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
     [self removeSectionsAtIndexes:sections];
     if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode deleteSections:sections];
-        [self.collectionNode endUpdatesAnimated:YES];
+        [self.collectionNode performBatchUpdates:^{
+            [self.collectionNode deleteSections:sections];
+        } completion:nil];
+    }
+    else if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode deleteSections:sections withRowAnimation:animation];
+        } completion:nil];
     }
     else {
         [self.tableView beginUpdates];
@@ -227,11 +237,17 @@
 - (void)reloadSectionsAtIndexSet:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
     
     if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode reloadSections:sections];
-        [self.collectionNode endUpdatesAnimated:YES];
+        [self.collectionNode performBatchUpdates:^{
+            [self.collectionNode reloadSections:sections];
+        } completion:nil];
+    }
+    else if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode reloadSections:sections withRowAnimation:animation];
+        } completion:nil];
     }
     else {
+        
         [self.tableView beginUpdates];
         [self.tableView reloadSections:sections withRowAnimation:animation];
         [self.tableView endUpdates];
@@ -249,11 +265,16 @@
 
 - (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection {
     [self exchangeSectionAtIndex:section withSectionAtIndex:newSection];
-    
+
     if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode moveSection:section toSection:newSection];
-        [self.collectionNode endUpdatesAnimated:YES];
+        [self.collectionNode performBatchUpdates:^{
+            [self.collectionNode moveSection:section toSection:newSection];
+        } completion:nil];
+    }
+    else if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode moveSection:section toSection:newSection];
+        } completion:nil];
     }
     else {
         [self.tableView beginUpdates];
@@ -263,11 +284,10 @@
 }
 
 - (void)reloadRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation {
-    
-    if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode reloadSections:indexPaths];
-        [self.collectionNode endUpdatesAnimated:YES];
+    if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode reloadRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        } completion:nil];
     }
     else {
         [self.tableView beginUpdates];
@@ -285,11 +305,15 @@
         [section insertItem:item atIndex:indexPath.row];
         count ++;
     }
-    
     if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode insertItemsAtIndexPaths:indexPaths];
-        [self.collectionNode endUpdatesAnimated:YES];
+        [self.collectionNode performBatchUpdates:^{
+            [self.collectionNode insertItemsAtIndexPaths:indexPaths];
+        } completion:nil];
+    }
+    else if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode insertRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        } completion:nil];
     }
     else {
         [self.tableView beginUpdates];
@@ -303,10 +327,16 @@
         TFTableViewSection *section = self.mutableSections[indexPath.section];
         [section removeItemAtIndex:indexPath.row];
     }
+    
     if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode deleteItemsAtIndexPaths:indexPaths];
-        [self.collectionNode endUpdatesAnimated:YES];
+        [self.collectionNode performBatchUpdates:^{
+            [self.collectionNode deleteItemsAtIndexPaths:indexPaths];
+        } completion:nil];
+    }
+    else if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode deleteRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        } completion:nil];
     }
     else {
         [self.tableView beginUpdates];
@@ -323,10 +353,16 @@
     TFTableViewSection *newSection = self.mutableSections[newIndexPath.section];
     [newSection insertItem:oldItem atIndex:newIndexPath.row];
     
+    
     if (self.collectionNode) {
-        [self.collectionNode beginUpdates];
-        [self.collectionNode moveItemAtIndexPath:indexPath toIndexPath:newIndexPath];
-        [self.collectionNode endUpdatesAnimated:YES];
+        [self.collectionNode performBatchUpdates:^{
+            [self.collectionNode moveItemAtIndexPath:indexPath toIndexPath:newIndexPath];
+        } completion:nil];
+    }
+    else if (self.tableNode) {
+        [self.tableNode performBatchUpdates:^{
+            [self.tableNode moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
+        } completion:nil];
     }
     else {
         [self.tableView beginUpdates];
@@ -629,7 +665,22 @@
 
 #pragma mark unique methods for ASTableDataSource.
 
-- (ASCellNodeBlock)tableView:(ASTableView *)tableView nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+/**
+ * Asks the data source for the number of sections in the table node.
+ *
+ * @see @c numberOfSectionsInTableView:
+ */
+- (NSInteger)numberOfSectionsInTableNode:(ASTableNode *)tableNode {
+    return self.mutableSections.count;
+}
+- (NSInteger)tableNode:(ASTableNode *)tableNode numberOfRowsInSection:(NSInteger)section {
+    TFTableViewSection *tableViewSection = self.mutableSections[section];
+    return tableViewSection.items.count;
+}
+
+
+- (ASCellNodeBlock)tableNode:(ASTableNode *)tableNode nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath {
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
     Class cellClass = [self _cellClassWithItem:item];
     typeof(self) __weak weakSelf = self;
@@ -730,7 +781,7 @@
     }
 }
 
-#pragma mark - UITableViewDelegate & ASTableViewDelegate
+#pragma mark - UITableViewDelegate & ASTableNodeDelegate
 
 #pragma mark unique methods for UITableViewDelegate.
 
@@ -749,37 +800,108 @@
     }
 }
 
-#pragma mark unique methods for ASTableViewDelegate.
-- (void)tableView:(ASTableView *)tableView willDisplayNodeForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:willDisplayNodeForRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView willDisplayNodeForRowAtIndexPath:indexPath];
+#pragma mark unique methods for ASTableDelegate.
+
+
+- (nullable NSIndexPath *)tableNode:(ASTableNode *)tableNode willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:willSelectRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode willSelectRowAtIndexPath:indexPath];
+    }
+    return nil;
+}
+
+- (void)tableNode:(ASTableNode *)tableNode didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didSelectRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didSelectRowAtIndexPath:indexPath];
+    }
+    TFTableViewItem *item = [self itemAtIndexPath:indexPath];
+    if (item.selectionHandler) {
+        item.selectionHandler (item,indexPath);
+    }
+    if (item.cellClickHandler) {
+        item.cellClickHandler (item, -1, nil);
     }
 }
 
-- (void)tableView:(ASTableView *)tableView didEndDisplayingNode:(ASCellNode *)node forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingNode:forRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView didEndDisplayingNode:node forRowAtIndexPath:indexPath];
+- (nullable NSIndexPath *)tableNode:(ASTableNode *)tableNode willDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:willDeselectRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode willDeselectRowAtIndexPath:indexPath];
+    }
+    return nil;
+}
+
+- (void)tableNode:(ASTableNode *)tableNode didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didDeselectRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didDeselectRowAtIndexPath:indexPath];
     }
 }
 
-- (BOOL)shouldBatchFetchForTableView:(ASTableView *)tableView {
-    if ([self.delegate respondsToSelector:@selector(shouldBatchFetchForTableView:)]) {
-        return [self.delegate shouldBatchFetchForTableView:tableView];
+- (BOOL)tableNode:(ASTableNode *)tableNode shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:shouldHighlightRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode shouldHighlightRowAtIndexPath:indexPath];
+    }
+    return NO;
+}
+- (void)tableNode:(ASTableNode *)tableNode didHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didHighlightRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didHighlightRowAtIndexPath:indexPath];
+    }
+}
+- (void)tableNode:(ASTableNode *)tableNode didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didUnhighlightRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didUnhighlightRowAtIndexPath:indexPath];
+    }
+}
+
+- (BOOL)tableNode:(ASTableNode *)tableNode shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:shouldShowMenuForRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode shouldShowMenuForRowAtIndexPath:indexPath];
+    }
+    return YES;
+}
+- (BOOL)tableNode:(ASTableNode *)tableNode canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender {
+    if ([self.delegate respondsToSelector:@selector(tableNode:canPerformAction:forRowAtIndexPath:withSender:)]) {
+        return [self.delegate tableNode:tableNode canPerformAction:action forRowAtIndexPath:indexPath withSender:sender];
+    }
+    return YES;
+}
+- (void)tableNode:(ASTableNode *)tableNode performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender {
+    if ([self.delegate respondsToSelector:@selector(tableNode:performAction:forRowAtIndexPath:withSender:)]) {
+        [self.delegate tableNode:tableNode performAction:action forRowAtIndexPath:indexPath withSender:sender];
+    }
+}
+
+
+- (void)tableNode:(ASTableNode *)tableNode willDisplayRowWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(tableNode:willDisplayRowWithNode:)]) {
+        [self.delegate tableNode:tableNode willDisplayRowWithNode:node];
+    }
+}
+
+- (void)tableNode:(ASTableNode *)tableNode didEndDisplayingRowWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didEndDisplayingRowWithNode:)]) {
+        [self.delegate tableNode:tableNode didEndDisplayingRowWithNode:node];
+    }
+}
+
+- (BOOL)shouldBatchFetchForTableNode:(ASTableNode *)tableNode {
+    if ([self.delegate respondsToSelector:@selector(shouldBatchFetchForTableNode:)]) {
+        return [self.delegate shouldBatchFetchForTableNode:tableNode];
     }
     return NO;
 }
 
-- (void)tableView:(ASTableView *)tableView willBeginBatchFetchWithContext:(ASBatchContext *)context {
-    if ([self.delegate respondsToSelector:@selector(tableView:willBeginBatchFetchWithContext:)]) {
-        [self.delegate tableView:tableView willBeginBatchFetchWithContext:context];
+- (void)tableNode:(ASTableNode *)tableNode willBeginBatchFetchWithContext:(ASBatchContext *)context {
+    if ([self.delegate respondsToSelector:@selector(tableNode:willBeginBatchFetchWithContext:)]) {
+        [self.delegate tableNode:tableNode willBeginBatchFetchWithContext:context];
     }
 }
 
-- (ASSizeRange)tableView:(ASTableView *)tableView constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:constrainedSizeForRowAtIndexPath:)]) {
-        return [self.delegate tableView:tableView constrainedSizeForRowAtIndexPath:indexPath];
+- (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:constrainedSizeForRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode constrainedSizeForRowAtIndexPath:indexPath];
     }
-    CGFloat tableViewWidth = CGRectGetWidth(tableView.frame);
+    CGFloat tableViewWidth = CGRectGetWidth(tableNode.view.frame);
     TFTableViewItem *item = [self itemAtIndexPath:indexPath];
     CGFloat cellHeight = [TFTableViewItemCellNode cellNodeHeightWithItem:item];
     if (cellHeight) {
@@ -788,7 +910,7 @@
     return ASSizeRangeMake(CGSizeMake(tableViewWidth, 0.0),CGSizeMake(tableViewWidth, CGFLOAT_MAX));
 }
 
-#pragma mark same methods for UITableViewDelegate and ASTableViewDelegate.
+#pragma mark same methods for UITableViewDelegate and ASTableDelegate.
 
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section {
     if ([self.delegate respondsToSelector:@selector(tableView:willDisplayHeaderView:forSection:)]) {

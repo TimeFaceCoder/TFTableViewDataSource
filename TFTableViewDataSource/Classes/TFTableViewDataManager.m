@@ -55,8 +55,8 @@
 /**
  *  列表内View事件处理
  *
- *  @param item
- *  @param actionType
+ *  @param item item
+ *  @param actionType   actionType
  */
 - (void)cellViewClickHandler:(TFTableViewItem *)item actionType:(NSInteger)actionType {
     self.currentIndexPath = item.indexPath;
@@ -64,7 +64,7 @@
 /**
  *  列表删除事件处理
  *
- *  @param item
+ *  @param item item
  */
 - (void)deleteHanlder:(TFTableViewItem *)item{
     self.currentIndexPath = item.indexPath;
@@ -73,8 +73,8 @@
 /**
  *  刷新指定Cell
  *
- *  @param actionType
- *  @param dataId
+ *  @param actionType   actionType
+ *  @param identifier   identifier
  */
 - (void)refreshCell:(NSInteger)actionType identifier:(NSString *)identifier {
     

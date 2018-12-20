@@ -1,5 +1,5 @@
 use_frameworks!
-inhibit_all_warnings!
+
 
 target 'TFTableViewDataSource_Example' do
   pod 'TFTableViewDataSource', :path => '../'
@@ -10,6 +10,6 @@ target 'TFTableViewDataSource_Example' do
   target 'TFTableViewDataSource_Tests' do
     inherit! :search_paths
 
-    
+
   end
 end

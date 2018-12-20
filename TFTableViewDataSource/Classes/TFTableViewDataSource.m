@@ -67,7 +67,7 @@
 - (instancetype)initWithTableView:(UITableView *)tableView
                          listType:(NSInteger)listType
                            params:(NSDictionary *)params
-                         delegate:(id /*<TFTableViewDataSourceDelegate>*/)delegate {
+                         delegate:(id <TFTableViewDataSourceDelegate>)delegate {
     self = [super init];
     if (!self) {
         return nil;
@@ -287,7 +287,7 @@
         _currentPage = 1;
     }
     __weak __typeof(self)weakSelf = self;
-    __block blockDataLoadPolicy = dataLoadPolicy;
+    __block TFDataLoadPolicy blockDataLoadPolicy = dataLoadPolicy;
     [self.tableViewDataManager reloadView:result
                                     block:^(BOOL finished, id object, NSError *error, NSArray <TFTableViewSection *> *sections)
      {
@@ -303,7 +303,7 @@
                          [strongSelf.delegate didFinishLoad:blockDataLoadPolicy object:object error:error?error:hanldeError];
                      }
                      strongSelf.dataSourceState = TFDataSourceStateFinished;
-                     if (_isCollectionNode) {
+                     if (strongSelf->_isCollectionNode) {
                          [strongSelf.collectionNode reloadData];
                      }
                      else {
@@ -325,7 +325,7 @@
                              NSInteger totalCount = strongSelf.manager.sections.count;
                              NSInteger replaceCount = sections.count;
                              [strongSelf.manager replaceSectionsInRange:NSMakeRange(totalCount-replaceCount, replaceCount) withSectionsFromArray:sections];
-                             if (_isCollectionNode) {
+                             if (strongSelf->_isCollectionNode) {
                                  [strongSelf.collectionNode reloadData];
                              }
                              else {
@@ -335,22 +335,28 @@
                          else {
                              //加载下一页，移除loading item
                              [strongSelf.manager removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
-                             if (_isCollectionNode) {
-                                 [strongSelf.collectionNode beginUpdates];
-                                 [strongSelf.collectionNode deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
-                                 [strongSelf addNewAndLoadingSectionsWith:sections];
-                                 [strongSelf.collectionNode endUpdatesAnimated:YES];
-                                 [weakSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
+                             if (strongSelf->_isCollectionNode) {
+                                 
+                                 [strongSelf.collectionNode performBatchUpdates:^{
+                                     
+                                     [strongSelf.collectionNode deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex]];
+                                     [strongSelf addNewAndLoadingSectionsWith:sections];
+                                     
+                                 } completion:^(BOOL finished) {
+                                     if (finished) {
+                                         [strongSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
+                                     }
+                                 }];
                              }
                              else {
-                                 [strongSelf.tableView beginUpdates];
-                                 [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
                                  //重新载入新的section和loadsection
-                                 [strongSelf addNewAndLoadingSectionsWith:sections];
                                  if (strongSelf.tableNode) {
-                                     
-                                     [strongSelf.tableNode.view endUpdatesAnimated:YES completion:nil];
-                                     [weakSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
+                                     [strongSelf.tableNode performBatchUpdates:^{
+                                         [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:lastSectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+                                         [strongSelf addNewAndLoadingSectionsWith:sections];
+                                     } completion:^(BOOL finished) {
+                                         [strongSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
+                                     }];
                                  }
                                  else {
                                      [strongSelf.tableView endUpdates];
@@ -369,48 +375,50 @@
                                  return [strongSelf.collectionNode.view snapshotViewAfterScreenUpdates:NO];
                              }];
                              [strongSelf.collectionNode.supernode insertSubnode:snapshotNode aboveSubnode:strongSelf.collectionNode];
-                             [strongSelf.collectionNode beginUpdates];
-                             //重新加载列表数据
-                             NSInteger sectionCount = strongSelf.manager.sections.count;
-                             [strongSelf.manager removeAllSections];
-                             [strongSelf.collectionNode deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]];
-                             
-                             //重新载入新的section和loadsection
-                             [strongSelf addNewAndLoadingSectionsWith:sections];
-                             [strongSelf.collectionNode endUpdatesAnimated:NO completion:^(BOOL completed) {
+                             [strongSelf.collectionNode performBatchUpdates:^{
+                                 
+                                 //重新加载列表数据
+                                 NSInteger sectionCount = strongSelf.manager.sections.count;
+                                 [strongSelf.manager removeAllSections];
+                                 [strongSelf.collectionNode deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]];
+                                 
+                                 //重新载入新的section和loadsection
+                                 [strongSelf addNewAndLoadingSectionsWith:sections];
+                                 
+                             } completion:^(BOOL finished) {
                                  [UIView animateWithDuration:0.75 animations:^{
                                      snapshotNode.alpha = 0;
                                  } completion:^(BOOL finished) {
                                      [snapshotNode removeFromSupernode];
                                      
                                  }];
+                                 //请求新的数据
+                                 [strongSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
                              }];
-                             //请求新的数据
-                             [weakSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
                          }
                          else if (strongSelf.tableNode) {
                              //support for astablenode
                              UIView *snapshot = [strongSelf.tableView snapshotViewAfterScreenUpdates:NO];
                              [strongSelf.tableView.superview insertSubview:snapshot aboveSubview:strongSelf.tableView];
-                             [strongSelf.tableView beginUpdates];
-                             //重新加载列表数据
-                             NSInteger sectionCount = strongSelf.manager.sections.count;
-                             [strongSelf.manager removeAllSections];
-                             [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
-                                                 withRowAnimation:UITableViewRowAnimationFade];
-                             //重新载入新的section和loadsection
-                             [strongSelf addNewAndLoadingSectionsWith:sections];
-                             [strongSelf.tableNode.view endUpdatesAnimated:NO completion:^(BOOL completed) {
+                             
+                             [strongSelf.collectionNode performBatchUpdates:^{
+                                 //重新加载列表数据
+                                 NSInteger sectionCount = strongSelf.manager.sections.count;
+                                 [strongSelf.manager removeAllSections];
+                                 [strongSelf.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sectionCount)]
+                                                     withRowAnimation:UITableViewRowAnimationFade];
+                                 //重新载入新的section和loadsection
+                                 [strongSelf addNewAndLoadingSectionsWith:sections];
+                             } completion:^(BOOL finished) {
                                  [UIView animateWithDuration:0.75 animations:^{
                                      snapshot.alpha = 0;
                                  } completion:^(BOOL finished) {
                                      [snapshot removeFromSuperview];
                                      
                                  }];
-                                 
+                                 //请求新的数据
+                                 [strongSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
                              }];
-                             //请求新的数据
-                             [weakSelf _loadNewDataAfterLoadedCacheObjectWithRequest:dataRequest dataLoadPolicy:blockDataLoadPolicy context:context];
                          }
                          else if (strongSelf.tableView) {
                              //support for uitableview
@@ -502,27 +510,89 @@
     }
 }
 
-#pragma mark unique methods for ASTableViewDelegate.
-- (void)tableView:(ASTableView *)tableView willDisplayNodeForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:willDisplayNodeForRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView willDisplayNodeForRowAtIndexPath:indexPath];
+#pragma mark unique methods for ASTableDelegate.
+
+- (void)tableNode:(ASTableNode *)tableNode willDisplayRowWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(tableNode:willDisplayRowWithNode:)]) {
+        [self.delegate tableNode:tableNode willDisplayRowWithNode:node];
     }
 }
 
-- (void)tableView:(ASTableView *)tableView didEndDisplayingNode:(ASCellNode *)node forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingNode:forRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView didEndDisplayingNode:node forRowAtIndexPath:indexPath];
+- (void)tableNode:(ASTableNode *)tableNode didEndDisplayingRowWithNode:(ASCellNode *)node {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didEndDisplayingRowWithNode:)]) {
+        [self.delegate tableNode:tableNode didEndDisplayingRowWithNode:node];
     }
 }
 
-- (BOOL)shouldBatchFetchForTableView:(ASTableView *)tableView {
-    return _currentPage < _totalPage;
+- (nullable NSIndexPath *)tableNode:(ASTableNode *)tableNode willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:willSelectRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode willSelectRowAtIndexPath:indexPath];
+    }
+    return nil;
 }
 
-- (void)tableView:(ASTableView *)tableView willBeginBatchFetchWithContext:(ASBatchContext *)context {
+- (void)tableNode:(ASTableNode *)tableNode didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didSelectRowAtIndexPath:indexPath];
+    }
+}
+
+- (nullable NSIndexPath *)tableNode:(ASTableNode *)tableNode willDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:willDeselectRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode willDeselectRowAtIndexPath:indexPath];
+    }
+    return nil;
+}
+
+- (void)tableNode:(ASTableNode *)tableNode didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didDeselectRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didDeselectRowAtIndexPath:indexPath];
+    }
+}
+
+- (BOOL)tableNode:(ASTableNode *)tableNode shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:shouldHighlightRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode shouldHighlightRowAtIndexPath:indexPath];
+    }
+    return NO;
+}
+- (void)tableNode:(ASTableNode *)tableNode didHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didHighlightRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didHighlightRowAtIndexPath:indexPath];
+    }
+}
+- (void)tableNode:(ASTableNode *)tableNode didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:didUnhighlightRowAtIndexPath:)]) {
+        [self.delegate tableNode:tableNode didUnhighlightRowAtIndexPath:indexPath];
+    }
+}
+
+- (BOOL)tableNode:(ASTableNode *)tableNode shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(tableNode:shouldShowMenuForRowAtIndexPath:)]) {
+        return [self.delegate tableNode:tableNode shouldShowMenuForRowAtIndexPath:indexPath];
+    }
+    return YES;
+}
+- (BOOL)tableNode:(ASTableNode *)tableNode canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender {
+    if ([self.delegate respondsToSelector:@selector(tableNode:canPerformAction:forRowAtIndexPath:withSender:)]) {
+        return [self.delegate tableNode:tableNode canPerformAction:action forRowAtIndexPath:indexPath withSender:sender];
+    }
+    return YES;
+}
+- (void)tableNode:(ASTableNode *)tableNode performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender {
+    if ([self.delegate respondsToSelector:@selector(tableNode:performAction:forRowAtIndexPath:withSender:)]) {
+        [self.delegate tableNode:tableNode performAction:action forRowAtIndexPath:indexPath withSender:sender];
+    }
+}
+
+
+- (void)tableNode:(ASTableNode *)tableNode willBeginBatchFetchWithContext:(ASBatchContext *)context {
     TFTableViewLogDebug(@"Class %@ will fetch next page",NSStringFromClass(self.class));
-    
     [self loadDataWithPolicy:TFDataLoadPolicyMore context:context];
+}
+
+- (BOOL)shouldBatchFetchForTableNode:(ASTableNode *)tableNode {
+    return _currentPage < _totalPage;
 }
 
 #pragma mark same methods for UITableViewDelegate and ASTableViewDelegate.
@@ -571,8 +641,8 @@
 /**
  *  滚动方向判断
  *
- *  @param currentOffsetY
- *  @param previousOffsetY
+ *  @param currentOffsetY currentOffsetY
+ *  @param previousOffsetY previousOffsetY
  *
  *  @return ScrollDirection
  */

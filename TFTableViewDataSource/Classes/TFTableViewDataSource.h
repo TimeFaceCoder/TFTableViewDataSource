@@ -93,7 +93,7 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 /**
  *  列表及其控件点击事件回调
  *
- *  @param item
+ *  @param item TFTableViewItem
  *  @param actionType 事件类型
  */
 - (void)actionOnView:(TFTableViewItem *)item actionType:(NSInteger)actionType;
@@ -256,7 +256,7 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 - (instancetype)initWithTableView:(UITableView *)tableView
                          listType:(NSInteger)listType
                            params:(NSDictionary *)params
-                         delegate:(id /*<TFTableViewDataSourceDelegate>*/)delegate;
+                         delegate:(id <TFTableViewDataSourceDelegate>)delegate;
 
 /**
  *  初始化方法
@@ -271,7 +271,7 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 - (instancetype)initWithTableNode:(ASTableNode *)tableNode
                          listType:(NSInteger)listType
                            params:(NSDictionary *)params
-                         delegate:(id /*<TFTableViewDataSourceDelegate>*/)delegate;
+                         delegate:(id <TFTableViewDataSourceDelegate>)delegate;
 
 
 /**
@@ -287,7 +287,7 @@ typedef NS_ENUM(NSInteger, TFTableViewScrollDirection) {
 - (instancetype)initWithCollectionNode:(ASCollectionNode *)collectionNode
                          listType:(NSInteger)listType
                            params:(NSDictionary *)params
-                         delegate:(id /*<TFTableViewDataSourceDelegate>*/)delegate;
+                         delegate:(id <TFTableViewDataSourceDelegate>)delegate;
 
 
 /**

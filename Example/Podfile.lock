@@ -82,7 +82,7 @@ CHECKOUT OPTIONS:
     :commit: 878b561c324ed04c783e417a1c44a7ea9c830d09
     :git: https://github.com/TimeFaceCoder/TFNetwork.git
   TFTableViewManager:
-    :commit: b20f920e4ff89772cac719f97572031abd2138f8
+    :commit: b7d30113e1a8d42c9e9363806bcbc7e9cfefeecc
     :git: https://github.com/TimeFaceCoder/TFTableViewManager.git
 
 SPEC CHECKSUMS:
@@ -98,6 +98,6 @@ SPEC CHECKSUMS:
   TFTableViewDataSource: b2bc70728c494450c7ca33b4f7f41b5577391355
   TFTableViewManager: 5f58a2b8698fa782725804ecc3cda3dd6cd8fda5
 
-PODFILE CHECKSUM: b272b08beb64a82a381e35c2bd282719e35ff8ca
+PODFILE CHECKSUM: bdedda61cdd35ea62a410de0dc1229592800c4e1
 
 COCOAPODS: 1.5.3

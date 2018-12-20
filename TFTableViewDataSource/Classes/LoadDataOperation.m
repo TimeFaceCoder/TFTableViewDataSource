@@ -67,7 +67,7 @@
         } failure:^(TFBatchRequest *batchRequest) {
             if ([dataRequest cacheResponseObject]) {
                 self.result = dataRequest.responseObject;
-                _policy = TFDataLoadPolicyCache;
+                self->_policy = TFDataLoadPolicyCache;
                 [self completeOperation];
             }
             else {
